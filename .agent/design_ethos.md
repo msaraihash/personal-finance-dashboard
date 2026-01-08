@@ -1,4 +1,7 @@
-# Design Ethos: The "Brené Brown" Standard
+# Design Philosophy: The "Brené Brown" Standard
+
+> [!NOTE]
+> This file is **INSPIRATIONAL context**. For enforceable implementation rules, see [DESIGN_CONTRACT_V1.md](./DESIGN_CONTRACT_V1.md).
 
 **Vibe**: Calm, Courageous, Clear.
 **Theme**: "Nebula Glass" 🌌
