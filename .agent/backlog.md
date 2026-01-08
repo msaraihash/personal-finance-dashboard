@@ -20,8 +20,8 @@ Visual motifs defined in `investment_philosophies.v1.yml` but not yet implemente
 ## Tech Debt
 Pre-existing issues unrelated to Phase 6.
 
-- [ ] `App.tsx:156` — Move `SortHeader` component outside render function
-- [ ] `App.tsx:124` — Remove unused `_type` variable
+- [x] `App.tsx:156` — Move `SortHeader` component outside render function
+- [x] `App.tsx:124` — Remove unused `_type` variable
 
 ---
 

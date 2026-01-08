@@ -68,6 +68,28 @@ const ComplianceBanner = ({ compliance }: { compliance: Record<string, boolean> 
   );
 };
 
+const SortHeader = (
+  { label, sortKey, align = 'left', sortConfig, onSort }:
+    { label: string, sortKey: string, align?: 'left' | 'right', sortConfig: { key: string, direction: 'asc' | 'desc' }, onSort: (key: string) => void }
+) => {
+  const isActive = sortConfig.key === sortKey;
+  return (
+    <th
+      style={{ padding: '1rem', cursor: 'pointer', textAlign: align }}
+      onClick={() => onSort(sortKey)}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}>
+        {label}
+        {isActive ? (
+          sortConfig.direction === 'asc' ? <ChevronUp size={16} color="var(--accent-blue)" /> : <ChevronDown size={16} color="var(--accent-blue)" />
+        ) : (
+          <div style={{ width: 16 }}></div>
+        )}
+      </div>
+    </th>
+  );
+};
+
 export default function App() {
   const [holdings, setHoldings] = useState<Holding[]>(loadHoldings());
   const [ipsState, setIpsState] = useState<IPSState>(loadIPSState());
@@ -121,7 +143,7 @@ export default function App() {
   }, [holdings, ipsState.manualAssets, usdRate]);
   const complianceResult = usePhilosophyEngine(portfolioFeatures);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, _type: 'ws' | 'fid') => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -153,24 +175,7 @@ export default function App() {
     setSortConfig({ key, direction });
   };
 
-  const SortHeader = ({ label, sortKey, align = 'left' }: { label: string, sortKey: string, align?: 'left' | 'right' }) => {
-    const isActive = sortConfig.key === sortKey;
-    return (
-      <th
-        style={{ padding: '1rem', cursor: 'pointer', textAlign: align }}
-        onClick={() => handleSort(sortKey)}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}>
-          {label}
-          {isActive ? (
-            sortConfig.direction === 'asc' ? <ChevronUp size={16} color="var(--accent-blue)" /> : <ChevronDown size={16} color="var(--accent-blue)" />
-          ) : (
-            <div style={{ width: 16 }}></div>
-          )}
-        </div>
-      </th>
-    );
-  };
+
 
   return (
     <div className="container" style={{ paddingBottom: '8rem' }}>
@@ -194,7 +199,7 @@ export default function App() {
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: '0.75rem', paddingRight: '1rem', borderRight: '1px solid var(--border-color)' }}>
-            <input type="file" id="ws-upload" hidden onChange={(e) => handleFileUpload(e, 'ws')} />
+            <input type="file" id="ws-upload" hidden onChange={(e) => handleFileUpload(e)} />
             <label htmlFor="ws-upload" className="upload-label" style={{ borderRadius: '14px' }}>
               <Upload size={16} /> Wealthsimple
             </label>
@@ -288,11 +293,11 @@ export default function App() {
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.95rem' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                  <SortHeader label="Asset / Ticker" sortKey="ticker" />
-                  <SortHeader label="Class" sortKey="assetClass" />
-                  <SortHeader label={viewMode === 'consolidated' ? 'Portfolio Segments' : 'Source'} sortKey={viewMode === 'consolidated' ? 'accounts' : 'source'} />
-                  <SortHeader label="Native Value" sortKey="marketValue" />
-                  <SortHeader label="Value (CAD)" sortKey="valueCAD" align="right" />
+                  <SortHeader label="Asset / Ticker" sortKey="ticker" sortConfig={sortConfig} onSort={handleSort} />
+                  <SortHeader label="Class" sortKey="assetClass" sortConfig={sortConfig} onSort={handleSort} />
+                  <SortHeader label={viewMode === 'consolidated' ? 'Portfolio Segments' : 'Source'} sortKey={viewMode === 'consolidated' ? 'accounts' : 'source'} sortConfig={sortConfig} onSort={handleSort} />
+                  <SortHeader label="Native Value" sortKey="marketValue" sortConfig={sortConfig} onSort={handleSort} />
+                  <SortHeader label="Value (CAD)" sortKey="valueCAD" align="right" sortConfig={sortConfig} onSort={handleSort} />
                 </tr>
               </thead>
               <tbody style={{ verticalAlign: 'middle' }}>
