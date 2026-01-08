@@ -60,5 +60,13 @@
   - Created logic fuzz generator `generateSyntheticPortfolio.ts`.
   - Identified signal regression (fallback philosophy dominating predictions).
 
+### Phase 8B: Fallback Philosophy & Financial Goals ✅
+- **Time to Financial Freedom Fallback**
+  - Defined outcome-based philosophy `time_to_financial_freedom` (low-score fallback).
+  - Implemented `RunwayMeter` visual motif showing years to FI.
+- **Financial Goals Integration**
+  - Added "Financial Goals" step to `OnboardingWizard` (Expenses, Savings Rate).
+  - Wired global state in `App.tsx` to pass net worth and goals to the engine view.
+
 ## Current Focus
-Infrastructure is ready for signal tuning. The validation harness is successfully detecting that the fallback philosophy scores too highly, providing the necessary feedback loop for the next phase of engine refinement.
+The philosophy engine now has a robust fallback for "unclassifiable" portfolios, shifting the conversation to financial independence. The validation harness is operational, and the scoring logic has been tuned (lowering fallback points) to prevent false positives. Next steps involve signal tuning for other philosophies.
