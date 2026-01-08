@@ -23,8 +23,11 @@ import {
   loadHistory,
   loadOnboardingState,
   saveOnboardingState,
+  loadFinancialGoals,
+  saveFinancialGoals,
   type OnboardingState
 } from './services/storage';
+import type { FinancialGoals } from './types/FinancialGoals';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { TacticalPanel } from './components/TacticalPanel';
 import { IPSConfigModal } from './components/IPSConfigModal';
@@ -107,10 +110,16 @@ export default function App() {
   });
 
   const [onboardingState, setOnboardingState] = useState(loadOnboardingState());
+  const [financialGoals, setFinancialGoals] = useState<FinancialGoals>(loadFinancialGoals());
 
   const handleOnboardingComplete = (state: OnboardingState) => {
     saveOnboardingState(state);
     setOnboardingState(state);
+  };
+
+  const handleFinancialGoalsSet = (goals: FinancialGoals) => {
+    saveFinancialGoals(goals);
+    setFinancialGoals(goals);
   };
 
   // Fetch exchange rate on mount
@@ -159,6 +168,7 @@ export default function App() {
       <OnboardingWizard
         onComplete={handleOnboardingComplete}
         onHoldingsLoaded={(newHoldings) => setHoldings(newHoldings)}
+        onFinancialGoalsSet={handleFinancialGoalsSet}
       />
     );
   }
@@ -269,7 +279,11 @@ export default function App() {
 
         {/* Phase 5: Philosophy Engine View */}
         <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
-          <PhilosophyEngineView complianceResult={complianceResult} />
+          <PhilosophyEngineView
+            complianceResult={complianceResult}
+            netWorthCAD={metrics.totalNetWorthCAD}
+            financialGoals={financialGoals}
+          />
         </div>
 
         <div style={{ gridColumn: '1 / 2' }}>
