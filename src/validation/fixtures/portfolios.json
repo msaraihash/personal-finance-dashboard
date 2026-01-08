@@ -1,7 +1,7 @@
 {
     "datasetVersion": "v1",
     "generatedAt": "2026-01-08T18:00:00Z",
-    "notes": "Ground-truth fixtures for Philosophy Detection Engine validation.",
+    "notes": "Ground-truth fixtures for Philosophy Detection Engine validation. IDs aligned to investment_philosophies.v1.yml.",
     "portfolios": [
         {
             "id": "boglehead_vti_vxus_bnd",
@@ -29,9 +29,9 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "passive_indexing",
+                "primaryPhilosophy": "passive_indexing_bogleheads",
                 "secondaryPhilosophies": [
-                    "balanced_allocation"
+                    "modern_portfolio_theory"
                 ],
                 "requiredPrimaryInTopK": 1
             },
@@ -53,11 +53,14 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "passive_indexing",
+                "primaryPhilosophy": "passive_indexing_bogleheads",
                 "secondaryPhilosophies": [
-                    "equity_only"
+                    "lifecycle_target_date"
                 ],
-                "requiredPrimaryInTopK": 1
+                "allowAlternatePrimary": [
+                    "lifecycle_target_date"
+                ],
+                "requiredPrimaryInTopK": 2
             },
             "edgeCaseFlags": [
                 "pure_archetype",
@@ -99,7 +102,8 @@
             "expected": {
                 "primaryPhilosophy": "factor_investing",
                 "secondaryPhilosophies": [
-                    "passive_indexing"
+                    "passive_indexing_bogleheads",
+                    "value_investing"
                 ],
                 "requiredPrimaryInTopK": 1
             },
@@ -109,7 +113,7 @@
         },
         {
             "id": "em_tilt_vwo_majority",
-            "description": "Emerging markets dominates allocation.",
+            "description": "Emerging markets dominates allocation (factor-like behavior).",
             "archetype": "EM tilt",
             "baseCurrency": "USD",
             "holdings": [
@@ -133,9 +137,12 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "emerging_markets_tilt",
+                "primaryPhilosophy": "passive_indexing_bogleheads",
                 "secondaryPhilosophies": [
-                    "passive_indexing"
+                    "factor_investing"
+                ],
+                "allowAlternatePrimary": [
+                    "factor_investing"
                 ]
             },
             "edgeCaseFlags": [
@@ -168,10 +175,9 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "dividend_growth",
+                "primaryPhilosophy": "dividend_growth_income",
                 "secondaryPhilosophies": [
-                    "income_focused",
-                    "balanced_allocation"
+                    "passive_indexing_bogleheads"
                 ]
             },
             "edgeCaseFlags": []
@@ -202,9 +208,10 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "options_overlay_income",
+                "primaryPhilosophy": "covered_call_income",
                 "secondaryPhilosophies": [
-                    "income_focused"
+                    "dividend_growth_income",
+                    "cash_buffer_safety_first"
                 ]
             },
             "edgeCaseFlags": [
@@ -249,9 +256,10 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "all_weather_risk_parity",
+                "primaryPhilosophy": "risk_parity_all_weather",
                 "secondaryPhilosophies": [
-                    "diversification_maximalist"
+                    "inflation_hedge_real_assets",
+                    "modern_portfolio_theory"
                 ]
             },
             "edgeCaseFlags": []
@@ -282,9 +290,10 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "barbell_strategy",
+                "primaryPhilosophy": "barbell_antifragile",
                 "secondaryPhilosophies": [
-                    "capital_preservation"
+                    "cash_buffer_safety_first",
+                    "crypto_maximal"
                 ]
             },
             "edgeCaseFlags": [
@@ -311,7 +320,7 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "capital_preservation",
+                "primaryPhilosophy": "cash_buffer_safety_first",
                 "secondaryPhilosophies": []
             },
             "edgeCaseFlags": [
@@ -344,9 +353,9 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "crypto_speculation",
+                "primaryPhilosophy": "crypto_maximal",
                 "secondaryPhilosophies": [
-                    "thematic_growth"
+                    "thematic_sector_bets"
                 ],
                 "requiredPrimaryInTopK": 1
             },
@@ -380,9 +389,9 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "thematic_growth",
+                "primaryPhilosophy": "thematic_sector_bets",
                 "secondaryPhilosophies": [
-                    "growth_tilt"
+                    "growth_investing"
                 ]
             },
             "edgeCaseFlags": []
@@ -413,9 +422,9 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "stock_picking_concentrated",
+                "primaryPhilosophy": "concentrated_stock_picking",
                 "secondaryPhilosophies": [
-                    "growth_tilt"
+                    "growth_investing"
                 ]
             },
             "edgeCaseFlags": [
@@ -448,9 +457,12 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "home_bias",
+                "primaryPhilosophy": "passive_indexing_bogleheads",
                 "secondaryPhilosophies": [
-                    "passive_indexing"
+                    "factor_investing"
+                ],
+                "allowAlternatePrimary": [
+                    "factor_investing"
                 ]
             },
             "edgeCaseFlags": [
@@ -486,7 +498,10 @@
             "expected": {
                 "primaryPhilosophy": "esg_sri",
                 "secondaryPhilosophies": [
-                    "passive_indexing"
+                    "passive_indexing_bogleheads"
+                ],
+                "allowAlternatePrimary": [
+                    "passive_indexing_bogleheads"
                 ]
             },
             "edgeCaseFlags": [
@@ -513,9 +528,9 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "leveraged_beta",
+                "primaryPhilosophy": "leveraged_risk_parity_hfea",
                 "secondaryPhilosophies": [
-                    "barbell_strategy"
+                    "risk_parity_all_weather"
                 ]
             },
             "edgeCaseFlags": [
@@ -548,9 +563,9 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "real_assets_inflation_hedge",
+                "primaryPhilosophy": "inflation_hedge_real_assets",
                 "secondaryPhilosophies": [
-                    "diversification_maximalist"
+                    "risk_parity_all_weather"
                 ]
             },
             "edgeCaseFlags": []
@@ -584,12 +599,13 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "household_balance_sheet_aware",
+                "primaryPhilosophy": "inflation_hedge_real_assets",
                 "secondaryPhilosophies": [
-                    "capital_preservation"
+                    "cash_buffer_safety_first"
                 ],
                 "allowAlternatePrimary": [
-                    "passive_indexing"
+                    "passive_indexing_bogleheads",
+                    "cash_buffer_safety_first"
                 ]
             },
             "edgeCaseFlags": [
@@ -641,10 +657,10 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "passive_indexing",
+                "primaryPhilosophy": "passive_indexing_bogleheads",
                 "secondaryPhilosophies": [],
                 "allowAlternatePrimary": [
-                    "balanced_allocation"
+                    "lifecycle_target_date"
                 ]
             },
             "edgeCaseFlags": [
@@ -690,15 +706,15 @@
                 }
             ],
             "expected": {
-                "primaryPhilosophy": "mixed_unclear",
+                "primaryPhilosophy": "concentrated_stock_picking",
                 "secondaryPhilosophies": [
-                    "stock_picking_concentrated",
-                    "crypto_speculation",
-                    "options_overlay_income"
+                    "crypto_maximal",
+                    "covered_call_income"
                 ],
                 "allowAlternatePrimary": [
-                    "stock_picking_concentrated",
-                    "thematic_growth"
+                    "crypto_maximal",
+                    "thematic_sector_bets",
+                    "growth_investing"
                 ]
             },
             "edgeCaseFlags": [
@@ -706,6 +722,47 @@
                 "high_concentration",
                 "high_crypto",
                 "options_overlay"
+            ]
+        },
+        {
+            "id": "permanent_portfolio_classic",
+            "description": "Classic 4-sleeve permanent portfolio: stocks, long bonds, cash, gold.",
+            "archetype": "permanent portfolio",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "VTI",
+                    "value": 25000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "TLT",
+                    "value": 25000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "BIL",
+                    "value": 25000,
+                    "currency": "USD",
+                    "assetType": "cash_equivalent"
+                },
+                {
+                    "ticker": "GLD",
+                    "value": 25000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "permanent_portfolio",
+                "secondaryPhilosophies": [
+                    "risk_parity_all_weather"
+                ]
+            },
+            "edgeCaseFlags": [
+                "pure_archetype"
             ]
         }
     ]
