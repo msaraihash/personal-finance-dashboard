@@ -6,7 +6,7 @@ import type { ManualAsset } from '../../types/Assets';
 describe('featureExtractor', () => {
 
     // Helper to create a mock holding
-    const createHolding = (ticker: string, marketValue: number, assetClass: string = 'Equity'): Holding => ({
+    const createHolding = (ticker: string, marketValue: number, assetClass: Holding['assetClass'] = 'Equity'): Holding => ({
         id: 'test-id',
         ticker,
         name: ticker,

@@ -20,8 +20,12 @@ import {
   loadIPSState,
   saveIPSState,
   saveSnapshot,
-  loadHistory
+  loadHistory,
+  loadOnboardingState,
+  saveOnboardingState,
+  type OnboardingState
 } from './services/storage';
+import { OnboardingWizard } from './components/OnboardingWizard';
 import { TacticalPanel } from './components/TacticalPanel';
 import { IPSConfigModal } from './components/IPSConfigModal';
 import { StrategicVisuals } from './components/StrategicVisuals';
@@ -102,6 +106,13 @@ export default function App() {
     direction: 'desc'
   });
 
+  const [onboardingState, setOnboardingState] = useState(loadOnboardingState());
+
+  const handleOnboardingComplete = (state: OnboardingState) => {
+    saveOnboardingState(state);
+    setOnboardingState(state);
+  };
+
   // Fetch exchange rate on mount
   useEffect(() => {
     fetch('https://api.frankfurter.app/latest?from=USD&to=CAD')
@@ -143,6 +154,10 @@ export default function App() {
   }, [holdings, ipsState.manualAssets, usdRate]);
   const complianceResult = usePhilosophyEngine(portfolioFeatures);
 
+  if (!onboardingState.isComplete) {
+    return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+  }
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -176,6 +191,13 @@ export default function App() {
   };
 
 
+
+  const handleResetOnboarding = () => {
+    const newState: OnboardingState = { isComplete: false };
+    saveOnboardingState(newState);
+    setOnboardingState(newState);
+    setIsConfigOpen(false);
+  };
 
   return (
     <div className="container" style={{ paddingBottom: '8rem' }}>
@@ -331,7 +353,6 @@ export default function App() {
                       return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
                     })
                     .map((h, idx) => {
-                      // @ts-expect-error - valueCAD might be on consolidated but not base Holding
                       const valueCAD = (h as { valueCAD?: number }).valueCAD || (h.currency === 'USD' ? h.marketValue * usdRate : h.marketValue);
                       const isPam = h.accountName?.toLowerCase().includes('pam') || h.accountName?.toLowerCase().includes('spouse');
 
@@ -379,6 +400,7 @@ export default function App() {
         setHoldings={setHoldings}
         history={history}
         setHistory={setHistory}
+        onResetOnboarding={handleResetOnboarding}
       />
     </div>
   );

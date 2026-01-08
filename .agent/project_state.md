@@ -44,5 +44,14 @@
   - Fixed critical UI crash in `ConcentrationStack` (undefined holdings).
   - Verified UI load stability.
 
+### Phase 7: Onboarding Wizard & UX Polish ✅
+- **Onboarding Flow**
+    - Implemented `OnboardingWizard.tsx` with dynamic YAML philosophy loading.
+    - Added persistence via `localStorage`.
+    - Integrated with `App.tsx` (conditional rendering).
+- **UX Improvements**
+    - Added "Restart Onboarding" button to `IPSConfigModal`.
+    - Verified full flow with browser automation.
+
 ## Current Focus
-Phase 6 is complete. Tier 2 motifs (e.g., `risk_return_plane`, `glidepath_curve`) are deferred to future sprints.
+Phase 7 is complete. The application now supports a full user intake flow with detecting or selecting an investment philosophy. Next steps involve enriching the tactical panel.

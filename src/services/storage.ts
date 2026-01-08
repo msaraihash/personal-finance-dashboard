@@ -46,3 +46,19 @@ export const loadHistory = (): Snapshot[] => {
     const data = localStorage.getItem(KEYS.HISTORY);
     return data ? JSON.parse(data) : [];
 };
+
+const ONBOARDING_KEY = 'pfd_onboarding_state';
+
+export interface OnboardingState {
+    isComplete: boolean;
+    targetPhilosophyId?: string; // If manually selected
+}
+
+export const saveOnboardingState = (state: OnboardingState) => {
+    localStorage.setItem(ONBOARDING_KEY, JSON.stringify(state));
+};
+
+export const loadOnboardingState = (): OnboardingState => {
+    const data = localStorage.getItem(ONBOARDING_KEY);
+    return data ? JSON.parse(data) : { isComplete: false };
+};
