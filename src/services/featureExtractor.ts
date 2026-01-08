@@ -136,6 +136,10 @@ export const extractFeatures = (
 
     const allAssets: { name: string; value: number }[] = [];
 
+    // Options Overlay Accumulator
+    let value_with_options = 0;
+    const options_types = new Set<string>();
+
     // Process Holdings
     holdings.forEach(h => {
         const val = getCADValue(h.marketValue, h.currency, exchangeRate);
@@ -211,11 +215,14 @@ export const extractFeatures = (
             composition.pct_single_stocks += val;
         }
 
-
-        // ETF-based enrichment (Geography/Factors)
+        // These apply if metadata is available
         if (meta) {
             if (meta.assetClass === 'equity' || meta.assetClass === 'mixed') {
                 geography[meta.region] += val;
+            }
+            if (meta.options_strategy && meta.options_strategy !== 'none') {
+                value_with_options += val;
+                options_types.add(meta.options_strategy);
             }
             accumulateFactorTilts(factors, meta, val);
         } else {
@@ -300,6 +307,17 @@ export const extractFeatures = (
         ? computeExpenseRatio(holdings, totalValueCAD, exchangeRate)
         : 0.15;
 
+    // --- Options Overlay Logic ---
+    const pct_with_options = totalValueCAD > 0 ? value_with_options / totalValueCAD : 0;
+    const uses_options_overlay = pct_with_options >= 0.10; // Threshold: 10% of portfolio
+
+    let options_overlay_type = 'none';
+    if (uses_options_overlay) {
+        if (options_types.has('covered_call')) options_overlay_type = 'covered_call';
+        else if (options_types.has('protective_put')) options_overlay_type = 'protective_put';
+        else options_overlay_type = 'other';
+    }
+
     return {
         ...composition,
 
@@ -327,8 +345,8 @@ export const extractFeatures = (
         est_duration: 5,
         leverage_ratio: 1.0,
         uses_leveraged_etfs: hasLeveraged,
-        uses_options_overlay: false,
-        options_overlay_type: 'none',
+        uses_options_overlay: uses_options_overlay,
+        options_overlay_type: options_overlay_type,
         rebalance_frequency: 'ad_hoc',
         tax_sensitivity: 'medium',
         fee_sensitivity: avg_expense_ratio > 0.30 ? 'low' : avg_expense_ratio > 0.15 ? 'medium' : 'high',

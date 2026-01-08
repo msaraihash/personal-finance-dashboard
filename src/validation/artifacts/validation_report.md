@@ -10,9 +10,9 @@
 | barbell_antifragile | 1 | 0.0% | 0.0% | 0.0% | 0.0% | 0 | 0 | 1 |
 | cash_buffer_safety_first | 1 | 33.3% | 100.0% | 50.0% | 100.0% | 1 | 2 | 0 |
 | concentrated_stock_picking | 2 | 25.0% | 50.0% | 33.3% | 50.0% | 1 | 3 | 1 |
-| covered_call_income | 1 | 0.0% | 0.0% | 0.0% | 0.0% | 0 | 0 | 1 |
-| crypto_maximal | 1 | 50.0% | 100.0% | 66.7% | 100.0% | 1 | 1 | 0 |
-| dividend_growth_income | 1 | 0.0% | 0.0% | 0.0% | 0.0% | 0 | 1 | 1 |
+| covered_call_income | 1 | 50.0% | 100.0% | 66.7% | 100.0% | 1 | 1 | 0 |
+| crypto_maximal | 1 | 100.0% | 100.0% | 100.0% | 100.0% | 1 | 0 | 0 |
+| dividend_growth_income | 1 | 0.0% | 0.0% | 0.0% | 0.0% | 0 | 0 | 1 |
 | esg_sri | 1 | 0.0% | 0.0% | 0.0% | 0.0% | 0 | 0 | 1 |
 | factor_investing | 1 | 33.3% | 100.0% | 50.0% | 100.0% | 1 | 2 | 0 |
 | inflation_hedge_real_assets | 2 | 50.0% | 50.0% | 50.0% | 50.0% | 1 | 1 | 1 |
@@ -27,8 +27,8 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | barbell_antifragile | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | cash_buffer_safety_first | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| concentrated_stock_picking | 0 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| covered_call_income | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| concentrated_stock_picking | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| covered_call_income | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | crypto_maximal | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | dividend_growth_income | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | esg_sri | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |

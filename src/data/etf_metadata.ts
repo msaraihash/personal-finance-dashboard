@@ -17,6 +17,7 @@ export interface ETFMetadata {
     tilt_momentum: number;   // -1 to +1
     tilt_low_vol: number;    // -1 to +1
     expense_ratio: number;   // in percentage points (e.g., 0.20 = 0.20%)
+    options_strategy?: 'covered_call' | 'protective_put' | 'none';
 }
 
 /**
@@ -93,8 +94,8 @@ export const ETF_METADATA: Record<string, ETFMetadata> = {
     'UPRO': { ticker: 'UPRO', name: 'ProShares UltraPro S&P500', region: 'us', assetClass: 'equity', tilt_value: 0, tilt_size: -0.3, tilt_quality: 0, tilt_momentum: 0, tilt_low_vol: -0.9, expense_ratio: 0.91 },
 
     // --- Covered Call ---
-    'XYLD': { ticker: 'XYLD', name: 'Global X S&P 500 Covered Call ETF', region: 'us', assetClass: 'equity', tilt_value: 0, tilt_size: -0.2, tilt_quality: 0.1, tilt_momentum: -0.3, tilt_low_vol: 0.4, expense_ratio: 0.60 },
-    'QYLD': { ticker: 'QYLD', name: 'Global X Nasdaq 100 Covered Call ETF', region: 'us', assetClass: 'equity', tilt_value: -0.4, tilt_size: -0.3, tilt_quality: 0, tilt_momentum: -0.3, tilt_low_vol: 0.3, expense_ratio: 0.60 },
+    'XYLD': { ticker: 'XYLD', name: 'Global X S&P 500 Covered Call ETF', region: 'us', assetClass: 'equity', tilt_value: 0, tilt_size: -0.2, tilt_quality: 0.1, tilt_momentum: -0.3, tilt_low_vol: 0.4, expense_ratio: 0.60, options_strategy: 'covered_call' },
+    'QYLD': { ticker: 'QYLD', name: 'Global X Nasdaq 100 Covered Call ETF', region: 'us', assetClass: 'equity', tilt_value: -0.4, tilt_size: -0.3, tilt_quality: 0, tilt_momentum: -0.3, tilt_low_vol: 0.3, expense_ratio: 0.60, options_strategy: 'covered_call' },
     // --- US Factor / Other ---
     'AVUV': { ticker: 'AVUV', name: 'Avantis US Small Cap Value ETF', region: 'us', assetClass: 'equity', tilt_value: 0.7, tilt_size: 0.7, tilt_quality: 0.1, tilt_momentum: -0.1, tilt_low_vol: 0, expense_ratio: 0.25 },
     'AVDV': { ticker: 'AVDV', name: 'Avantis International Small Cap Value ETF', region: 'developed_ex_us', assetClass: 'equity', tilt_value: 0.7, tilt_size: 0.7, tilt_quality: 0.1, tilt_momentum: -0.1, tilt_low_vol: 0, expense_ratio: 0.36 },
@@ -103,7 +104,7 @@ export const ETF_METADATA: Record<string, ETFMetadata> = {
     'IEF': { ticker: 'IEF', name: 'iShares 7-10 Year Treasury Bond ETF', region: 'us', assetClass: 'bond', tilt_value: 0, tilt_size: 0, tilt_quality: 0, tilt_momentum: 0, tilt_low_vol: 0, expense_ratio: 0.15 },
 
     // --- Covered Call / Options ---
-    'JEPI': { ticker: 'JEPI', name: 'JPMorgan Equity Premium Income ETF', region: 'us', assetClass: 'equity', tilt_value: 0.3, tilt_size: -0.2, tilt_quality: 0.2, tilt_momentum: -0.2, tilt_low_vol: 0.5, expense_ratio: 0.35 },
+    'JEPI': { ticker: 'JEPI', name: 'JPMorgan Equity Premium Income ETF', region: 'us', assetClass: 'equity', tilt_value: 0.3, tilt_size: -0.2, tilt_quality: 0.2, tilt_momentum: -0.2, tilt_low_vol: 0.5, expense_ratio: 0.35, options_strategy: 'covered_call' },
 
     // --- ESG ---
     'ESGV': { ticker: 'ESGV', name: 'Vanguard ESG U.S. Stock ETF', region: 'us', assetClass: 'equity', tilt_value: 0, tilt_size: -0.1, tilt_quality: 0, tilt_momentum: 0, tilt_low_vol: 0, expense_ratio: 0.09 },

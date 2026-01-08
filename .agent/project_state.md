@@ -81,5 +81,16 @@
   - `time_to_financial_freedom` fallback no longer dominates valid portfolios.
   - Accurate detection of Boglehead, Risk Parity, and Factor strategies.
 
+### Phase 9B: Signal Fine-Tuning (Concentration + Options) ✅
+- **Concentration Tuning**
+  - Adjusted logic to differentiate "Concentrated Stock Picking" from "Single-Ticker Index Fund" (e.g. VEQT).
+- **Options Overlay Support**
+  - Added `options_strategy` to `etf_metadata.ts`.
+  - Implemented `uses_options_overlay` feature extraction.
+  - Successfully detecting `JEPI`, `XYLD`, `QYLD` as covered call strategies.
+- **Factor vs Dividend Separation**
+  - Refined rules to reduce false positives between Factor Investing and Dividend Growth.
+
+
 ## Current Focus
 The philosophy engine is now validated and tuned, with a robust verification harness in place. The data layer (`etf_metadata`, `featureExtractor`) has been hardened to support accurate signal detection. The project is ready for broader user testing or further feature expansion (e.g., more visual motifs).
