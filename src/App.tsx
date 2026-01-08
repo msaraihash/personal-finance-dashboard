@@ -319,19 +319,20 @@ export default function App() {
 
                   return combined
                     .sort((a, b) => {
-                      const aVal = (a as any)[sortConfig.key] || (sortConfig.key === 'valueCAD' ? (a.currency === 'USD' ? a.marketValue * usdRate : a.marketValue) : 0);
-                      const bVal = (b as any)[sortConfig.key] || (sortConfig.key === 'valueCAD' ? (b.currency === 'USD' ? b.marketValue * usdRate : b.marketValue) : 0);
+                      const aVal = (a as unknown as Record<string, string | number>)[sortConfig.key] || (sortConfig.key === 'valueCAD' ? (a.currency === 'USD' ? a.marketValue * usdRate : a.marketValue) : 0);
+                      const bVal = (b as unknown as Record<string, string | number>)[sortConfig.key] || (sortConfig.key === 'valueCAD' ? (b.currency === 'USD' ? b.marketValue * usdRate : b.marketValue) : 0);
 
-                      if (typeof aVal === 'string') {
+                      if (typeof aVal === 'string' && typeof bVal === 'string') {
                         return sortConfig.direction === 'asc'
                           ? aVal.localeCompare(bVal)
                           : bVal.localeCompare(aVal);
                       }
+                      // @ts-expect-error - mixed types sorting
                       return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
                     })
                     .map((h, idx) => {
-                      // @ts-ignore - valueCAD might be on consolidated but not base Holding
-                      const valueCAD = h.valueCAD || (h.currency === 'USD' ? h.marketValue * usdRate : h.marketValue);
+                      // @ts-expect-error - valueCAD might be on consolidated but not base Holding
+                      const valueCAD = (h as { valueCAD?: number }).valueCAD || (h.currency === 'USD' ? h.marketValue * usdRate : h.marketValue);
                       const isPam = h.accountName?.toLowerCase().includes('pam') || h.accountName?.toLowerCase().includes('spouse');
 
                       return (

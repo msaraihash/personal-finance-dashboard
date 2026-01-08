@@ -25,7 +25,6 @@ export const IPSConfigModal = ({
     setUsdRate,
     holdings,
     setHoldings,
-    history: _history,
     setHistory
 }: IPSConfigModalProps) => {
     const [newAsset, setNewAsset] = useState<Partial<ManualAsset>>({

@@ -59,10 +59,8 @@ export const transpileRule = (rule: string): string => {
     // We'll use a specific list of keywords to ignore to avoid breaking syntax.
     const keywords = ['Math', 'true', 'false', 'window', 'document', 'ctx'];
 
-    // Regex to find potential variables:
-    // Look for words that are not preceded by a dot or quote.
     expr = expr.replace(
-        /(?<![\.\["'])(\b[a-z_][a-z0-9_]*\b)(?!["'\:])/gi,
+        /(?<![.["'])(\b[a-z_][a-z0-9_]*\b)(?!["':])/gi,
         (match) => {
             if (keywords.includes(match)) return match;
             // It's likely a feature name (e.g., pct_equity)
@@ -82,7 +80,6 @@ export const createEvaluator = (rule: string): (ctx: Context) => boolean => {
         // We use the Function constructor for performance, but it's "safe" 
         // because we only execute logic against the provided context object 
         // and we are running in a client-side environment dealing with numbers.
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
         return new Function('ctx', `return !!(${jsExpr});`) as (ctx: Context) => boolean;
     } catch (e) {
         console.error(`Failed to compile rule: "${rule}"`, e);

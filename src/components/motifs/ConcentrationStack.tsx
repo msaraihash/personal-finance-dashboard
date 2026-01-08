@@ -19,6 +19,8 @@ const STACK_COLORS = [
  * Shows how much portfolio is dominated by top positions.
  */
 export const ConcentrationStack = ({ holdings, totalValue }: ConcentrationStackProps) => {
+    if (!holdings || holdings.length === 0) return null;
+
     // Sort by value descending
     const sorted = [...holdings].sort((a, b) => b.marketValue - a.marketValue);
     const top5 = sorted.slice(0, 5);
