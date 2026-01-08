@@ -354,6 +354,6 @@ export const extractFeatures = (
         tax_sensitivity: 'medium',
         fee_sensitivity: avg_expense_ratio > 0.30 ? 'low' : avg_expense_ratio > 0.15 ? 'medium' : 'high',
         avg_expense_ratio,
-        totalNetWorthCAD
+        totalNetWorthCAD: totalValueCAD
     } as PortfolioFeatures;
 };

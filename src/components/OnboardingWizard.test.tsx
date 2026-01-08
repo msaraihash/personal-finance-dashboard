@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
-import React from 'react';
+
 import { OnboardingWizard } from './OnboardingWizard';
 import { calculateOntarioTax } from '../services/tax';
 
@@ -16,7 +16,7 @@ describe('OnboardingWizard Financial Goals (Minimal V3)', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        (calculateOntarioTax as any).mockReturnValue(0.30);
+        (calculateOntarioTax as Mock).mockReturnValue(0.30);
     });
 
     afterEach(() => {
@@ -64,7 +64,7 @@ describe('OnboardingWizard Financial Goals (Minimal V3)', () => {
     });
 
     it('calculates tax rate implicitly when income changes', async () => {
-        (calculateOntarioTax as any).mockReturnValue(0.35);
+        (calculateOntarioTax as Mock).mockReturnValue(0.35);
 
         await renderGoalsStep();
 
@@ -80,7 +80,7 @@ describe('OnboardingWizard Financial Goals (Minimal V3)', () => {
     });
 
     it('submits correctly constructed financial goals object with implicit defaults', async () => {
-        (calculateOntarioTax as any).mockReturnValue(0.30);
+        (calculateOntarioTax as Mock).mockReturnValue(0.30);
         await renderGoalsStep();
 
         // Defaults: Age 30, Ret 55, Inc 120k

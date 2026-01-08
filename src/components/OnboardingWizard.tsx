@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ChangeEvent, type FC } from 'react';
 import { Sparkles, ArrowRight, CheckCircle, Target, BrainCircuit, Upload, FileText, Plus, DollarSign } from 'lucide-react';
 import type { OnboardingState } from '../services/storage';
 import { parseWealthsimpleCSV } from '../services/parser';
@@ -31,7 +31,7 @@ interface OnboardingWizardProps {
     onFinancialGoalsSet?: (goals: FinancialGoals) => void;
 }
 
-export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, onHoldingsLoaded, onFinancialGoalsSet }) => {
+export const OnboardingWizard: FC<OnboardingWizardProps> = ({ onComplete, onHoldingsLoaded, onFinancialGoalsSet }) => {
     const [step, setStep] = useState<'welcome' | 'philosophy' | 'goals' | 'import'>('welcome');
     const [selectedPhilosophyId, setSelectedPhilosophyId] = useState<string | null>(null);
     const [holdings, setHoldings] = useState<Holding[]>([]);
@@ -43,22 +43,16 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
     const [grossIncome, setGrossIncome] = useState<string>('120000');
 
     // Implicit Assumptions (No longer inputs, just state)
-    const [assumedTaxRate, setAssumedTaxRate] = useState<number>(0.30);
+    // Derived from income directly to avoid useEffect sync warnings
+    const incomeVal = parseFloat(grossIncome);
+    const assumedTaxRate = (!isNaN(incomeVal) && incomeVal > 0) ? calculateOntarioTax(incomeVal) : 0.30;
+
     // Explicitly requested fixed assumptions
-    const IMPLICIT_SAVINGS_RATE = 0.20; // 20%
-    const IMPLICIT_REAL_RETURN = 0.05; // 5%
-    const IMPLICIT_SWR = 0.04; // 4%
+    const IMPLICIT_SAVINGS_RATE = 0.20;
+    const IMPLICIT_REAL_RETURN = 0.05;
+    const IMPLICIT_SWR = 0.04;
 
     const [skipGoals, setSkipGoals] = useState(false);
-    const [showAssumptions, setShowAssumptions] = useState(false);
-
-    // Auto-calculate tax rate when income changes
-    React.useEffect(() => {
-        const income = parseFloat(grossIncome);
-        if (!isNaN(income) && income > 0) {
-            setAssumedTaxRate(calculateOntarioTax(income));
-        }
-    }, [grossIncome]);
 
     const handleStart = () => {
         setStep('philosophy');
@@ -93,7 +87,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
         setStep('import');
     };
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'user' | 'partner') => {
+    const handleFileUpload = (e: ChangeEvent<HTMLInputElement>, type: 'user' | 'partner') => {
         const file = e.target.files?.[0];
         if (!file) return;
 

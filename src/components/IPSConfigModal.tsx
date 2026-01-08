@@ -155,7 +155,7 @@ export const IPSConfigModal = ({
                                 </div>
 
                                 <div style={{ marginBottom: '1rem' }}>
-                                    <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Savings Rate ({(financialGoals?.savingsRate * 100).toFixed(0)}%)</label>
+                                    <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Savings Rate ({((financialGoals?.savingsRate || 0) * 100).toFixed(0)}%)</label>
                                     <input
                                         type="range"
                                         min="0"

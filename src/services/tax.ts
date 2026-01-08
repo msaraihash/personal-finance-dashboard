@@ -69,7 +69,7 @@ export const calculateOntarioTax = (grossIncome: number): number => {
     }
     // Prov Non-refundable credit (BPA only)
     const provCredit = ONTARIO_BPA * 0.0505;
-    let basicProvTax = Math.max(0, provTax - provCredit);
+    const basicProvTax = Math.max(0, provTax - provCredit);
 
     // 3. Ontario Surtax
     // 20% on tax over ~5.5k

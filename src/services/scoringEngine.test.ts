@@ -13,7 +13,8 @@ describe('ScoringEngine', () => {
         tilt_value: 0, tilt_size: 0, tilt_quality: 0, tilt_momentum: 0, tilt_low_vol: 0,
         est_equity_beta: 1, est_duration: 0, leverage_ratio: 1, uses_leveraged_etfs: false,
         uses_options_overlay: false, options_overlay_type: 'none', rebalance_frequency: 'none',
-        tax_sensitivity: 'low', fee_sensitivity: 'low', avg_expense_ratio: 0
+        tax_sensitivity: 'low', fee_sensitivity: 'low', avg_expense_ratio: 0,
+        totalNetWorthCAD: 0
     };
 
     it('identifies Passive Indexing (Bogleheads)', () => {

@@ -25,9 +25,9 @@ export const LiveStats = ({ result }: LiveStatsProps) => {
         : `${deltaYearsAbs.toFixed(1)} Year${deltaYearsAbs !== 1 ? 's' : ''} ${isYearsImproved ? 'Faster' : 'Slower'}`;
 
     // Philosophy Change
-    const originalPhil = original.philosophy.highestScoringPhilosophy;
-    const remixedPhil = remixed.philosophy.highestScoringPhilosophy;
-    const isPhilChanged = originalPhil.id !== remixedPhil.id;
+    const originalPhil = original.philosophy.bestMatch;
+    const remixedPhil = remixed.philosophy.bestMatch;
+    const isPhilChanged = (originalPhil?.id || '') !== (remixedPhil?.id || '');
 
     return (
         <div className="glass-card" style={{ padding: '1.5rem', background: 'linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))' }}>
@@ -68,11 +68,11 @@ export const LiveStats = ({ result }: LiveStatsProps) => {
                         <Scale size={12} /> Detected Strategy
                     </div>
                     <div style={{ fontSize: '1.2rem', fontWeight: 800, marginTop: '0.5rem', color: 'var(--nebula-purple)' }}>
-                        {remixedPhil.name}
+                        {remixedPhil?.displayName || 'Unclassified'}
                     </div>
                     {isPhilChanged && (
                         <div style={{ fontSize: '0.7rem', marginTop: '4px', color: 'var(--text-secondary)' }}>
-                            Shifted from {originalPhil.name}
+                            Shifted from {originalPhil?.displayName || 'Unclassified'}
                         </div>
                     )}
                 </div>

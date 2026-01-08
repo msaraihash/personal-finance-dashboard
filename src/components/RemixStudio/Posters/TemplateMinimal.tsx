@@ -9,7 +9,7 @@ interface TemplateProps {
 export const TemplateMinimal = ({ result, sliders }: TemplateProps) => {
     const { remixed } = result;
     const { yearsToFI } = remixed.fiStatus;
-    const philosophyName = remixed.philosophy.highestScoringPhilosophy.name;
+    const philosophyName = remixed.philosophy.bestMatch?.displayName || 'Unclassified';
 
     const top3 = sliders.slice(0, 3);
 
@@ -39,7 +39,7 @@ export const TemplateMinimal = ({ result, sliders }: TemplateProps) => {
 
             {/* Middle: The Recipe */}
             <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-end' }}>
-                {top3.map((s, i) => (
+                {top3.map((s) => (
                     <div key={s.id} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         <div style={{
                             height: `${s.value * 8}px`,

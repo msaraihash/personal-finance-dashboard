@@ -2,9 +2,10 @@
 import { Download } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { useState } from 'react';
+import type { RefObject } from 'react';
 
 interface ExportControlsProps {
-    targetRef: React.RefObject<HTMLDivElement>;
+    targetRef: RefObject<HTMLDivElement | null>;
 }
 
 export const ExportControls = ({ targetRef }: ExportControlsProps) => {

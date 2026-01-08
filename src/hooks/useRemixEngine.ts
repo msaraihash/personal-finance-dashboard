@@ -1,11 +1,11 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import type { Holding, IPSState } from '../types';
-import type { FinancialGoals, FICalculationResult } from '../types/FinancialGoals';
+import type { FinancialGoals } from '../types/FinancialGoals';
 import { computeFIStatus } from '../types/FinancialGoals';
 import { extractFeatures } from '../services/featureExtractor';
 import { scorePortfolio } from '../services/scoringEngine';
-import type { RemixResult, RemixScenario, SliderItem } from '../types/Remix';
+import type { RemixResult, SliderItem } from '../types/Remix';
 
 // Helper to get consistent colors for top tickers
 const COLORS = [
@@ -85,6 +85,7 @@ export const useRemixEngine = (
         if (baseState.sliders.length > 0 && sliders.length === 0) {
             setSliders(baseState.sliders);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [baseState.sliders]);
 
     // 3. Re-Calculation Engine
@@ -113,26 +114,7 @@ export const useRemixEngine = (
         // Deep copy logic is expensive, so we'll be clever.
         // We only change marketValue.
 
-        const virtualHoldings: Holding[] = holdings.map(h => {
-            // Is this holding in Top 5?
-            if (targets.has(h.ticker)) {
-                // Determine this holding's share of that Ticker's total original weight
-                // (In case multiple accounts hold VTI)
-                // This is getting complex.
-                // Simpler MVP: 
-                // We just need `extractFeatures` to work. 
-                // `extractFeatures` sums by ticker anyway.
-                // So we can just emit ONE holding per Top 5 ticker with the new value.
-                // And ONE holding for "Rest" with the new value? 
-                // Wait, `extractFeatures` needs Asset Class. We lose Asset Class info if we merge "Rest".
 
-                // Better approach:
-                // Calculate scaling factors.
-
-                return h; // Placeholder, see logic below
-            }
-            return h;
-        });
 
         // Let's calculate scaling factors for specific tickers
         const tickerScaleFactors = new Map<string, number>();
