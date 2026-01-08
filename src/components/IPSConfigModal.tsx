@@ -134,7 +134,7 @@ export const IPSConfigModal = ({
                                 <button onClick={clearHistory} style={{ marginTop: '1rem', width: '100%', padding: '0.75rem', background: '#fef2f2', color: '#dc2626', border: '1px dashed #fca5a5', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
                                     Clear History Snapshots
                                 </button>
-                                <button onClick={() => { if (confirm('Detailed onboarding state will be lost. Continue?')) onResetOnboarding(); }} style={{ marginTop: '0.5rem', width: '100%', padding: '0.75rem', background: '#f0f9ff', color: '#0ea5e9', border: '1px dashed #7dd3fc', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
+                                <button onClick={onResetOnboarding} style={{ marginTop: '0.5rem', width: '100%', padding: '0.75rem', background: '#f0f9ff', color: '#0ea5e9', border: '1px dashed #7dd3fc', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
                                     Restart Onboarding Wizard
                                 </button>
                             </div>

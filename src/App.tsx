@@ -155,7 +155,12 @@ export default function App() {
   const complianceResult = usePhilosophyEngine(portfolioFeatures);
 
   if (!onboardingState.isComplete) {
-    return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+    return (
+      <OnboardingWizard
+        onComplete={handleOnboardingComplete}
+        onHoldingsLoaded={(newHoldings) => setHoldings(newHoldings)}
+      />
+    );
   }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
