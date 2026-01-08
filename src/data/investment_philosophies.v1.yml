@@ -1,0 +1,657 @@
+schema_version: "1.0.0"
+generated_at: "2026-01-08"
+purpose: >
+  Map a user's portfolio + stated preferences to one or more investment philosophies,
+  optimized for visual-first explanations.
+
+# -----------------------------
+# Shared feature contract
+# -----------------------------
+portfolio_features:
+  # Composition (0..1)
+  pct_equity: "Fraction in equities (incl. equity ETFs, equity mutual funds)."
+  pct_bonds: "Fraction in bonds/treasuries/credit funds."
+  pct_cash: "Fraction in cash, MMFs, T-bills, ultra-short."
+  pct_real_assets: "Fraction in REITs, commodities, gold, infrastructure."
+  pct_alternatives: "Fraction in alts (managed futures, private, hedge-like funds)."
+  pct_crypto: "Fraction in crypto assets/funds."
+  pct_single_stocks: "Fraction in individual stocks (not funds)."
+  pct_index_funds: "Fraction in index-tracking funds/ETFs."
+  pct_active_funds: "Fraction in active mutual funds/ETFs."
+  pct_sector_thematic: "Fraction in sector/thematic funds (AI, clean energy, etc.)."
+
+  # Concentration & diversification
+  top_1_position_pct: "Largest position weight."
+  top_5_positions_pct: "Sum of top 5 position weights."
+  n_positions: "Count of distinct positions."
+  herfindahl_index: "Concentration metric (sum weights^2)."
+
+  # Geography (0..1)
+  pct_us_equity: "Fraction of equities in US."
+  pct_ex_us_dev_equity: "Fraction of equities in developed ex-US."
+  pct_em_equity: "Fraction of equities in emerging."
+  home_bias_score: "0..1; higher indicates strong tilt to home country."
+
+  # Style / factors (approximate; can be inferred from holdings)
+  tilt_value: "Negative=growthy, Positive=valuey; normalized -1..+1."
+  tilt_size: "Negative=large-cap, Positive=small-cap; normalized -1..+1."
+  tilt_quality: "Normalized -1..+1."
+  tilt_momentum: "Normalized -1..+1."
+  tilt_low_vol: "Normalized -1..+1."
+
+  # Risk & implementation
+  est_equity_beta: "Approx portfolio beta vs broad equity market (approx)."
+  est_duration: "Approx interest-rate duration for fixed income sleeve."
+  leverage_ratio: "Gross exposure / net liquidation (1.0 = unlevered)."
+  uses_leveraged_etfs: "Boolean."
+  uses_options_overlay: "Boolean."
+  options_overlay_type: "Enum: [none, covered_call, protective_put, collar, other]."
+  rebalance_frequency: "Enum: [none, ad_hoc, monthly, quarterly, annual, threshold]."
+  tax_sensitivity: "Enum: [low, medium, high] if known (taxable heavy, TLH, etc.)."
+  fee_sensitivity: "Enum: [low, medium, high] if known."
+  avg_expense_ratio: "Weighted average expense ratio if computable."
+
+# -----------------------------
+# Scoring contract (suggested)
+# -----------------------------
+scoring_notes:
+  approach: >
+    Score each philosophy 0..100 using weighted signals. Select top-N with score>=threshold.
+    Show overlaps intentionally (e.g., 'Passive Indexing' + 'Factor Investing').
+  default_threshold: 55
+  max_labels_default: 4
+  confidence_bands:
+    high: ">=75"
+    medium: "60-74"
+    low: "55-59"
+
+# -----------------------------
+# Philosophy catalog
+# -----------------------------
+philosophies:
+
+  - id: passive_indexing_bogleheads
+    display_name: "Passive Indexing (Bogleheads-style)"
+    archetype: "Low-cost, diversified, long-horizon"
+    one_liner: "Own the whole market cheaply; stay the course."
+    principles:
+      - "Broad diversification across global markets."
+      - "Low fees and low turnover."
+      - "Time in market > timing the market."
+      - "Rules-based rebalancing."
+    typical_instruments:
+      - "Total market / global equity ETFs"
+      - "Aggregate bond ETFs"
+      - "Target-date or all-in-one asset allocation funds"
+    detection:
+      weight: 1.0
+      signals:
+        - name: "Mostly index funds"
+          rule: "pct_index_funds >= 0.75"
+          points: 35
+        - name: "Low concentration"
+          rule: "top_5_positions_pct <= 0.35 and n_positions >= 5"
+          points: 15
+        - name: "Low fees"
+          rule: "avg_expense_ratio <= 0.25"
+          points: 15
+        - name: "Simple stock/bond split"
+          rule: "pct_equity between 0.50 and 0.95 and pct_bonds between 0.05 and 0.50"
+          points: 15
+    exclusions:
+      - "pct_single_stocks >= 0.50"
+      - "uses_leveraged_etfs == true"
+    visual_motifs:
+      - type: "allocation_donut"
+        caption: "Simple diversified core (stocks/bonds/cash)."
+      - type: "fee_meter"
+        caption: "Low fees as a compounding advantage."
+      - type: "stay_the_course_timeline"
+        caption: "Long holding periods, fewer decisions."
+
+  - id: modern_portfolio_theory
+    display_name: "Modern Portfolio Theory (Mean–Variance)"
+    archetype: "Optimization, efficient frontier"
+    one_liner: "Balance assets to maximize expected return for a chosen risk level."
+    principles:
+      - "Diversify across imperfectly correlated assets."
+      - "Choose risk level intentionally (volatility as proxy)."
+      - "Periodic re-optimization / rebalancing."
+    typical_instruments:
+      - "Multi-asset portfolios (equities, bonds, real assets)"
+      - "Risk/return optimized sleeves"
+    detection:
+      weight: 0.7
+      signals:
+        - name: "Multi-asset diversification"
+          rule: "pct_equity between 0.30 and 0.85 and pct_bonds >= 0.10 and pct_real_assets >= 0.05"
+          points: 25
+        - name: "Regular rebalancing"
+          rule: "rebalance_frequency in [quarterly, annual, threshold]"
+          points: 15
+        - name: "Moderate concentration"
+          rule: "herfindahl_index <= 0.12"
+          points: 10
+    exclusions: []
+    visual_motifs:
+      - type: "risk_return_plane"
+        caption: "Where your portfolio sits on risk vs return."
+      - type: "correlation_heatmap"
+        caption: "Diversification benefit by correlation."
+
+  - id: factor_investing
+    display_name: "Factor Investing (Value/Size/Quality/Momentum)"
+    archetype: "Systematic tilts beyond cap-weight"
+    one_liner: "Tilt toward compensated factors with disciplined rules."
+    principles:
+      - "Harvest long-run factor premia (if present) via rules-based funds."
+      - "Diversify across factors; avoid performance chasing."
+      - "Rebalance and stay consistent through factor droughts."
+    typical_instruments:
+      - "Small-cap value ETFs"
+      - "Quality/min-vol ETFs"
+      - "Multi-factor funds"
+    detection:
+      weight: 1.0
+      signals:
+        - name: "Meaningful factor tilts"
+          rule: "abs(tilt_value) >= 0.35 or abs(tilt_size) >= 0.35 or abs(tilt_quality) >= 0.35 or abs(tilt_momentum) >= 0.35"
+          points: 35
+        - name: "Dedicated factor funds"
+          rule: "pct_sector_thematic <= 0.25 and pct_index_funds >= 0.40"
+          points: 10
+        - name: "Diversified implementation"
+          rule: "top_5_positions_pct <= 0.45"
+          points: 10
+    exclusions:
+      - "pct_single_stocks >= 0.60"
+    visual_motifs:
+      - type: "factor_radar"
+        caption: "Your factor exposures (value/size/quality/momentum/low-vol)."
+      - type: "tracking_error_gauge"
+        caption: "How different you are from the market (and why)."
+
+  - id: value_investing
+    display_name: "Fundamental Value (Graham/Buffett lineage)"
+    archetype: "Intrinsic value, margin of safety"
+    one_liner: "Buy undervalued businesses with a margin of safety."
+    principles:
+      - "Price vs intrinsic value matters."
+      - "Prefer durable cash flows, strong balance sheets."
+      - "Patience and long holding periods."
+    typical_instruments:
+      - "Value-tilted ETFs"
+      - "Concentrated value stock picks"
+    detection:
+      weight: 0.8
+      signals:
+        - name: "Value tilt"
+          rule: "tilt_value >= 0.35"
+          points: 25
+        - name: "Concentration typical"
+          rule: "pct_single_stocks >= 0.30 or top_5_positions_pct >= 0.40"
+          points: 15
+    exclusions:
+      - "tilt_momentum >= 0.50"
+    visual_motifs:
+      - type: "valuation_badges"
+        caption: "Value tilt vs broad market."
+      - type: "holding_period_bar"
+        caption: "Long-term ownership mindset."
+
+  - id: growth_investing
+    display_name: "Growth Investing"
+    archetype: "Revenue/earnings compounding"
+    one_liner: "Pay up for businesses with high reinvestment and growth."
+    principles:
+      - "Focus on secular growth and competitive moats."
+      - "Accept higher valuation risk."
+      - "Concentration often increases conviction."
+    typical_instruments:
+      - "Growth ETFs"
+      - "Mega-cap growth stock concentration"
+    detection:
+      weight: 0.8
+      signals:
+        - name: "Growth tilt"
+          rule: "tilt_value <= -0.35"
+          points: 25
+        - name: "Concentrated equity"
+          rule: "pct_single_stocks >= 0.30 and pct_equity >= 0.85"
+          points: 15
+        - name: "Thematic/tech overlap"
+          rule: "pct_sector_thematic >= 0.20"
+          points: 10
+    exclusions: []
+    visual_motifs:
+      - type: "concentration_stack"
+        caption: "Top holdings driving outcomes."
+      - type: "volatility_band"
+        caption: "Higher dispersion of outcomes."
+
+  - id: dividend_growth_income
+    display_name: "Dividend Growth / Income"
+    archetype: "Cashflow orientation"
+    one_liner: "Prefer steady distributions and dividend growth."
+    principles:
+      - "Emphasize yield and/or dividend growth."
+      - "Often favors quality, profitability, lower volatility."
+      - "May trade off growth for income stability."
+    typical_instruments:
+      - "Dividend ETFs"
+      - "Covered-call ETFs (sometimes)"
+    detection:
+      weight: 0.9
+      signals:
+        - name: "Income orientation proxy"
+          rule: "options_overlay_type == covered_call or tilt_quality >= 0.25 or tilt_low_vol >= 0.25"
+          points: 20
+        - name: "Equity with lower vol tilt"
+          rule: "pct_equity >= 0.60 and tilt_low_vol >= 0.30"
+          points: 15
+    exclusions: []
+    visual_motifs:
+      - type: "cashflow_stream"
+        caption: "Expected distribution stream vs reinvestment."
+      - type: "yield_vs_growth_quadrant"
+        caption: "Income vs growth trade-off."
+
+  - id: risk_parity_all_weather
+    display_name: "Risk Parity / All-Weather"
+    archetype: "Balance risk contributions across assets"
+    one_liner: "Diversify by economic regimes; balance risk, not dollars."
+    principles:
+      - "Use multiple asset classes (stocks, bonds, commodities, gold)."
+      - "Aim for resilient performance across inflation/growth regimes."
+      - "Often uses duration and sometimes leverage."
+    typical_instruments:
+      - "Treasuries (often longer duration)"
+      - "Commodities / gold"
+      - "Broad equity"
+    detection:
+      weight: 0.9
+      signals:
+        - name: "Meaningful real assets + bonds"
+          rule: "pct_bonds >= 0.25 and pct_real_assets >= 0.10"
+          points: 25
+        - name: "Not equity-dominant"
+          rule: "pct_equity <= 0.65"
+          points: 15
+        - name: "Possible leverage"
+          rule: "leverage_ratio >= 1.10"
+          points: 10
+    exclusions:
+      - "pct_equity >= 0.85 and pct_real_assets < 0.05"
+    visual_motifs:
+      - type: "economic_regime_grid"
+        caption: "How sleeves respond to inflation/growth regimes."
+      - type: "risk_contribution_bars"
+        caption: "Risk balanced across sleeves."
+
+  - id: permanent_portfolio
+    display_name: "Permanent Portfolio (4-sleeve)"
+    archetype: "Simple robustness"
+    one_liner: "Equal-weight sleeves for prosperity, deflation, inflation, recession."
+    principles:
+      - "Often ~25% stocks, 25% long bonds, 25% cash, 25% gold."
+      - "Rebalance back to targets."
+    typical_instruments:
+      - "Broad equities"
+      - "Long treasuries"
+      - "Cash/T-bills"
+      - "Gold"
+    detection:
+      weight: 0.7
+      signals:
+        - name: "Four-sleeve pattern"
+          rule: "pct_equity between 0.15 and 0.35 and pct_bonds between 0.15 and 0.35 and pct_cash between 0.15 and 0.35 and pct_real_assets between 0.15 and 0.35"
+          points: 45
+    exclusions: []
+    visual_motifs:
+      - type: "four_quadrant_sleeves"
+        caption: "Four equal pillars."
+      - type: "rebalance_band"
+        caption: "Rebalance when drift exceeds bands."
+
+  - id: trend_following_managed_futures
+    display_name: "Trend Following / Managed Futures"
+    archetype: "Crisis alpha / convexity"
+    one_liner: "Follow trends across futures markets to diversify equity risk."
+    principles:
+      - "Rules-based momentum across asset futures."
+      - "Can provide crisis diversification (not guaranteed)."
+    typical_instruments:
+      - "Managed futures funds"
+      - "Time-series momentum ETFs"
+    detection:
+      weight: 0.8
+      signals:
+        - name: "Alternatives allocation"
+          rule: "pct_alternatives >= 0.08"
+          points: 25
+        - name: "Momentum tilt"
+          rule: "tilt_momentum >= 0.35"
+          points: 10
+    exclusions: []
+    visual_motifs:
+      - type: "crisis_overlay_chart"
+        caption: "Behavior during equity drawdowns."
+      - type: "diversifier_badge"
+        caption: "Non-stock/bond return sources."
+
+  - id: tactical_asset_allocation
+    display_name: "Tactical Allocation / Market Timing"
+    archetype: "Shifts weights based on views/signals"
+    one_liner: "Change exposure as conditions change."
+    principles:
+      - "Macro/valuation/technical signals drive weight changes."
+      - "Higher turnover; timing risk."
+    typical_instruments:
+      - "Rotation among equity/bonds/cash"
+      - "Sector timing"
+    detection:
+      weight: 0.6
+      signals:
+        - name: "High turnover proxy (if available)"
+          rule: "rebalance_frequency in [monthly, ad_hoc]"
+          points: 20
+        - name: "Large cash swings proxy"
+          rule: "pct_cash >= 0.20 and pct_equity >= 0.50"
+          points: 15
+        - name: "Sector/thematic heavy"
+          rule: "pct_sector_thematic >= 0.35"
+          points: 15
+    exclusions: []
+    visual_motifs:
+      - type: "allocation_timeline"
+        caption: "How weights change over time."
+      - type: "decision_markers"
+        caption: "What triggered moves."
+
+  - id: barbell_antifragile
+    display_name: "Barbell / Antifragile (Taleb-style)"
+    archetype: "Very safe core + small high-upside tail"
+    one_liner: "Protect the core; keep a small slice for asymmetric upside."
+    principles:
+      - "Large allocation to safe assets (cash/short bills)."
+      - "Small allocation to highly convex, high-variance bets."
+      - "Avoid fragile middle-risk exposures."
+    typical_instruments:
+      - "T-bills/cash core"
+      - "Small sleeve in venture-like equities/crypto/options"
+    detection:
+      weight: 0.9
+      signals:
+        - name: "Large safe core"
+          rule: "pct_cash + pct_bonds >= 0.50"
+          points: 25
+        - name: "Small aggressive tail"
+          rule: "pct_crypto + pct_sector_thematic + (pct_single_stocks) >= 0.10 and (pct_cash + pct_bonds) >= 0.50"
+          points: 25
+    exclusions:
+      - "pct_equity between 0.55 and 0.75 and pct_cash < 0.10 and pct_bonds < 0.10"
+    visual_motifs:
+      - type: "barbell_visual"
+        caption: "Safe core vs convex tail."
+      - type: "downside_protection_gauge"
+        caption: "How much is insulated from shocks."
+
+  - id: leveraged_risk_parity_hfea
+    display_name: "Leveraged Risk Parity (e.g., HFEA-like)"
+    archetype: "Higher expected return via leverage + diversification"
+    one_liner: "Use leverage on diversified sleeves (often stocks + long bonds)."
+    principles:
+      - "Leverage amplifies both gains and drawdowns."
+      - "Requires discipline, rebalancing, and drawdown tolerance."
+    typical_instruments:
+      - "Leveraged equity ETFs"
+      - "Leveraged long-duration bond ETFs"
+    detection:
+      weight: 1.0
+      signals:
+        - name: "Explicit leverage"
+          rule: "uses_leveraged_etfs == true or leverage_ratio >= 1.20"
+          points: 45
+        - name: "Stocks + long bonds pairing"
+          rule: "pct_equity >= 0.50 and pct_bonds >= 0.25 and est_duration >= 10"
+          points: 15
+    exclusions: []
+    visual_motifs:
+      - type: "leverage_gauge"
+        caption: "Gross exposure vs account value."
+      - type: "drawdown_cone"
+        caption: "Amplified drawdown scenarios."
+
+  - id: options_hedging
+    display_name: "Options Hedging (Protection-first)"
+    archetype: "Defined-risk overlays"
+    one_liner: "Spend premium to cap downside (sometimes sacrificing upside)."
+    principles:
+      - "Use protective puts/collars to shape payoff."
+      - "Trade cost (premium) for drawdown control."
+    typical_instruments:
+      - "Protective puts"
+      - "Collars"
+      - "Tail-risk funds"
+    detection:
+      weight: 1.0
+      signals:
+        - name: "Options overlay present"
+          rule: "uses_options_overlay == true and options_overlay_type in [protective_put, collar]"
+          points: 60
+    exclusions: []
+    visual_motifs:
+      - type: "payoff_diagram"
+        caption: "Capped downside / shaped upside."
+      - type: "premium_cost_meter"
+        caption: "Ongoing hedging cost."
+
+  - id: covered_call_income
+    display_name: "Covered Call Income"
+    archetype: "Yield enhancement, capped upside"
+    one_liner: "Sell calls to generate income, accept capped upside."
+    principles:
+      - "Higher distributable income in exchange for foregone upside."
+      - "Often underperforms in sharp rallies; can help in flat markets."
+    typical_instruments:
+      - "Covered-call ETFs"
+      - "Systematic call overwriting"
+    detection:
+      weight: 1.0
+      signals:
+        - name: "Covered call overlay"
+          rule: "options_overlay_type == covered_call"
+          points: 70
+    exclusions: []
+    visual_motifs:
+      - type: "payoff_diagram"
+        caption: "Income vs capped upside."
+      - type: "rally_regret_indicator"
+        caption: "Upside surrendered in strong bull moves."
+
+  - id: concentrated_stock_picking
+    display_name: "Concentrated Stock Picking"
+    archetype: "High conviction selection"
+    one_liner: "Pick a small number of stocks; accept idiosyncratic risk."
+    principles:
+      - "Security selection drives returns more than allocation."
+      - "High dispersion; requires temperament and thesis discipline."
+    typical_instruments:
+      - "Individual equities"
+    detection:
+      weight: 1.0
+      signals:
+        - name: "High single-stock exposure"
+          rule: "pct_single_stocks >= 0.60"
+          points: 45
+        - name: "High concentration"
+          rule: "top_5_positions_pct >= 0.55 or top_1_position_pct >= 0.20 or herfindahl_index >= 0.18"
+          points: 35
+    exclusions: []
+    visual_motifs:
+      - type: "concentration_stack"
+        caption: "A few holdings dominate outcomes."
+      - type: "idiosyncratic_risk_badge"
+        caption: "Company-specific risk is a primary driver."
+
+  - id: thematic_sector_bets
+    display_name: "Thematic / Sector Investing"
+    archetype: "Narrative-driven allocation"
+    one_liner: "Express views via sectors and themes (AI, biotech, clean energy)."
+    principles:
+      - "Belief in structural winners."
+      - "Higher tracking error; theme cycles can be violent."
+    typical_instruments:
+      - "Sector ETFs"
+      - "Thematic ETFs"
+    detection:
+      weight: 0.9
+      signals:
+        - name: "Theme-heavy allocation"
+          rule: "pct_sector_thematic >= 0.35"
+          points: 55
+    exclusions: []
+    visual_motifs:
+      - type: "theme_map"
+        caption: "Which narratives you’re exposed to."
+      - type: "tracking_error_gauge"
+        caption: "How far from broad market."
+
+  - id: esg_sri
+    display_name: "ESG / SRI Screening"
+    archetype: "Values-constrained investing"
+    one_liner: "Constrain holdings to align with environmental/social/governance goals."
+    principles:
+      - "Screening/exclusions based on ESG criteria."
+      - "Trade-offs: tracking error, differing methodologies."
+    typical_instruments:
+      - "ESG-screened index funds"
+      - "Impact funds"
+    detection:
+      weight: 0.6
+      signals:
+        - name: "ESG fund usage (requires holdings metadata)"
+          rule: "pct_index_funds >= 0.30 and pct_active_funds >= 0.10"
+          points: 10
+    exclusions: []
+    notes:
+      limitation: "Reliable detection usually requires fund labels/metadata (ESG in name/strategy)."
+    visual_motifs:
+      - type: "screening_filters_panel"
+        caption: "What’s included/excluded and why."
+      - type: "values_alignment_badge"
+        caption: "Portfolio aligned to stated constraints."
+
+  - id: lifecycle_target_date
+    display_name: "Lifecycle / Target-Date Glidepath"
+    archetype: "Age/time-based de-risking"
+    one_liner: "Automatically reduce risk as a target date approaches."
+    principles:
+      - "Glidepath shifts from equities toward bonds/cash over time."
+      - "Hands-off rebalancing."
+    typical_instruments:
+      - "Target-date funds"
+      - "Auto-rebalanced balanced funds"
+    detection:
+      weight: 0.7
+      signals:
+        - name: "Single-fund solution proxy"
+          rule: "n_positions <= 3 and pct_index_funds >= 0.60"
+          points: 20
+        - name: "Moderate balanced allocation"
+          rule: "pct_equity between 0.40 and 0.80 and pct_bonds between 0.15 and 0.55"
+          points: 15
+    exclusions:
+      - "pct_single_stocks >= 0.40"
+    visual_motifs:
+      - type: "glidepath_curve"
+        caption: "Planned risk reduction over time."
+      - type: "hands_off_badge"
+        caption: "Auto-rebalanced simplicity."
+
+  - id: inflation_hedge_real_assets
+    display_name: "Inflation Hedge (Real Assets tilt)"
+    archetype: "Protect purchasing power"
+    one_liner: "Increase exposure to assets that may fare better in inflation."
+    principles:
+      - "Own real assets (commodities, gold, REITs, infrastructure)."
+      - "Accept cyclicality and tracking error."
+    typical_instruments:
+      - "Gold"
+      - "Commodities"
+      - "REITs/infrastructure"
+    detection:
+      weight: 0.8
+      signals:
+        - name: "Real assets sleeve"
+          rule: "pct_real_assets >= 0.15"
+          points: 45
+    exclusions: []
+    visual_motifs:
+      - type: "purchasing_power_gauge"
+        caption: "Inflation sensitivity by sleeve."
+      - type: "real_asset_breakdown"
+        caption: "Gold/commodities/REITs split."
+
+  - id: cash_buffer_safety_first
+    display_name: "Safety-First / Cash Buffer"
+    archetype: "Liquidity and stability"
+    one_liner: "Hold substantial cash/short bills to reduce volatility and fund needs."
+    principles:
+      - "Liquidity for near-term spending or psychological comfort."
+      - "Lower expected return; reduces drawdowns."
+    typical_instruments:
+      - "HYSA/MMF"
+      - "T-bills/ultra-short bond funds"
+    detection:
+      weight: 0.9
+      signals:
+        - name: "High cash allocation"
+          rule: "pct_cash >= 0.20"
+          points: 55
+        - name: "Low leverage"
+          rule: "leverage_ratio <= 1.02"
+          points: 10
+    exclusions: []
+    visual_motifs:
+      - type: "runway_meter"
+        caption: "Months/years of spending coverage."
+      - type: "volatility_dampener_badge"
+        caption: "Stability prioritized over return."
+
+  - id: crypto_maximal
+    display_name: "Crypto-Forward / Crypto Maximal"
+    archetype: "High volatility, high narrative risk"
+    one_liner: "Meaningful portfolio weight in crypto as a core belief."
+    principles:
+      - "High conviction in crypto’s long-term adoption."
+      - "Accept extreme volatility and tail risk."
+    typical_instruments:
+      - "BTC/ETH"
+      - "Crypto ETFs/funds (where available)"
+    detection:
+      weight: 1.0
+      signals:
+        - name: "Meaningful crypto allocation"
+          rule: "pct_crypto >= 0.10"
+          points: 60
+        - name: "Crypto dominates alternatives"
+          rule: "pct_crypto >= (pct_alternatives + 0.05)"
+          points: 10
+    exclusions: []
+    visual_motifs:
+      - type: "volatility_warning_band"
+        caption: "High variance sleeve."
+      - type: "tail_risk_badge"
+        caption: "Outcomes dominated by tails."
+
+# -----------------------------
+# OPTIONAL: UI copy blocks (short)
+# -----------------------------
+ui_snippets:
+  label_explanation: >
+    Your portfolio can match multiple philosophies. We show the top matches and the
+    portfolio signals that drove the classification.
+  overlap_note: >
+    Overlap is normal (e.g., Passive Indexing + Factor Investing). The goal is clarity,
+    not a single label.
