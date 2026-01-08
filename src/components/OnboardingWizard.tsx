@@ -4,7 +4,9 @@ import type { OnboardingState } from '../services/storage';
 import { parseWealthsimpleCSV } from '../services/parser';
 import type { Holding } from '../types';
 import type { FinancialGoals } from '../types/FinancialGoals';
-import { DEFAULT_FINANCIAL_GOALS } from '../types/FinancialGoals';
+
+import { calculateOntarioTax } from '../services/tax';
+
 import rawPhilosophyData from '../data/investment_philosophies.v1.yml';
 
 interface PhilosophyYaml {
@@ -35,10 +37,28 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
     const [holdings, setHoldings] = useState<Holding[]>([]);
     const [filesUploaded, setFilesUploaded] = useState<{ user: boolean; partner: boolean }>({ user: false, partner: false });
 
-    // Financial Goals state
-    const [annualExpenses, setAnnualExpenses] = useState<string>('60000');
-    const [savingsRate, setSavingsRate] = useState<string>('20');
+    // Financial Goals state (Simplified V3 - Minimal)
+    const [currentAge, setCurrentAge] = useState<string>('30');
+    const [retirementAge, setRetirementAge] = useState<string>('55');
+    const [grossIncome, setGrossIncome] = useState<string>('120000');
+
+    // Implicit Assumptions (No longer inputs, just state)
+    const [assumedTaxRate, setAssumedTaxRate] = useState<number>(0.30);
+    // Explicitly requested fixed assumptions
+    const IMPLICIT_SAVINGS_RATE = 0.20; // 20%
+    const IMPLICIT_REAL_RETURN = 0.05; // 5%
+    const IMPLICIT_SWR = 0.04; // 4%
+
     const [skipGoals, setSkipGoals] = useState(false);
+    const [showAssumptions, setShowAssumptions] = useState(false);
+
+    // Auto-calculate tax rate when income changes
+    React.useEffect(() => {
+        const income = parseFloat(grossIncome);
+        if (!isNaN(income) && income > 0) {
+            setAssumedTaxRate(calculateOntarioTax(income));
+        }
+    }, [grossIncome]);
 
     const handleStart = () => {
         setStep('philosophy');
@@ -57,8 +77,16 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
         // Save financial goals if callback provided
         if (onFinancialGoalsSet && !skipGoals) {
             const goals: FinancialGoals = {
-                annualExpensesCAD: parseFloat(annualExpenses) || DEFAULT_FINANCIAL_GOALS.annualExpensesCAD,
-                savingsRate: (parseFloat(savingsRate) || 20) / 100,
+                version: 2,
+                currentAge: parseInt(currentAge) || 30,
+                targetRetirementAge: parseInt(retirementAge) || 55,
+                grossIncomeAnnual: parseFloat(grossIncome) || 120000,
+                // Use calculated / implicit values
+                taxRate: assumedTaxRate,
+                savingsRate: IMPLICIT_SAVINGS_RATE,
+                savingsRateAppliesTo: 'net', // Implicitly saving on net
+                realReturn: IMPLICIT_REAL_RETURN,
+                safeWithdrawalRate: IMPLICIT_SWR,
             };
             onFinancialGoalsSet(goals);
         }
@@ -198,10 +226,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
                             style={{
                                 background: 'linear-gradient(135deg, #fff 0%, #f8fafc 100%)',
                                 borderRadius: '16px',
+                                ...((selectedPhilosophyId === null) ? { border: '2px solid var(--nebula-teal)', borderStyle: 'dashed' } : { border: '1px solid #e2e8f0', borderStyle: 'dashed' }),
                                 padding: '1.5rem',
                                 cursor: 'pointer',
-                                border: selectedPhilosophyId === null ? '2px solid var(--nebula-teal)' : '1px solid #e2e8f0',
-                                borderStyle: 'dashed',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 gap: '1rem',
@@ -247,6 +274,10 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
     }
 
     if (step === 'goals') {
+        const estNetIncome = (parseFloat(grossIncome) || 0) * (1 - assumedTaxRate);
+        const estSavings = estNetIncome * IMPLICIT_SAVINGS_RATE;
+        // const estExpenses = estNetIncome - estSavings;
+
         return (
             <div className="onboarding-overlay" style={{
                 position: 'fixed', inset: 0, zIndex: 9999,
@@ -266,62 +297,82 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
                             <DollarSign size={28} color="white" />
                         </div>
                         <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Financial Goals</h2>
-                        <p style={{ color: '#64748b', maxWidth: '450px', margin: '0 auto' }}>
-                            Optional: Help us calculate your runway to financial independence.
+                        <p style={{ color: '#64748b', maxWidth: '450px', margin: '0 auto', fontSize: '1.05rem', lineHeight: '1.6' }}>
+                            Just the basics. We'll handle the complex tax math and assumptions to project your freedom date.
                         </p>
                     </div>
 
-                    <div style={{ background: 'white', borderRadius: '16px', padding: '2rem', border: '1px solid #e2e8f0' }}>
-                        {/* Annual Expenses */}
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-                                Annual Expenses (CAD)
+                    <div style={{ background: 'white', borderRadius: '16px', padding: '2rem', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+
+                        {/* Primary Inputs */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.5rem', color: '#1e293b' }}>
+                                    Current Age
+                                </label>
+                                <input
+                                    type="number"
+                                    value={currentAge}
+                                    onChange={(e) => setCurrentAge(e.target.value)}
+                                    disabled={skipGoals}
+                                    style={{
+                                        width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1px solid #cbd5e1',
+                                        fontSize: '1.1rem', fontWeight: 500
+                                    }}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.5rem', color: '#1e293b' }}>
+                                    Retirement Age
+                                </label>
+                                <input
+                                    type="number"
+                                    value={retirementAge}
+                                    onChange={(e) => setRetirementAge(e.target.value)}
+                                    disabled={skipGoals}
+                                    style={{
+                                        width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1px solid #cbd5e1',
+                                        fontSize: '1.1rem', fontWeight: 500
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        <div style={{ marginBottom: '2rem' }}>
+                            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.5rem', color: '#1e293b' }}>
+                                Gross Annual Income (CAD)
                             </label>
                             <input
                                 type="number"
-                                value={annualExpenses}
-                                onChange={(e) => setAnnualExpenses(e.target.value)}
+                                value={grossIncome}
+                                onChange={(e) => setGrossIncome(e.target.value)}
                                 disabled={skipGoals}
                                 style={{
-                                    width: '100%', padding: '0.75rem 1rem', fontSize: '1rem',
-                                    border: '1px solid #e2e8f0', borderRadius: '10px',
-                                    background: skipGoals ? '#f1f5f9' : 'white',
-                                    opacity: skipGoals ? 0.5 : 1
+                                    width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1px solid #cbd5e1',
+                                    fontSize: '1.1rem', fontWeight: 500
                                 }}
-                                placeholder="60000"
+                                placeholder="120000"
                             />
-                            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>
-                                Your FI target = 25× this amount
+                            <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.5rem' }}>
+                                Estimated Annual Savings (Net): <strong>${estSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
                             </p>
                         </div>
 
-                        {/* Savings Rate */}
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-                                Savings Rate (%)
-                            </label>
-                            <input
-                                type="number"
-                                value={savingsRate}
-                                onChange={(e) => setSavingsRate(e.target.value)}
-                                disabled={skipGoals}
-                                min="1"
-                                max="99"
-                                style={{
-                                    width: '100%', padding: '0.75rem 1rem', fontSize: '1rem',
-                                    border: '1px solid #e2e8f0', borderRadius: '10px',
-                                    background: skipGoals ? '#f1f5f9' : 'white',
-                                    opacity: skipGoals ? 0.5 : 1
-                                }}
-                                placeholder="20"
-                            />
-                            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>
-                                Higher savings = faster runway to FI
+                        {/* Implicit Assumptions Summary (Read-only) */}
+                        <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
+                            <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                Active Assumptions
                             </p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
+                                <div>Tax Rate (ON): <strong>{(assumedTaxRate * 100).toFixed(1)}%</strong></div>
+                                <div>Savings Rate: <strong>{(IMPLICIT_SAVINGS_RATE * 100).toFixed(0)}%</strong></div>
+                                <div>Real Return: <strong>{(IMPLICIT_REAL_RETURN * 100).toFixed(1)}%</strong></div>
+                                <div>Safe Withdrawal: <strong>{(IMPLICIT_SWR * 100).toFixed(1)}%</strong></div>
+                            </div>
                         </div>
 
                         {/* Skip Option */}
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', marginTop: '1.5rem' }}>
                             <input
                                 type="checkbox"
                                 checked={skipGoals}
@@ -360,6 +411,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
             </div>
         );
     }
+
+
+
 
     // Import Step
     return (

@@ -103,6 +103,11 @@
 - **Data Safety**
   - Implemented auto-migration for V1 types to V2 defaults.
   - Verified with new unit tests (`fiMath.test.ts`).
+- **Refinement (V2.1)**
+  - **Simplified Onboarding**: Reduced inputs to Age/Income only layout (implicit assumptions).
+  - **Tax Automation**: Added `src/services/tax.ts` for Ontario tax estimation.
+  - **Settings Parity**: Updated `IPSConfigModal` to match simplified logic + added SWR configuration.
+
 
 ## Current Focus
 The philosophy engine is robust, and the "Time to Financial Freedom" calculator is now mathematically rigorous. The project is ready for broader user testing. Next steps could involve more advanced motifs or further tuning of philosophy signals.

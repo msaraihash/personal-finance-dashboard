@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { extractFeatures } from './featureExtractor';
 import { scorePortfolio } from './scoringEngine';
-import { Holding } from '../types';
+import type { Holding } from '../types';
 
 describe('Signal Tuning Verification', () => {
 
@@ -9,7 +9,7 @@ describe('Signal Tuning Verification', () => {
         // VWO is a single ticker, so Top 1% is 100%. 
         // But it is an index fund. The new rule should preventing "Concentrated Stock Picking".
         const holdings: Holding[] = [
-            { id: '1', ticker: 'VWO', marketValue: 10000, currency: 'USD', assetClass: 'equity' }
+            { id: '1', ticker: 'VWO', marketValue: 10000, currency: 'USD', assetClass: 'Equity', name: 'Vanguard Emerging Markets', accountType: 'Test', source: 'Manual', accountName: 'Test Account' }
         ];
 
         const features = extractFeatures(holdings, [], 1.0);
@@ -33,7 +33,7 @@ describe('Signal Tuning Verification', () => {
     it('Scenario 2: Dividend vs Factor (100% VDY)', () => {
         // VDY is High Dividend. It has value/quality leans.
         const holdings: Holding[] = [
-            { id: '1', ticker: 'VDY', marketValue: 10000, currency: 'CAD', assetClass: 'equity' }
+            { id: '1', ticker: 'VDY', marketValue: 10000, currency: 'CAD', assetClass: 'Equity', name: 'Vanguard High Div', accountType: 'Test', source: 'Manual', accountName: 'Test Account' }
         ];
 
         const features = extractFeatures(holdings, [], 1.0);
@@ -48,7 +48,7 @@ describe('Signal Tuning Verification', () => {
 
     it('Scenario 3: Covered Call Detection (100% JEPI)', () => {
         const holdings: Holding[] = [
-            { id: '1', ticker: 'JEPI', marketValue: 10000, currency: 'USD', assetClass: 'equity' }
+            { id: '1', ticker: 'JEPI', marketValue: 10000, currency: 'USD', assetClass: 'Equity', name: 'JPMorgan Overlay', accountType: 'Test', source: 'Manual', accountName: 'Test Account' }
         ];
 
         const features = extractFeatures(holdings, [], 1.0);
@@ -66,7 +66,7 @@ describe('Signal Tuning Verification', () => {
     it('Scenario 4: High Concentration Genuine Stock Picking', () => {
         // 100% TSLA (not an index fund)
         const holdings: Holding[] = [
-            { id: '1', ticker: 'TSLA', marketValue: 10000, currency: 'USD', assetClass: 'stock' } // manual assetClass
+            { id: '1', ticker: 'TSLA', marketValue: 10000, currency: 'USD', assetClass: 'Equity', name: 'Tesla Inc', accountType: 'Test', source: 'Manual', accountName: 'Test Account' } // manual assetClass
         ];
 
         const features = extractFeatures(holdings, [], 1.0);

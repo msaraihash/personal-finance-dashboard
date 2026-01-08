@@ -3,6 +3,7 @@ import { Settings, X, Trash2, Plus, DollarSign, Wallet, ChevronUp, ChevronDown }
 import type { IPSState, Holding, Snapshot, AssetClass, Currency } from '../types';
 import type { ManualAsset } from '../types/Assets';
 import type { FinancialGoals } from '../types/FinancialGoals';
+import { calculateOntarioTax } from '../services/tax';
 
 interface IPSConfigModalProps {
     isOpen: boolean;
@@ -179,19 +180,28 @@ export const IPSConfigModal = ({
 
                                 {showAdvancedGoals && (
                                     <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+
                                         <div style={{ marginBottom: '1rem' }}>
                                             <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Gross Annual Income</label>
                                             <input
                                                 type="number"
                                                 value={financialGoals?.grossIncomeAnnual ?? 100000}
-                                                onChange={(e) => setFinancialGoals({ ...financialGoals!, grossIncomeAnnual: parseFloat(e.target.value) || 0 })}
+                                                onChange={(e) => {
+                                                    const inc = parseFloat(e.target.value) || 0;
+                                                    const newTax = calculateOntarioTax(inc);
+                                                    setFinancialGoals({
+                                                        ...financialGoals!,
+                                                        grossIncomeAnnual: inc,
+                                                        taxRate: newTax
+                                                    });
+                                                }}
                                                 style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
                                             />
                                         </div>
 
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                                             <div>
-                                                <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Tax Rate (Est.)</label>
+                                                <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Tax Rate (Auto-calc)</label>
                                                 <input
                                                     type="number"
                                                     step="0.01"
@@ -205,9 +215,20 @@ export const IPSConfigModal = ({
                                                 <input
                                                     type="number"
                                                     step="0.01"
-                                                    value={financialGoals?.realReturn ?? 0.04}
+                                                    value={financialGoals?.realReturn ?? 0.05}
                                                     onChange={(e) => setFinancialGoals({ ...financialGoals!, realReturn: parseFloat(e.target.value) || 0 })}
                                                     title="Expected return after inflation and fees"
+                                                    style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Safe Withdrawal Rate</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={financialGoals?.safeWithdrawalRate ?? 0.04}
+                                                    onChange={(e) => setFinancialGoals({ ...financialGoals!, safeWithdrawalRate: parseFloat(e.target.value) || 0 })}
+                                                    title="Safe Withdrawal Rate (e.g. 0.04 for 4%)"
                                                     style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
                                                 />
                                             </div>

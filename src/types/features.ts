@@ -46,4 +46,5 @@ export interface PortfolioFeatures {
     tax_sensitivity: TaxSensitivity;
     fee_sensitivity: FeeSensitivity;
     avg_expense_ratio: number;
+    totalNetWorthCAD: number;
 }

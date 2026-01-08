@@ -166,8 +166,8 @@ export const extractFeatures = (
             const ac = h.assetClass; // may be undefined for some inputs
             if (CASH_EQUIVALENTS.has(t) || ac === 'Cash') resolvedAssetClass = 'cash';
             else if (CRYPTO_ASSETS.has(t) || ac === 'Crypto') resolvedAssetClass = 'crypto';
-            else if (ac === 'FixedIncome' || ac === 'Bond') resolvedAssetClass = 'bond';
-            else if (ac === 'Property' || ac === 'RealAsset') resolvedAssetClass = 'real_asset';
+            else if (ac === 'FixedIncome') resolvedAssetClass = 'bond';
+            else if (ac === 'Property') resolvedAssetClass = 'real_asset';
             else if (['stock', 'Equity', 'etf', 'mutual_fund'].includes(ac || '') || ac === 'Equity') {
                 // Logic for generic ETF without metadata handled below
                 resolvedAssetClass = 'equity';
@@ -204,14 +204,17 @@ export const extractFeatures = (
 
         // Active Funds (heuristic)
         // If it's an ETF/Fund but NOT an index fund?
-        const isFund = ['etf', 'mutual_fund'].includes(h.assetType || '') || INDEX_FUNDS.has(t) || meta;
+        const isMutualFund = h.assetClass === 'MutualFund';
+        const isFund = isMutualFund || INDEX_FUNDS.has(t) || !!meta;
         if (isFund && !INDEX_FUNDS.has(t) && !SECTOR_THEMATIC.has(t)) {
             // Maybe active?
             // composition.pct_active_funds += val;
         }
 
         // Single Stocks
-        if (h.assetType === 'stock' || (!isFund && resolvedAssetClass === 'equity' && !CASH_EQUIVALENTS.has(t))) {
+        // If it's Equity but not identified as a Fund/ETF
+        const isEquity = h.assetClass === 'Equity' || resolvedAssetClass === 'equity';
+        if (isEquity && !isFund && !CASH_EQUIVALENTS.has(t)) {
             composition.pct_single_stocks += val;
         }
 
@@ -350,6 +353,7 @@ export const extractFeatures = (
         rebalance_frequency: 'ad_hoc',
         tax_sensitivity: 'medium',
         fee_sensitivity: avg_expense_ratio > 0.30 ? 'low' : avg_expense_ratio > 0.15 ? 'medium' : 'high',
-        avg_expense_ratio
+        avg_expense_ratio,
+        totalNetWorthCAD
     } as PortfolioFeatures;
 };
