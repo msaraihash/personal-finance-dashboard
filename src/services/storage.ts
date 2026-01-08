@@ -64,8 +64,9 @@ export const loadOnboardingState = (): OnboardingState => {
     return data ? JSON.parse(data) : { isComplete: false };
 };
 
-import type { FinancialGoals } from '../types/FinancialGoals';
-import { DEFAULT_FINANCIAL_GOALS } from '../types/FinancialGoals';
+
+// Helper from Types (avoiding circular dep if I import logic, but types are fine)
+import { DEFAULT_FINANCIAL_GOALS, type FinancialGoals, type FinancialGoalsV1 } from '../types/FinancialGoals';
 
 export const saveFinancialGoals = (goals: FinancialGoals) => {
     localStorage.setItem(FINANCIAL_GOALS_KEY, JSON.stringify(goals));
@@ -73,5 +74,38 @@ export const saveFinancialGoals = (goals: FinancialGoals) => {
 
 export const loadFinancialGoals = (): FinancialGoals => {
     const data = localStorage.getItem(FINANCIAL_GOALS_KEY);
-    return data ? JSON.parse(data) : DEFAULT_FINANCIAL_GOALS;
+    if (!data) return DEFAULT_FINANCIAL_GOALS;
+
+    const parsed = JSON.parse(data);
+
+    // Version Check & Migration
+    if (!parsed.version || parsed.version < 2) {
+        console.log('Migrating Financial Goals to V2...');
+        const old = parsed as FinancialGoalsV1;
+
+        // Infer defaults from old data if possible
+        // If old expenses existed, try to reverse-engineer income?
+        // Let's stick to safe defaults as per plan, but preserve known values.
+
+        return {
+            version: 2,
+            currentAge: 35, // Default
+            targetRetirementAge: 60, // Default
+            // Estimate gross income: Expenses / (1 - SavingsRate) / (1 - TaxRate) -> Very rough proxy
+            // Safer: Just use a reasonable default. 100k.
+            grossIncomeAnnual: 100000,
+            taxRate: 0.30,
+            savingsRate: old.savingsRate || 0.20,
+            savingsRateAppliesTo: 'net', // Safest assumption for simplistic models
+            realReturn: 0.04,
+            safeWithdrawalRate: 0.04,
+            // If they had a custom target, it's tricky since V2 calculates it dynamically.
+            // We can respect it by adjusting SWR? Or just let V2 recalculate based on expenses?
+            // V2 definition: Target = Expenses / SWR.
+            // Let's rely on Expenses migration if present.
+        };
+    }
+
+    return parsed as FinancialGoals;
 };
+

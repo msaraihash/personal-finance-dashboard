@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Settings, X, Trash2, Plus, DollarSign, Wallet } from 'lucide-react';
+import { Settings, X, Trash2, Plus, DollarSign, Wallet, ChevronUp, ChevronDown } from 'lucide-react';
 import type { IPSState, Holding, Snapshot, AssetClass, Currency } from '../types';
 import type { ManualAsset } from '../types/Assets';
+import type { FinancialGoals } from '../types/FinancialGoals';
 
 interface IPSConfigModalProps {
     isOpen: boolean;
@@ -15,6 +16,8 @@ interface IPSConfigModalProps {
     history: Snapshot[];
     setHistory: (h: Snapshot[]) => void;
     onResetOnboarding: () => void;
+    financialGoals?: FinancialGoals;
+    setFinancialGoals: (g: FinancialGoals) => void;
 }
 
 export const IPSConfigModal = ({
@@ -27,8 +30,11 @@ export const IPSConfigModal = ({
     holdings,
     setHoldings,
     setHistory,
-    onResetOnboarding
+    onResetOnboarding,
+    financialGoals,
+    setFinancialGoals
 }: IPSConfigModalProps) => {
+    const [showAdvancedGoals, setShowAdvancedGoals] = useState(false);
     const [newAsset, setNewAsset] = useState<Partial<ManualAsset>>({
         currency: 'CAD',
         assetClass: 'Cash',
@@ -118,11 +124,112 @@ export const IPSConfigModal = ({
                             </div>
                         </section>
 
+
                         <section>
                             <h4 style={{ marginBottom: '1rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase' }}>
-                                <DollarSign size={16} /> Global Settings
+                                <DollarSign size={16} /> Financial Goals
                             </h4>
                             <div style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '1.5rem' }}>
+
+                                {/* Basic Inputs */}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Current Age</label>
+                                        <input
+                                            type="number"
+                                            value={financialGoals?.currentAge ?? 35}
+                                            onChange={(e) => setFinancialGoals({ ...financialGoals!, currentAge: parseInt(e.target.value) || 35 })}
+                                            style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Retirement Age</label>
+                                        <input
+                                            type="number"
+                                            value={financialGoals?.targetRetirementAge ?? 60}
+                                            onChange={(e) => setFinancialGoals({ ...financialGoals!, targetRetirementAge: parseInt(e.target.value) || 60 })}
+                                            style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Savings Rate ({(financialGoals?.savingsRate * 100).toFixed(0)}%)</label>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={financialGoals?.savingsRate ?? 0.20}
+                                        onChange={(e) => setFinancialGoals({ ...financialGoals!, savingsRate: parseFloat(e.target.value) })}
+                                        style={{ width: '100%' }}
+                                    />
+                                </div>
+
+                                {/* Advanced Toggle */}
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <button
+                                        onClick={() => setShowAdvancedGoals(!showAdvancedGoals)}
+                                        style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', padding: 0 }}
+                                    >
+                                        {showAdvancedGoals ? 'Hide Assumptions' : 'Show Advanced Assumptions'}
+                                        {showAdvancedGoals ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                                    </button>
+                                </div>
+
+                                {showAdvancedGoals && (
+                                    <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+                                        <div style={{ marginBottom: '1rem' }}>
+                                            <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Gross Annual Income</label>
+                                            <input
+                                                type="number"
+                                                value={financialGoals?.grossIncomeAnnual ?? 100000}
+                                                onChange={(e) => setFinancialGoals({ ...financialGoals!, grossIncomeAnnual: parseFloat(e.target.value) || 0 })}
+                                                style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
+                                            />
+                                        </div>
+
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Tax Rate (Est.)</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={financialGoals?.taxRate ?? 0.30}
+                                                    onChange={(e) => setFinancialGoals({ ...financialGoals!, taxRate: parseFloat(e.target.value) || 0 })}
+                                                    style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Real Return</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={financialGoals?.realReturn ?? 0.04}
+                                                    onChange={(e) => setFinancialGoals({ ...financialGoals!, realReturn: parseFloat(e.target.value) || 0 })}
+                                                    title="Expected return after inflation and fees"
+                                                    style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                                            <div>
+                                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={financialGoals?.savingsRateAppliesTo === 'net'}
+                                                        onChange={(e) => setFinancialGoals({ ...financialGoals!, savingsRateAppliesTo: e.target.checked ? 'net' : 'gross' })}
+                                                    />
+                                                    Apply Savings to Net Income
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div style={{ height: '1px', background: 'var(--border-color)', margin: '1.5rem 0' }} />
+
                                 <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>USD/CAD Rate</label>
                                 <input
                                     type="number"
@@ -139,6 +246,7 @@ export const IPSConfigModal = ({
                                 </button>
                             </div>
                         </section>
+
                     </div>
 
                     {/* Right Column: Manual Assets */}

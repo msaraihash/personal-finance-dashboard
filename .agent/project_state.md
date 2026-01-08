@@ -91,6 +91,18 @@
 - **Factor vs Dividend Separation**
   - Refined rules to reduce false positives between Factor Investing and Dividend Growth.
 
+### Phase 9C: Financial Freedom Calculator V2 ✅
+- **Robust Math Engine**
+  - Implemented closed-form annuity formulas for accurate FI projections (`src/types/FinancialGoals.ts`).
+  - Added support for `Gross Income`, `Tax Rate`, `Real Return`, and `Safe Withdrawal Rate`.
+  - Implemented iterative fallback for edge cases (negative returns).
+- **UI & UX**
+  - Updated `IPSConfigModal` with "Progressive Disclosure" (Basic vs Advanced settings).
+  - Refined `RunwayMeter` to show "Years to Freedom" and "Projected Age".
+  - Detected and removed legacy UI duplications (`StrategicVisuals.tsx`).
+- **Data Safety**
+  - Implemented auto-migration for V1 types to V2 defaults.
+  - Verified with new unit tests (`fiMath.test.ts`).
 
 ## Current Focus
-The philosophy engine is now validated and tuned, with a robust verification harness in place. The data layer (`etf_metadata`, `featureExtractor`) has been hardened to support accurate signal detection. The project is ready for broader user testing or further feature expansion (e.g., more visual motifs).
+The philosophy engine is robust, and the "Time to Financial Freedom" calculator is now mathematically rigorous. The project is ready for broader user testing. Next steps could involve more advanced motifs or further tuning of philosophy signals.

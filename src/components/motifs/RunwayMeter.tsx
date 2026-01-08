@@ -1,7 +1,7 @@
 import { Plane } from 'lucide-react';
 import type { MotifProps } from './index';
 import type { FinancialGoals } from '../../types/FinancialGoals';
-import { computeFITarget, computeYearsToFI, DEFAULT_FINANCIAL_GOALS } from '../../types/FinancialGoals';
+import { computeFIStatus, DEFAULT_FINANCIAL_GOALS } from '../../types/FinancialGoals';
 
 interface RunwayMeterProps extends MotifProps {
     netWorthCAD: number;
@@ -16,9 +16,10 @@ export const RunwayMeter = ({
     netWorthCAD,
     financialGoals = DEFAULT_FINANCIAL_GOALS
 }: RunwayMeterProps) => {
-    const fiTarget = computeFITarget(financialGoals);
-    const yearsToFI = computeYearsToFI(netWorthCAD, financialGoals);
-    const progressPct = Math.min(100, (netWorthCAD / fiTarget) * 100);
+
+    const status = computeFIStatus(netWorthCAD, financialGoals);
+    const { fiTarget, yearsToFI, ageAtFI, isFI } = status;
+    const progressPct = fiTarget > 0 ? Math.min(100, (netWorthCAD / fiTarget) * 100) : 100;
 
     const formatCurrency = (val: number) => {
         if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`;
@@ -28,7 +29,7 @@ export const RunwayMeter = ({
 
     const formatYears = (years: number) => {
         if (years === Infinity) return '∞';
-        if (years === 0) return 'FI!';
+        if (years <= 0) return 'FI!';
         if (years < 1) return `${Math.round(years * 12)} mo`;
         return `${years.toFixed(1)} yrs`;
     };
@@ -40,6 +41,8 @@ export const RunwayMeter = ({
         if (progressPct >= 25) return 'linear-gradient(90deg, #8b5cf6, #a78bfa)';
         return 'linear-gradient(90deg, #6366f1, #818cf8)';
     };
+
+    const isBehindSchedule = ageAtFI > financialGoals.targetRetirementAge;
 
     return (
         <div style={{
@@ -117,6 +120,7 @@ export const RunwayMeter = ({
                 display: 'flex',
                 justifyContent: 'space-between',
                 fontSize: '0.75rem',
+                marginBottom: '0.75rem',
             }}>
                 <div>
                     <span style={{ color: 'var(--text-secondary)' }}>Net Worth: </span>
@@ -134,23 +138,30 @@ export const RunwayMeter = ({
 
             {/* Years To FI */}
             <div style={{
-                marginTop: '0.75rem',
+                marginTop: '0.5rem',
                 padding: '0.5rem',
-                background: 'rgba(139, 92, 246, 0.1)',
+                background: isBehindSchedule && !isFI ? 'rgba(239, 68, 68, 0.1)' : 'rgba(139, 92, 246, 0.1)',
                 borderRadius: '8px',
                 textAlign: 'center',
+                border: isBehindSchedule && !isFI ? '1px solid rgba(239, 68, 68, 0.2)' : 'none'
             }}>
                 <span style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>
-                    Time to FI at {(financialGoals.savingsRate * 100).toFixed(0)}% savings rate:
+                    Freedom projected in:
                 </span>
                 <div style={{
                     fontSize: '1.25rem',
                     fontWeight: 800,
-                    color: yearsToFI === 0 ? '#10b981' : 'var(--text-primary)',
+                    color: isFI ? '#10b981' : 'var(--text-primary)',
                     marginTop: '0.25rem',
                 }}>
                     {formatYears(yearsToFI)}
                 </div>
+                {!isFI && yearsToFI !== Infinity && (
+                    <div style={{ fontSize: '0.7rem', color: isBehindSchedule ? '#fca5a5' : 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                        (Age {(financialGoals.currentAge + yearsToFI).toFixed(0)})
+                        {isBehindSchedule && <span style={{ fontWeight: 700 }}> • Past target age {financialGoals.targetRetirementAge}</span>}
+                    </div>
+                )}
             </div>
         </div>
     );

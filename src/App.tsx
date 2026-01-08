@@ -31,7 +31,7 @@ import type { FinancialGoals } from './types/FinancialGoals';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { TacticalPanel } from './components/TacticalPanel';
 import { IPSConfigModal } from './components/IPSConfigModal';
-import { StrategicVisuals } from './components/StrategicVisuals';
+
 import { HistoryView } from './components/HistoryView';
 import { PhilosophyEngineView } from './components/PhilosophyEngineView';
 import type { Holding, IPSState, Snapshot } from './types';
@@ -265,9 +265,7 @@ export default function App() {
       </header>
 
       <main className="grid-layout stagger-reveal" style={{ marginTop: '0rem' }}>
-        <div style={{ gridColumn: '1 / -1' }}>
-          <StrategicVisuals metrics={metrics} ipsState={ipsState} />
-        </div>
+
 
         <div style={{ gridColumn: '1 / -1' }}>
           <ComplianceBanner compliance={metrics.compliance} />
@@ -420,6 +418,8 @@ export default function App() {
         history={history}
         setHistory={setHistory}
         onResetOnboarding={handleResetOnboarding}
+        financialGoals={financialGoals}
+        setFinancialGoals={handleFinancialGoalsSet}
       />
     </div>
   );
