@@ -7,6 +7,11 @@ export interface SignalMatch {
     rule: string;
 }
 
+export interface VisualMotif {
+    type: string;
+    caption: string;
+}
+
 export interface PhilosophyMatch {
     id: string; // matches id in YAML
     displayName: string;
@@ -15,6 +20,7 @@ export interface PhilosophyMatch {
     missingSignals: SignalMatch[]; // Signals that failed (for "Why not?" UI)
     isExcluded: boolean;
     exclusionReason?: string;
+    visualMotifs: VisualMotif[]; // From YAML visual_motifs
 }
 
 export interface ComplianceResult {
@@ -22,3 +28,4 @@ export interface ComplianceResult {
     bestMatch: PhilosophyMatch | null;
     features: PortfolioFeatures; // The input features, passed through for reference
 }
+

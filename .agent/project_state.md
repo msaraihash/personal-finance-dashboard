@@ -27,5 +27,19 @@
 - Implemented `PhilosophyCard` and `PhilosophyEngineView`.
 - Integrated "Nebula Glass" theme with staggered animations.
 
+### Phase 6: Precision Motifs & Data Fidelity ✅
+- **6A: Data Fidelity**
+  - Created `src/data/etf_metadata.ts` with 50 ETFs (region, factors, expense ratios).
+  - Upgraded `featureExtractor.ts` for real geography and factor tilt computation.
+- **6B: Tier 1 Motifs**
+  - `AllocationDonut.tsx`: Asset class donut chart.
+  - `BarbellVisual.tsx`: Taleb-style safe core / convex tail.
+  - `FactorRadar.tsx`: 5-axis factor exposure radar.
+  - `ConcentrationStack.tsx`: Top holdings stacked bar.
+- **6C: Smart Card Integration**
+  - Created motif registry (`src/components/motifs/index.ts`).
+  - Updated `PhilosophyCard` for dynamic motif rendering from YAML.
+- All 31 tests passing; build verified.
+
 ## Current Focus
-Phase 5 is complete. Next steps include deep-diving into specific visualizations (Barbell Chart, etc.) and refining transition states.
+Phase 6 is complete. Tier 2 motifs (e.g., `risk_return_plane`, `glidepath_curve`) are deferred to future sprints.

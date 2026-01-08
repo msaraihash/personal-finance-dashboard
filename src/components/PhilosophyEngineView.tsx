@@ -86,6 +86,7 @@ export const PhilosophyEngineView = ({ complianceResult }: PhilosophyEngineViewP
                         philosophy={philosophy}
                         rank={index + 1}
                         isBestMatch={bestMatch?.id === philosophy.id}
+                        features={complianceResult.features}
                     />
                 ))}
             </div>

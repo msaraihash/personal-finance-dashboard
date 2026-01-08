@@ -1,6 +1,6 @@
 
 import type { PortfolioFeatures } from '../types/features';
-import type { ComplianceResult, PhilosophyMatch, SignalMatch } from '../types/scoring';
+import type { ComplianceResult, PhilosophyMatch, SignalMatch, VisualMotif } from '../types/scoring';
 import { evaluateRule } from './ruleEvaluator';
 import yamlData from '../data/investment_philosophies.v1.yml';
 
@@ -12,6 +12,11 @@ interface YamlSignal {
     points: number;
 }
 
+interface YamlVisualMotif {
+    type: string;
+    caption: string;
+}
+
 interface YamlPhilosophy {
     id: string;
     display_name: string;
@@ -20,6 +25,7 @@ interface YamlPhilosophy {
         signals: YamlSignal[];
     };
     exclusions: string[];
+    visual_motifs?: YamlVisualMotif[];
 }
 
 interface YamlRoot {
@@ -28,6 +34,7 @@ interface YamlRoot {
 
 // Cast the imported YAML to the typed shape
 const PHILOSOPHIES = (yamlData as unknown as YamlRoot).philosophies;
+
 
 /**
  * Scores the portfolio features against all defined philosophies.
@@ -50,6 +57,12 @@ export const scorePortfolio = (features: PortfolioFeatures): ComplianceResult =>
             }
         }
 
+        // Convert visual_motifs
+        const visualMotifs: VisualMotif[] = (p.visual_motifs || []).map(m => ({
+            type: m.type,
+            caption: m.caption
+        }));
+
         if (isExcluded) {
             return {
                 id: p.id,
@@ -58,7 +71,8 @@ export const scorePortfolio = (features: PortfolioFeatures): ComplianceResult =>
                 matchedSignals: [],
                 missingSignals: [],
                 isExcluded: true,
-                exclusionReason
+                exclusionReason,
+                visualMotifs
             };
         }
 
@@ -94,7 +108,8 @@ export const scorePortfolio = (features: PortfolioFeatures): ComplianceResult =>
             score: Math.round(normalized),
             matchedSignals,
             missingSignals,
-            isExcluded: false
+            isExcluded: false,
+            visualMotifs
         };
     });
 

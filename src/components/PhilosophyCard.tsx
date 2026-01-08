@@ -1,23 +1,42 @@
 import { Sparkles, CheckCircle2, XCircle } from 'lucide-react';
 import type { PhilosophyMatch } from '../types/scoring';
+import type { PortfolioFeatures } from '../types/features';
+import type { Holding } from '../types';
+import { MOTIF_REGISTRY, isMotifImplemented } from './motifs';
 
 interface PhilosophyCardProps {
     philosophy: PhilosophyMatch;
     rank: number;
     isBestMatch: boolean;
+    features?: PortfolioFeatures;
+    holdings?: Holding[];
 }
 
 /**
  * Displays a single matched Investment Philosophy.
  * Per DesignBrief: States are default, hover, best_match_glow.
  * Motif: constellation node with radial glow on best match.
+ * 
+ * Phase 6C: Now renders dynamic motifs based on visualMotifs from YAML.
  */
-export const PhilosophyCard = ({ philosophy, rank, isBestMatch }: PhilosophyCardProps) => {
+export const PhilosophyCard = ({
+    philosophy,
+    rank,
+    isBestMatch,
+    features,
+    holdings
+}: PhilosophyCardProps) => {
     const scoreColor = philosophy.score >= 75
         ? 'var(--accent-green-dark)'
         : philosophy.score >= 55
             ? 'var(--nebula-purple-dark)'
             : 'var(--text-secondary)';
+
+    // Determine primary motif to render (first one in the list)
+    const primaryMotif = philosophy.visualMotifs?.[0];
+    const MotifComponent = primaryMotif && isMotifImplemented(primaryMotif.type)
+        ? MOTIF_REGISTRY[primaryMotif.type]
+        : null;
 
     return (
         <div
@@ -98,6 +117,24 @@ export const PhilosophyCard = ({ philosophy, rank, isBestMatch }: PhilosophyCard
                 }}>
                     {philosophy.displayName}
                 </h3>
+
+                {/* Dynamic Motif Visualization */}
+                {MotifComponent && features && (
+                    <div style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
+                        <MotifComponent features={features} holdings={holdings} />
+                        {primaryMotif?.caption && (
+                            <p style={{
+                                fontSize: '0.7rem',
+                                color: 'var(--text-secondary)',
+                                textAlign: 'center',
+                                marginTop: '0.5rem',
+                                fontStyle: 'italic'
+                            }}>
+                                {primaryMotif.caption}
+                            </p>
+                        )}
+                    </div>
+                )}
 
                 {/* Matched Signals */}
                 {philosophy.matchedSignals.length > 0 && (
