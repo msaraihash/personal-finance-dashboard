@@ -1,6 +1,6 @@
 import { Holding } from '../types';
 import { ManualAsset } from '../types/Assets';
-import { PortfolioFeatures, RebalanceFrequency, TaxSensitivity, FeeSensitivity, OptionsOverlayType } from '../types/features';
+import { PortfolioFeatures } from '../types/features';
 
 // --- Heuristic Lists ---
 const INDEX_FUNDS = new Set([

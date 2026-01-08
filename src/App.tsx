@@ -10,7 +10,7 @@ import {
   Zap,
   LayoutDashboard
 } from 'lucide-react';
-import { parseWealthsimpleCSV, parseFidelityCSV } from './services/parser';
+import { parseWealthsimpleCSV } from './services/parser';
 import { useIPSEngine } from './hooks/useIPSEngine';
 import {
   loadHoldings,
@@ -118,9 +118,9 @@ export default function App() {
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result as string;
-      const newHoldings = type === 'ws' ? parseWealthsimpleCSV(content) : parseFidelityCSV(content);
+      const newHoldings = parseWealthsimpleCSV(content);
 
-      const incomingSource = type === 'ws' ? 'Wealthsimple' : 'Fidelity';
+      const incomingSource = 'Wealthsimple';
       const newAccountKeys = new Set(newHoldings.map(h =>
         h.accountNumber ? `${h.source}-${h.accountNumber}` : `${h.source}-${h.accountName}-${h.accountType}`
       ));
@@ -176,9 +176,9 @@ export default function App() {
           </div>
           <div>
             <h1 style={{ fontSize: '1.5rem', letterSpacing: '-0.02em', fontWeight: 800, color: 'var(--text-primary)' }}>
-              MICHAEL & PAM'S JOURNEY
+              INVESTMENT DASHBOARD
             </h1>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', marginTop: '4px' }}>Nurturing Our Shared Future</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', marginTop: '4px' }}>Private • Secure • Local</p>
           </div>
         </div>
 
@@ -187,11 +187,6 @@ export default function App() {
             <input type="file" id="ws-upload" hidden onChange={(e) => handleFileUpload(e, 'ws')} />
             <label htmlFor="ws-upload" className="upload-label" style={{ borderRadius: '14px' }}>
               <Upload size={16} /> Wealthsimple
-            </label>
-
-            <input type="file" id="fid-upload" hidden onChange={(e) => handleFileUpload(e, 'fid')} />
-            <label htmlFor="fid-upload" className="upload-label" style={{ borderRadius: '14px' }}>
-              <Upload size={16} /> Fidelity
             </label>
           </div>
 
@@ -287,82 +282,18 @@ export default function App() {
               </thead>
               <tbody style={{ verticalAlign: 'middle' }}>
                 {(() => {
-                  const manualHoldings: Holding[] = [];
-
-                  if (ipsState.manualAssets.propertyValueCAD > 0) {
-                    manualHoldings.push({
-                      id: 'manual-property',
-                      ticker: 'PROPERTY',
-                      name: 'Rental Property (Equity)',
-                      assetClass: 'Property',
-                      source: 'Direct',
-                      accountName: 'Direct Ownership',
-                      accountType: 'Real Estate',
-                      marketValue: ipsState.manualAssets.propertyValueCAD - ipsState.manualAssets.mortgageBalanceCAD,
-                      valueCAD: ipsState.manualAssets.propertyValueCAD - ipsState.manualAssets.mortgageBalanceCAD,
-                      currency: 'CAD'
-                    });
-                  }
-
-                  if (ipsState.manualAssets.wsChequingCAD > 0) {
-                    manualHoldings.push({
-                      id: 'manual-ws-cheq',
-                      ticker: 'CASH',
-                      name: 'Wealthsimple Chequing',
-                      assetClass: 'Cash',
-                      source: 'Wealthsimple',
-                      accountName: 'Primary Cash',
-                      accountType: 'Chequing',
-                      marketValue: ipsState.manualAssets.wsChequingCAD,
-                      valueCAD: ipsState.manualAssets.wsChequingCAD,
-                      currency: 'CAD'
-                    });
-                  }
-
-                  if (ipsState.manualAssets.rbcUsChequingUSD > 0) {
-                    manualHoldings.push({
-                      id: 'manual-rbc-us',
-                      ticker: 'CASH',
-                      name: 'RBC US Cross-Border',
-                      assetClass: 'Cash',
-                      source: 'Manual',
-                      accountName: 'RBC USD',
-                      accountType: 'Chequing',
-                      marketValue: ipsState.manualAssets.rbcUsChequingUSD,
-                      valueCAD: ipsState.manualAssets.rbcUsChequingUSD * usdRate,
-                      currency: 'USD'
-                    });
-                  }
-
-                  if (ipsState.manualAssets.usdHysaAmount > 0) {
-                    manualHoldings.push({
-                      id: 'manual-hysa',
-                      ticker: 'HYSA',
-                      name: 'USD High Yield Savings',
-                      assetClass: 'Cash',
-                      source: 'Manual',
-                      accountName: 'USD Savings',
-                      accountType: 'Cash',
-                      marketValue: ipsState.manualAssets.usdHysaAmount,
-                      valueCAD: ipsState.manualAssets.usdHysaAmount * usdRate,
-                      currency: 'USD'
-                    });
-                  }
-
-                  if (ipsState.manualAssets.spouseMutualFundCAD > 0) {
-                    manualHoldings.push({
-                      id: 'manual-spouse-mf',
-                      ticker: 'MFUND',
-                      name: 'Employer Mutual Fund',
-                      assetClass: 'MutualFund',
-                      source: 'Manual',
-                      accountName: 'Pam/Spouse',
-                      accountType: 'Investment',
-                      marketValue: ipsState.manualAssets.spouseMutualFundCAD,
-                      valueCAD: ipsState.manualAssets.spouseMutualFundCAD,
-                      currency: 'CAD'
-                    });
-                  }
+                  const manualHoldings: Holding[] = ipsState.manualAssets.map(asset => ({
+                    id: asset.id,
+                    ticker: 'MANUAL',
+                    name: asset.name,
+                    assetClass: asset.assetClass,
+                    source: 'Manual',
+                    accountName: 'Manual Entry',
+                    accountType: 'Asset',
+                    marketValue: asset.value,
+                    valueCAD: asset.currency === 'USD' ? asset.value * usdRate : asset.value,
+                    currency: asset.currency
+                  }));
 
                   const combined: (Holding & { accounts?: string; sources?: string })[] = [...(viewMode === 'consolidated' ? metrics.consolidatedHoldings : holdings), ...manualHoldings];
 

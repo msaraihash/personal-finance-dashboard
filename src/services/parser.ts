@@ -67,45 +67,4 @@ export const parseWealthsimpleCSV = (csvContent: string): Holding[] => {
         });
 };
 
-export const parseFidelityCSV = (csvContent: string): Holding[] => {
-    const lines = csvContent.split('\n');
-    const headerIdx = lines.findIndex(l => l.includes('Account Number,Account Name,Symbol'));
-    if (headerIdx === -1) return [];
 
-    const relevantContent = lines.slice(headerIdx).join('\n');
-    const results = Papa.parse(relevantContent, { header: true, skipEmptyLines: true });
-    const data = results.data as Fidelity_Row[];
-
-    return data
-        .filter(row => row.Symbol || row.Description === 'HELD IN MONEY MARKET')
-        .map(row => {
-            const valueStr = row['Current Value'] || '0';
-            const value = parseFloat(valueStr.replace(/[$,]/g, ''));
-            const ticker = row.Symbol || (row.Description === 'HELD IN MONEY MARKET' ? 'CASH' : 'UNKNOWN');
-
-            let assetClass: AssetClass = 'Equity';
-            if (CASH_EQUIVALENTS.includes(ticker) || row.Description.includes('MONEY MARKET')) {
-                assetClass = 'Cash';
-            } else if (SPECULATIVE_TICKERS.includes(ticker)) {
-                assetClass = 'Speculative';
-            } else if (ticker === 'FXAIX' || ticker === 'FSKAX' || ticker === 'FZROX') {
-                assetClass = 'Equity';
-            }
-
-            return {
-                id: crypto.randomUUID(),
-                ticker,
-                name: row.Description,
-                shares: parseFloat(row.Quantity || '0'),
-                marketPrice: parseFloat(row['Last Price']?.replace(/[$,]/g, '') || '0'),
-                marketValue: value,
-                currency: 'USD',
-                assetClass,
-                source: 'Fidelity',
-                accountName: row['Account Name'],
-                accountType: 'Brokerage',
-                accountNumber: row['Account Number'],
-                lastUpdated: new Date().toISOString()
-            };
-        });
-};

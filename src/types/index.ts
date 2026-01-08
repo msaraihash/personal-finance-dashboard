@@ -1,6 +1,7 @@
 export type Currency = 'CAD' | 'USD';
 
-export const TECH_TICKERS = ['NVDA', 'GOOG', 'META', 'GOOGL'];
+
+import { ManualAsset } from './Assets';
 
 export type AssetClass =
     | 'Equity'
@@ -70,14 +71,7 @@ export type IPSState = {
     techConcentrationBasketLimit: number; // e.g., 0.10 for 10%
     techConcentrationSingleLimit: number; // e.g., 0.05 for 5%
     speculativeLimit: number; // e.g., 0.02 for 2%
-    manualAssets: {
-        propertyValueCAD: number;
-        mortgageBalanceCAD: number;
-        wsChequingCAD: number;
-        rbcUsChequingUSD: number;
-        spouseMutualFundCAD: number;
-        usdHysaAmount: number; // In USD
-    };
+    manualAssets: ManualAsset[];
 }
 
 export interface Snapshot {

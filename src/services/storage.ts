@@ -13,14 +13,9 @@ export const DEFAULT_IPS_STATE: IPSState = {
     techConcentrationBasketLimit: 0.10,
     techConcentrationSingleLimit: 0.05,
     speculativeLimit: 0.02,
-    manualAssets: {
-        propertyValueCAD: 500000,
-        mortgageBalanceCAD: 200000,
-        wsChequingCAD: 5000,
-        rbcUsChequingUSD: 2000,
-        spouseMutualFundCAD: 100000,
-        usdHysaAmount: 50000,
-    },
+    manualAssets: [
+        { id: 'default-1', name: 'Emergency Fund', value: 10000, currency: 'CAD', assetClass: 'Cash' }
+    ],
 };
 
 export const saveHoldings = (holdings: Holding[]) => {

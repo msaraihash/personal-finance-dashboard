@@ -16,13 +16,15 @@
 - Implemented `src/services/featureExtractor.ts` with heuristics.
 - Verified with `vitest`.
 
-### Phase 4: Philosophy Engine (Next) 🚧
-- Implement the "Scoring Logic" to match portfolios against the YAML rules.
-- Build the `usePhilosophyEngine` hook.
+### Phase 4: Philosophy Engine ✅
+- Implemented `src/services/ruleEvaluator.ts` (DSL Parser).
+- Implemented `src/services/scoringEngine.ts` (Matching & Scoring).
+- Implemented `src/hooks/usePhilosophyEngine.ts` (React Integration).
+- Verified with comprehensive `vitest` suites.
 
-### Phase 5: Visual Overhaul
+### Phase 5: Visual Overhaul (Next) 🚧
 - Implement the "Nebula Glass" UI components.
 - Build visualizations (Barbells, Sankeys) driven by the Engine.
 
 ## Current Focus
-Preparing for **Phase 4**. The taxonomy and data layer are ready. We need to build the logic that consumes the `PortfolioFeatures` and outputs a `ComplianceResult`.
+Phase 4 is complete. The application can now take a portfolio and output a sorted list of matched Investment Philosophies. Next step is Phase 5: Building the UI to display these results.
