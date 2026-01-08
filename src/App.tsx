@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { parseWealthsimpleCSV } from './services/parser';
 import { useIPSEngine } from './hooks/useIPSEngine';
+import { extractFeatures } from './services/featureExtractor';
+import { usePhilosophyEngine } from './hooks/usePhilosophyEngine';
 import {
   loadHoldings,
   saveHoldings,
@@ -24,6 +26,7 @@ import { TacticalPanel } from './components/TacticalPanel';
 import { IPSConfigModal } from './components/IPSConfigModal';
 import { StrategicVisuals } from './components/StrategicVisuals';
 import { HistoryView } from './components/HistoryView';
+import { PhilosophyEngineView } from './components/PhilosophyEngineView';
 import type { Holding, IPSState, Snapshot } from './types';
 
 // --- Sub-components ---
@@ -111,7 +114,14 @@ export default function App() {
 
   const metrics = useIPSEngine(holdings, ipsState, usdRate);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'ws' | 'fid') => {
+  // Philosophy Engine Integration
+  const portfolioFeatures = React.useMemo(() => {
+    if (holdings.length === 0 && ipsState.manualAssets.length === 0) return null;
+    return extractFeatures(holdings, ipsState.manualAssets, usdRate);
+  }, [holdings, ipsState.manualAssets, usdRate]);
+  const complianceResult = usePhilosophyEngine(portfolioFeatures);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, _type: 'ws' | 'fid') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -223,6 +233,11 @@ export default function App() {
 
         <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
           <HistoryView history={history} />
+        </div>
+
+        {/* Phase 5: Philosophy Engine View */}
+        <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
+          <PhilosophyEngineView complianceResult={complianceResult} />
         </div>
 
         <div style={{ gridColumn: '1 / 2' }}>

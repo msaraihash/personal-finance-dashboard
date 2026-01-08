@@ -1,6 +1,6 @@
-import { Holding } from '../types';
-import { ManualAsset } from '../types/Assets';
-import { PortfolioFeatures } from '../types/features';
+import type { Holding } from '../types';
+import type { ManualAsset } from '../types/Assets';
+import type { PortfolioFeatures } from '../types/features';
 
 // --- Heuristic Lists ---
 const INDEX_FUNDS = new Set([
@@ -108,9 +108,9 @@ export const extractFeatures = (
         // Simple mapping for manual assets
         if (m.assetClass === 'Cash') composition['pct_cash'] += val;
         else if (m.assetClass === 'Property') composition['pct_real_assets'] += val;
-        else if (m.assetClass === 'Crypto') composition['pct_crypto'] += val;
         else if (m.assetClass === 'FixedIncome') composition['pct_bonds'] += val;
         else if (m.assetClass === 'Equity') composition['pct_single_stocks'] += val; // Assume manual equity is specific
+        else if (m.assetClass === 'Speculative') composition['pct_crypto'] += val; // Best-effort mapping
     });
 
     // --- Normalize Composition ---

@@ -18,16 +18,17 @@ interface WS_Row {
     'Security Type': string;
 }
 
-interface Fidelity_Row {
-    'Account Number': string;
-    'Account Name': string;
-    'Symbol': string;
-    'Description': string;
-    'Quantity': string;
-    'Last Price': string;
-    'Current Value': string;
-    'Type': string;
-}
+// Fidelity removed - not supported in current version
+// interface Fidelity_Row {
+//     'Account Number': string;
+//     'Account Name': string;
+//     'Symbol': string;
+//     'Description': string;
+//     'Quantity': string;
+//     'Last Price': string;
+//     'Current Value': string;
+//     'Type': string;
+// }
 
 export const parseWealthsimpleCSV = (csvContent: string): Holding[] => {
     const results = Papa.parse(csvContent, { header: true, skipEmptyLines: true });

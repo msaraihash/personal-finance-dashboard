@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Settings, X, Trash2, Plus, DollarSign, Wallet } from 'lucide-react';
-import type { IPSState, Holding, Snapshot } from '../types';
+import type { IPSState, Holding, Snapshot, AssetClass, Currency } from '../types';
 import type { ManualAsset } from '../types/Assets';
-import { AssetClass, Currency } from '../types';
 
 interface IPSConfigModalProps {
     isOpen: boolean;
@@ -26,7 +25,7 @@ export const IPSConfigModal = ({
     setUsdRate,
     holdings,
     setHoldings,
-    history,
+    history: _history,
     setHistory
 }: IPSConfigModalProps) => {
     const [newAsset, setNewAsset] = useState<Partial<ManualAsset>>({

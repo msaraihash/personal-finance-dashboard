@@ -36,7 +36,7 @@ export const transpileRule = (rule: string): string => {
     // Example: rebalance_frequency in [monthly, quarterly]
     expr = expr.replace(
         /([a-z_][a-z0-9_]*) in \[([\w,\s]+)\]/gi,
-        (match, field, listInner) => {
+        (_match, field, listInner) => {
             // quote the items if they look like strings
             const items = listInner.split(',').map((s: string) => `"${s.trim()}"`).join(',');
             return `[${items}].includes(${field})`;

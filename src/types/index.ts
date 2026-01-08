@@ -1,7 +1,7 @@
 export type Currency = 'CAD' | 'USD';
 
 
-import { ManualAsset } from './Assets';
+import type { ManualAsset } from './Assets';
 
 export type AssetClass =
     | 'Equity'

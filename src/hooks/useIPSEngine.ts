@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { Holding, IPSState } from '../types';
+import type { Holding, IPSState, Metrics } from '../types';
 import { calculateRebalance } from '../services/tacticalEngine';
 
 export const useIPSEngine = (holdings: Holding[], ipsState: IPSState, usdToCadRate: number = 1.40): Metrics => {
@@ -80,6 +80,8 @@ export const useIPSEngine = (holdings: Holding[], ipsState: IPSState, usdToCadRa
             totalLiquidityCAD,
             liquidityCAD,
             liquidityUSD_CAD,
+            techBasketValueCAD: 0, // Not computed in stripped-down version
+            speculativeValueCAD,
             individualTechValues: {},
             consolidatedHoldings,
             compliance: {

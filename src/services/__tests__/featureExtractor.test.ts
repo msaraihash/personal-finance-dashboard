@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { extractFeatures } from '../featureExtractor';
-import { Holding } from '../../types';
-import { ManualAsset } from '../../types/Assets';
+import type { Holding } from '../../types';
+import type { ManualAsset } from '../../types/Assets';
 
 describe('featureExtractor', () => {
 
@@ -80,6 +80,5 @@ describe('featureExtractor', () => {
 
         expect(features.pct_real_assets).toBeCloseTo(0.5);
         expect(features.pct_index_funds).toBeCloseTo(0.5);
-        expect(features.total_net_worth).toBeUndefined(); // We don't verify total NW in features yet
     });
 });

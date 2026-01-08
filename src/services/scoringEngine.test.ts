@@ -1,7 +1,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { scorePortfolio } from '../services/scoringEngine';
-import { PortfolioFeatures } from '../types/features';
+import type { PortfolioFeatures } from '../types/features';
 
 describe('ScoringEngine', () => {
     // Create a base "empty" feature set to spread

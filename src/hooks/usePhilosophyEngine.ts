@@ -1,8 +1,8 @@
 
 import { useMemo } from 'react';
-import { PortfolioFeatures } from '../types/features';
+import type { PortfolioFeatures } from '../types/features';
 import { scorePortfolio } from '../services/scoringEngine';
-import { ComplianceResult } from '../types/scoring';
+import type { ComplianceResult } from '../types/scoring';
 
 /**
  * React hook that runs the Philosophy Engine against the provided features.

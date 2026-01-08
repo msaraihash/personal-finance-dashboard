@@ -278,3 +278,45 @@ td {
 svg {
   stroke-width: 2px;
 }
+
+/* ===== Philosophy Engine Animations (Phase 5) ===== */
+
+/* Micro-interaction: Score badge pulse on best match */
+@keyframes scorePulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(167, 139, 250, 0.2);
+  }
+}
+
+.score-pulse {
+  animation: scorePulse 2s ease-in-out infinite;
+}
+
+/* Micro-interaction: Card hover lift + shadow */
+.philosophy-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.philosophy-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 20px 40px -10px rgba(100, 116, 139, 0.15),
+    0 8px 16px -8px rgba(100, 116, 139, 0.1);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .stagger-reveal > * {
+    animation: none;
+    opacity: 1;
+  }
+  .score-pulse {
+    animation: none;
+  }
+  .philosophy-card {
+    transition: none;
+  }
+}

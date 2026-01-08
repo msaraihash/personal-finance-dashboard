@@ -1,6 +1,6 @@
 
-import { PortfolioFeatures } from '../types/features';
-import { ComplianceResult, PhilosophyMatch, SignalMatch } from '../types/scoring';
+import type { PortfolioFeatures } from '../types/features';
+import type { ComplianceResult, PhilosophyMatch, SignalMatch } from '../types/scoring';
 import { evaluateRule } from './ruleEvaluator';
 import yamlData from '../data/investment_philosophies.v1.yml';
 

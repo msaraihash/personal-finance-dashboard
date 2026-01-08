@@ -1,5 +1,5 @@
 
-import { PortfolioFeatures } from './features';
+import type { PortfolioFeatures } from './features';
 
 export interface SignalMatch {
     name: string;

@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { usePhilosophyEngine } from '../hooks/usePhilosophyEngine';
-import { PortfolioFeatures } from '../types/features';
+import type { PortfolioFeatures } from '../types/features';
 
 describe('usePhilosophyEngine', () => {
     // Basic mock features
