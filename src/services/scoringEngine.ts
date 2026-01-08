@@ -99,13 +99,14 @@ export const scorePortfolio = (features: PortfolioFeatures): ComplianceResult =>
             normalized = (rawScore / maxPossibleScore) * 100;
         }
 
-        // Apply weight if needed (though weight is typically for sorting importance, 
-        // here we might just store it. For now, let's keep score as pure match %)
+        // Apply weight (priority)
+        const weight = p.detection.weight ?? 1.0;
+        const weightedScore = normalized * weight;
 
         return {
             id: p.id,
             displayName: p.display_name,
-            score: Math.round(normalized),
+            score: Math.round(weightedScore),
             matchedSignals,
             missingSignals,
             isExcluded: false,

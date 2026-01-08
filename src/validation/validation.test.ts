@@ -267,8 +267,37 @@ async function writeReport(markdown: string): Promise<void> {
 /**
  * Convert fixture holding to the format expected by extractFeatures
  */
-function toHolding(h: Holding): { ticker: string; value: number; currency: string } {
-    return { ticker: h.ticker, value: h.value, currency: h.currency };
+function toHolding(h: Holding): { ticker: string; marketValue: number; currency: string; assetClass?: string } {
+    let assetClass: string | undefined;
+    switch (h.assetType) {
+        case "stock":
+            assetClass = "Equity";
+            break;
+        case "bond":
+            assetClass = "FixedIncome";
+            break;
+        case "cash_equivalent":
+            assetClass = "Cash";
+            break;
+        case "crypto":
+            assetClass = "Crypto";
+            break;
+        case "etf":
+        case "mutual_fund":
+            // Leave undefined to let metadata/heuristics handle it, 
+            // or perform a secondary fallback if needed.
+            // But usually 'Equity' is a safe fallback for unknown ETFs in this context?
+            // Let's stick to undefined to rely on metadata, but maybe hint 'Equity' if unclear?
+            // Actually, featureExtractor falls back to null if no metadata.
+            // Let's map 'etf' to 'Equity' ONLY if we want it treated as stock-like if unknown.
+            // Better: don't map it, force metadata usage.
+            // But for 'stock' (NVDA), we NEED 'Equity'.
+            break;
+        case "other":
+            assetClass = "Other";
+            break;
+    }
+    return { ticker: h.ticker, marketValue: h.value, currency: h.currency, assetClass };
 }
 
 /**
@@ -305,8 +334,9 @@ describe("Philosophy Detection Engine validation", () => {
             const exchangeRate = input.baseCurrency === "CAD" ? 1.0 : 1.35;
 
             const features = extractFeatures(holdings as never[], manualAssets as never[], exchangeRate);
-            const rawOutput = scorePortfolio(features);
-            const normalized = normalizeScoringOutput(rawOutput);
+
+            const scoringResult = scorePortfolio(features);
+            const normalized = normalizeScoringOutput(scoringResult);
 
             const ranked = normalized.ranked;
             if (ranked.length === 0) {

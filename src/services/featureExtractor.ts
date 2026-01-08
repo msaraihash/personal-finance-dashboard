@@ -8,15 +8,17 @@ const INDEX_FUNDS = new Set([
     'XEQT', 'VEQT', 'VGRO', 'VBAL', 'XGRO', 'XBAL',
     'VFV', 'XUS', 'VUN', 'XUU', 'VDY', 'XEI', 'ZSP', 'XIU',
     'VCN', 'XIC', 'XEF', 'VIU', 'ZEA', 'XEC', 'VEE', 'ZEM',
-    'VTV', 'VUG', 'VBR', 'VBK', 'BND', 'AGG', 'ZAG', 'VAB', 'XBB'
+    'VTV', 'VUG', 'VBR', 'VBK', 'BND', 'AGG', 'ZAG', 'VAB', 'XBB',
+    'VOO', 'VTI', 'VXUS', 'QQQ', 'IVV', 'SPY', 'IWM'
 ]);
 
 const CRYPTO_ASSETS = new Set([
-    'BTC', 'ETH', 'SOL', 'COIN', 'MSTR', 'IBIT', 'FBTC', 'ETHX.B', 'BTCX.B'
+    'BTC', 'ETH', 'SOL', 'COIN', 'MSTR', 'IBIT', 'FBTC', 'ETHX.B', 'BTCX.B', 'DOGE'
 ]);
 
 const CASH_EQUIVALENTS = new Set([
-    'CASH', 'CASH.TO', 'PSA', 'PSA.TO', 'HISA', 'UBIL.U', 'CSAV', 'FDRXX'
+    'CASH', 'CASH.TO', 'PSA', 'PSA.TO', 'HISA', 'UBIL.U', 'CSAV', 'FDRXX',
+    'BIL', 'SGOV', 'SHV', 'GBIL'
 ]);
 
 const SECTOR_THEMATIC = new Set([
@@ -37,29 +39,7 @@ const getCADValue = (value: number, currency: string, exchangeRate: number): num
     return value;
 };
 
-/**
- * Categorizes an asset into one of the PortfolioFeature buckets.
- */
-const categorizeAsset = (ticker: string, assetClass: string): keyof PortfolioFeatures | null => {
-    const t = normalizeTicker(ticker);
 
-    if (CASH_EQUIVALENTS.has(t) || assetClass === 'Cash') return 'pct_cash';
-    if (CRYPTO_ASSETS.has(t) || assetClass === 'Crypto') return 'pct_crypto';
-    if (INDEX_FUNDS.has(t)) return 'pct_index_funds';
-    if (SECTOR_THEMATIC.has(t)) return 'pct_sector_thematic';
-    if (assetClass === 'Property' || assetClass === 'Speculative') return 'pct_real_assets';
-
-    // Check ETF metadata for real assets
-    const meta = getETFMetadata(ticker);
-    if (meta?.assetClass === 'real_asset') return 'pct_real_assets';
-    if (meta?.assetClass === 'bond') return 'pct_bonds';
-
-    // Default fallback
-    if (assetClass === 'Equity') return 'pct_single_stocks';
-    if (assetClass === 'FixedIncome') return 'pct_bonds';
-
-    return null;
-};
 
 /**
  * Compute weighted average of factor tilts from ETF metadata.
@@ -162,34 +142,90 @@ export const extractFeatures = (
         totalValueCAD += val;
         allAssets.push({ name: h.ticker, value: val });
 
-        const category = categorizeAsset(h.ticker, h.assetClass);
-        if (category && category in composition) {
-            composition[category] += val;
-        }
-
-        // Broad Category Aggregation
-        if (['pct_single_stocks', 'pct_index_funds', 'pct_sector_thematic', 'pct_active_funds'].includes(category || '')) {
-            composition['pct_equity'] += val;
-        }
-
-        // ETF-based enrichment
+        const t = normalizeTicker(h.ticker);
         const meta = getETFMetadata(h.ticker);
+
+        // --- 1. Asset Class Allocation (Mutually Exclusive mostly) ---
+        let resolvedAssetClass = 'unknown';
+
         if (meta) {
-            // Geography (only for equity ETFs)
+            // Trust metadata first
+            if (meta.assetClass === 'bond') resolvedAssetClass = 'bond';
+            else if (meta.assetClass === 'real_asset') resolvedAssetClass = 'real_asset';
+            else if (meta.assetClass === 'equity' || meta.assetClass === 'mixed') {
+                // Determine if thematic or broad
+                // For now treat as equity, sector/thematic logic adds to attribute
+                resolvedAssetClass = 'equity';
+            }
+        } else {
+            // Fallback to input assetClass
+            const ac = h.assetClass; // may be undefined for some inputs
+            if (CASH_EQUIVALENTS.has(t) || ac === 'Cash') resolvedAssetClass = 'cash';
+            else if (CRYPTO_ASSETS.has(t) || ac === 'Crypto') resolvedAssetClass = 'crypto';
+            else if (ac === 'FixedIncome' || ac === 'Bond') resolvedAssetClass = 'bond';
+            else if (ac === 'Property' || ac === 'RealAsset') resolvedAssetClass = 'real_asset';
+            else if (['stock', 'Equity', 'etf', 'mutual_fund'].includes(ac || '') || ac === 'Equity') {
+                // Logic for generic ETF without metadata handled below
+                resolvedAssetClass = 'equity';
+            }
+        }
+
+        // Special case: Generic ETF without metadata not in lists -> assume Equity? 
+        // Or if INDEX_FUNDS has it but no metadata? 
+        // e.g. BND in INDEX_FUNDS but not in meta (if it wasn't). 
+        // Current lists: INDEX_FUNDS has BND. 
+        // If meta not found, resolvedAssetClass might default to equity if we aren't careful.
+
+        // Let's rely on resolvedAssetClass for the main buckets
+        switch (resolvedAssetClass) {
+            case 'equity': composition.pct_equity += val; break;
+            case 'bond': composition.pct_bonds += val; break;
+            case 'real_asset': composition.pct_real_assets += val; break;
+            case 'crypto': composition.pct_crypto += val; break;
+            case 'cash': composition.pct_cash += val; break;
+            // 'unknown' falls through
+        }
+
+        // --- 2. Attributes (Overlapping) ---
+
+        // Index Funds
+        if (INDEX_FUNDS.has(t) || (meta && meta.expense_ratio <= 0.25 && meta.name.includes('Index'))) {
+            composition.pct_index_funds += val;
+        }
+
+        // Sector / Thematic
+        if (SECTOR_THEMATIC.has(t)) {
+            composition.pct_sector_thematic += val;
+        }
+
+        // Active Funds (heuristic)
+        // If it's an ETF/Fund but NOT an index fund?
+        const isFund = ['etf', 'mutual_fund'].includes(h.assetType || '') || INDEX_FUNDS.has(t) || meta;
+        if (isFund && !INDEX_FUNDS.has(t) && !SECTOR_THEMATIC.has(t)) {
+            // Maybe active?
+            // composition.pct_active_funds += val;
+        }
+
+        // Single Stocks
+        if (h.assetType === 'stock' || (!isFund && resolvedAssetClass === 'equity' && !CASH_EQUIVALENTS.has(t))) {
+            composition.pct_single_stocks += val;
+        }
+
+
+        // ETF-based enrichment (Geography/Factors)
+        if (meta) {
             if (meta.assetClass === 'equity' || meta.assetClass === 'mixed') {
                 geography[meta.region] += val;
             }
-            // Factor tilts
             accumulateFactorTilts(factors, meta, val);
         } else {
-            // Unknown geography for non-ETF holdings
-            if (h.assetClass === 'Equity') {
+            if (resolvedAssetClass === 'equity') {
                 geography.unknown += val;
             }
         }
     });
 
-    // Process Manual Assets
+    // Process Manual Assets (Simple)
     manualAssets.forEach(m => {
         const val = getCADValue(m.value, m.currency, exchangeRate);
         totalValueCAD += val;

@@ -95,6 +95,25 @@ export const ETF_METADATA: Record<string, ETFMetadata> = {
     // --- Covered Call ---
     'XYLD': { ticker: 'XYLD', name: 'Global X S&P 500 Covered Call ETF', region: 'us', assetClass: 'equity', tilt_value: 0, tilt_size: -0.2, tilt_quality: 0.1, tilt_momentum: -0.3, tilt_low_vol: 0.4, expense_ratio: 0.60 },
     'QYLD': { ticker: 'QYLD', name: 'Global X Nasdaq 100 Covered Call ETF', region: 'us', assetClass: 'equity', tilt_value: -0.4, tilt_size: -0.3, tilt_quality: 0, tilt_momentum: -0.3, tilt_low_vol: 0.3, expense_ratio: 0.60 },
+    // --- US Factor / Other ---
+    'AVUV': { ticker: 'AVUV', name: 'Avantis US Small Cap Value ETF', region: 'us', assetClass: 'equity', tilt_value: 0.7, tilt_size: 0.7, tilt_quality: 0.1, tilt_momentum: -0.1, tilt_low_vol: 0, expense_ratio: 0.25 },
+    'AVDV': { ticker: 'AVDV', name: 'Avantis International Small Cap Value ETF', region: 'developed_ex_us', assetClass: 'equity', tilt_value: 0.7, tilt_size: 0.7, tilt_quality: 0.1, tilt_momentum: -0.1, tilt_low_vol: 0, expense_ratio: 0.36 },
+    'VIG': { ticker: 'VIG', name: 'Vanguard Dividend Appreciation ETF', region: 'us', assetClass: 'equity', tilt_value: 0.2, tilt_size: -0.2, tilt_quality: 0.6, tilt_momentum: 0.1, tilt_low_vol: 0.2, expense_ratio: 0.06 },
+    'VWO': { ticker: 'VWO', name: 'Vanguard FTSE Emerging Markets ETF', region: 'emerging', assetClass: 'equity', tilt_value: 0.1, tilt_size: 0, tilt_quality: -0.1, tilt_momentum: 0, tilt_low_vol: 0, expense_ratio: 0.08 },
+    'IEF': { ticker: 'IEF', name: 'iShares 7-10 Year Treasury Bond ETF', region: 'us', assetClass: 'bond', tilt_value: 0, tilt_size: 0, tilt_quality: 0, tilt_momentum: 0, tilt_low_vol: 0, expense_ratio: 0.15 },
+
+    // --- Covered Call / Options ---
+    'JEPI': { ticker: 'JEPI', name: 'JPMorgan Equity Premium Income ETF', region: 'us', assetClass: 'equity', tilt_value: 0.3, tilt_size: -0.2, tilt_quality: 0.2, tilt_momentum: -0.2, tilt_low_vol: 0.5, expense_ratio: 0.35 },
+
+    // --- ESG ---
+    'ESGV': { ticker: 'ESGV', name: 'Vanguard ESG U.S. Stock ETF', region: 'us', assetClass: 'equity', tilt_value: 0, tilt_size: -0.1, tilt_quality: 0, tilt_momentum: 0, tilt_low_vol: 0, expense_ratio: 0.09 },
+    'VSGX': { ticker: 'VSGX', name: 'Vanguard ESG International Stock ETF', region: 'global', assetClass: 'equity', tilt_value: 0, tilt_size: 0, tilt_quality: 0, tilt_momentum: 0, tilt_low_vol: 0, expense_ratio: 0.12 },
+
+    // --- Leveraged ---
+    'TMF': { ticker: 'TMF', name: 'Direxion Daily 20+ Year Treasury Bull 3X', region: 'us', assetClass: 'bond', tilt_value: 0, tilt_size: 0, tilt_quality: 0, tilt_momentum: 0, tilt_low_vol: 0, expense_ratio: 1.04 },
+
+    // --- Commodities ---
+    'DBC': { ticker: 'DBC', name: 'Invesco DB Commodity Index Tracking Fund', region: 'global', assetClass: 'real_asset', tilt_value: 0, tilt_size: 0, tilt_quality: 0, tilt_momentum: 0, tilt_low_vol: 0, expense_ratio: 0.85 },
 };
 
 /**
