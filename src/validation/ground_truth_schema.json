@@ -1,0 +1,250 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/philosophy-detection/ground-truth.schema.json",
+    "title": "Philosophy Detection Ground Truth Dataset",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "datasetVersion",
+        "portfolios"
+    ],
+    "properties": {
+        "datasetVersion": {
+            "type": "string",
+            "minLength": 1
+        },
+        "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "notes": {
+            "type": "string"
+        },
+        "portfolios": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "#/$defs/PortfolioCase"
+            }
+        }
+    },
+    "$defs": {
+        "CurrencyCode": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "description": "ISO 4217 currency code, e.g., USD, CAD"
+        },
+        "Holding": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "ticker",
+                "value",
+                "currency"
+            ],
+            "properties": {
+                "ticker": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "value": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "currency": {
+                    "$ref": "#/$defs/CurrencyCode"
+                },
+                "units": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "assetType": {
+                    "type": "string",
+                    "enum": [
+                        "etf",
+                        "mutual_fund",
+                        "stock",
+                        "bond",
+                        "cash_equivalent",
+                        "crypto",
+                        "option",
+                        "other"
+                    ]
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "uniqueItems": true
+                },
+                "notes": {
+                    "type": "string"
+                }
+            }
+        },
+        "ManualAsset": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "type",
+                "value",
+                "currency"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "cash",
+                        "real_estate_equity",
+                        "private_business_equity",
+                        "pension_present_value",
+                        "collectible",
+                        "other"
+                    ]
+                },
+                "value": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "currency": {
+                    "$ref": "#/$defs/CurrencyCode"
+                },
+                "liquidity": {
+                    "type": "string",
+                    "enum": [
+                        "liquid",
+                        "semi_liquid",
+                        "illiquid"
+                    ]
+                },
+                "notes": {
+                    "type": "string"
+                }
+            }
+        },
+        "ExpectedLabels": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "primaryPhilosophy"
+            ],
+            "properties": {
+                "primaryPhilosophy": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "secondaryPhilosophies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "uniqueItems": true
+                },
+                "allowAlternatePrimary": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "uniqueItems": true,
+                    "description": "If multiple labels are acceptable as 'primary' due to tie/ambiguity."
+                },
+                "minPrimaryScore": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Optional: minimum acceptable normalized score for primary."
+                },
+                "requiredPrimaryInTopK": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10,
+                    "description": "Optional: require expected primary to be within top K ranked outputs."
+                },
+                "notes": {
+                    "type": "string"
+                }
+            }
+        },
+        "PortfolioCase": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "description",
+                "baseCurrency",
+                "holdings",
+                "expected"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "description": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "archetype": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "baseCurrency": {
+                    "$ref": "#/$defs/CurrencyCode"
+                },
+                "holdings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/Holding"
+                    }
+                },
+                "manualAssets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/ManualAsset"
+                    }
+                },
+                "expected": {
+                    "$ref": "#/$defs/ExpectedLabels"
+                },
+                "edgeCaseFlags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "pure_archetype",
+                            "mixed_signals",
+                            "multi_currency",
+                            "tiny_positions",
+                            "manual_assets_present",
+                            "high_concentration",
+                            "high_leverage",
+                            "high_crypto",
+                            "options_overlay",
+                            "home_bias",
+                            "esg_screened",
+                            "em_tilt",
+                            "illiquid_assets",
+                            "data_quality_noisy"
+                        ]
+                    },
+                    "uniqueItems": true
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "uniqueItems": true
+                }
+            }
+        }
+    }
+}

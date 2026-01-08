@@ -17,6 +17,7 @@ export { AllocationDonut } from './AllocationDonut';
 export { BarbellVisual } from './BarbellVisual';
 export { FactorRadar } from './FactorRadar';
 export { ConcentrationStack } from './ConcentrationStack';
+export { RunwayMeter } from './RunwayMeter';
 
 /**
  * Props that all motif components can receive.
@@ -37,6 +38,8 @@ export const MOTIF_REGISTRY: Record<string, ComponentType<MotifProps>> = {
     'barbell_visual': BarbellVisual as ComponentType<MotifProps>,
     'factor_radar': FactorRadar as ComponentType<MotifProps>,
     'concentration_stack': ConcentrationStack as ComponentType<MotifProps>,
+    // Note: 'runway_meter' requires special handling (needs netWorthCAD, financialGoals)
+    // It's rendered directly in PhilosophyCard for time_to_financial_freedom philosophy
 };
 
 /**

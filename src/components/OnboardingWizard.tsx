@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Sparkles, ArrowRight, CheckCircle, Target, BrainCircuit, Upload, FileText, Plus } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle, Target, BrainCircuit, Upload, FileText, Plus, DollarSign } from 'lucide-react';
 import type { OnboardingState } from '../services/storage';
 import { parseWealthsimpleCSV } from '../services/parser';
 import type { Holding } from '../types';
+import type { FinancialGoals } from '../types/FinancialGoals';
+import { DEFAULT_FINANCIAL_GOALS } from '../types/FinancialGoals';
 import rawPhilosophyData from '../data/investment_philosophies.v1.yml';
 
 interface PhilosophyYaml {
@@ -24,13 +26,19 @@ const AVAILABLE_PHILOSOPHIES = philosophyData.philosophies.map(p => ({
 interface OnboardingWizardProps {
     onComplete: (state: OnboardingState) => void;
     onHoldingsLoaded?: (holdings: Holding[]) => void;
+    onFinancialGoalsSet?: (goals: FinancialGoals) => void;
 }
 
-export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, onHoldingsLoaded }) => {
-    const [step, setStep] = useState<'welcome' | 'philosophy' | 'import'>('welcome');
+export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, onHoldingsLoaded, onFinancialGoalsSet }) => {
+    const [step, setStep] = useState<'welcome' | 'philosophy' | 'goals' | 'import'>('welcome');
     const [selectedPhilosophyId, setSelectedPhilosophyId] = useState<string | null>(null);
     const [holdings, setHoldings] = useState<Holding[]>([]);
     const [filesUploaded, setFilesUploaded] = useState<{ user: boolean; partner: boolean }>({ user: false, partner: false });
+
+    // Financial Goals state
+    const [annualExpenses, setAnnualExpenses] = useState<string>('60000');
+    const [savingsRate, setSavingsRate] = useState<string>('20');
+    const [skipGoals, setSkipGoals] = useState(false);
 
     const handleStart = () => {
         setStep('philosophy');
@@ -41,7 +49,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
         setSelectedPhilosophyId(id);
     };
 
-    const goToImport = () => {
+    const goToGoals = () => {
+        setStep('goals');
+    };
+
+    const handleGoalsNext = () => {
+        // Save financial goals if callback provided
+        if (onFinancialGoalsSet && !skipGoals) {
+            const goals: FinancialGoals = {
+                annualExpensesCAD: parseFloat(annualExpenses) || DEFAULT_FINANCIAL_GOALS.annualExpensesCAD,
+                savingsRate: (parseFloat(savingsRate) || 20) / 100,
+            };
+            onFinancialGoalsSet(goals);
+        }
         setStep('import');
     };
 
@@ -210,7 +230,122 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete, 
 
                     <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '2rem', borderTop: '1px solid #e2e8f0' }}>
                         <button
-                            onClick={goToImport}
+                            onClick={goToGoals}
+                            className="btn-primary"
+                            style={{
+                                fontSize: '1.1rem', padding: '0.85rem 2.5rem', borderRadius: '12px',
+                                background: '#0f172a', color: 'white', fontWeight: 600, border: 'none', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', gap: '8px'
+                            }}
+                        >
+                            Next: Financial Goals <ArrowRight size={18} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (step === 'goals') {
+        return (
+            <div className="onboarding-overlay" style={{
+                position: 'fixed', inset: 0, zIndex: 9999,
+                background: '#f8fafc',
+                color: '#0f172a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                overflowY: 'auto'
+            }}>
+                <div style={{
+                    maxWidth: '600px', width: '100%', padding: '4rem 2rem',
+                    display: 'flex', flexDirection: 'column'
+                }}>
+                    <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                        <div style={{
+                            width: '60px', height: '60px', background: 'linear-gradient(135deg, #10b981, #34d399)',
+                            borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem'
+                        }}>
+                            <DollarSign size={28} color="white" />
+                        </div>
+                        <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Financial Goals</h2>
+                        <p style={{ color: '#64748b', maxWidth: '450px', margin: '0 auto' }}>
+                            Optional: Help us calculate your runway to financial independence.
+                        </p>
+                    </div>
+
+                    <div style={{ background: 'white', borderRadius: '16px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                        {/* Annual Expenses */}
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+                                Annual Expenses (CAD)
+                            </label>
+                            <input
+                                type="number"
+                                value={annualExpenses}
+                                onChange={(e) => setAnnualExpenses(e.target.value)}
+                                disabled={skipGoals}
+                                style={{
+                                    width: '100%', padding: '0.75rem 1rem', fontSize: '1rem',
+                                    border: '1px solid #e2e8f0', borderRadius: '10px',
+                                    background: skipGoals ? '#f1f5f9' : 'white',
+                                    opacity: skipGoals ? 0.5 : 1
+                                }}
+                                placeholder="60000"
+                            />
+                            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+                                Your FI target = 25× this amount
+                            </p>
+                        </div>
+
+                        {/* Savings Rate */}
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+                                Savings Rate (%)
+                            </label>
+                            <input
+                                type="number"
+                                value={savingsRate}
+                                onChange={(e) => setSavingsRate(e.target.value)}
+                                disabled={skipGoals}
+                                min="1"
+                                max="99"
+                                style={{
+                                    width: '100%', padding: '0.75rem 1rem', fontSize: '1rem',
+                                    border: '1px solid #e2e8f0', borderRadius: '10px',
+                                    background: skipGoals ? '#f1f5f9' : 'white',
+                                    opacity: skipGoals ? 0.5 : 1
+                                }}
+                                placeholder="20"
+                            />
+                            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+                                Higher savings = faster runway to FI
+                            </p>
+                        </div>
+
+                        {/* Skip Option */}
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                            <input
+                                type="checkbox"
+                                checked={skipGoals}
+                                onChange={(e) => setSkipGoals(e.target.checked)}
+                                style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                            />
+                            <span style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                Skip this step (use defaults)
+                            </span>
+                        </label>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '2rem', marginTop: '2rem', borderTop: '1px solid #e2e8f0' }}>
+                        <button
+                            onClick={() => setStep('philosophy')}
+                            style={{
+                                fontSize: '1rem', padding: '0.75rem 1.5rem', borderRadius: '10px',
+                                background: 'transparent', color: '#64748b', fontWeight: 600, border: '1px solid #e2e8f0', cursor: 'pointer'
+                            }}
+                        >
+                            Back
+                        </button>
+                        <button
+                            onClick={handleGoalsNext}
                             className="btn-primary"
                             style={{
                                 fontSize: '1.1rem', padding: '0.85rem 2.5rem', borderRadius: '12px',

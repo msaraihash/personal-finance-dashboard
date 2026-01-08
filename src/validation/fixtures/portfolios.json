@@ -1,0 +1,712 @@
+{
+    "datasetVersion": "v1",
+    "generatedAt": "2026-01-08T18:00:00Z",
+    "notes": "Ground-truth fixtures for Philosophy Detection Engine validation.",
+    "portfolios": [
+        {
+            "id": "boglehead_vti_vxus_bnd",
+            "description": "Classic 3-fund Boglehead, broad indexing with bond ballast.",
+            "archetype": "pure Boglehead",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "VTI",
+                    "value": 70000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "VXUS",
+                    "value": 20000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "BND",
+                    "value": 10000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "passive_indexing",
+                "secondaryPhilosophies": [
+                    "balanced_allocation"
+                ],
+                "requiredPrimaryInTopK": 1
+            },
+            "edgeCaseFlags": [
+                "pure_archetype"
+            ]
+        },
+        {
+            "id": "boglehead_canada_xeqt_only",
+            "description": "Single-ticket global equity ETF (Canada).",
+            "archetype": "single ETF indexer",
+            "baseCurrency": "CAD",
+            "holdings": [
+                {
+                    "ticker": "XEQT.TO",
+                    "value": 100000,
+                    "currency": "CAD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "passive_indexing",
+                "secondaryPhilosophies": [
+                    "equity_only"
+                ],
+                "requiredPrimaryInTopK": 1
+            },
+            "edgeCaseFlags": [
+                "pure_archetype",
+                "home_bias",
+                "multi_currency"
+            ]
+        },
+        {
+            "id": "factor_tilt_avuv_avdv_core",
+            "description": "Core index + strong SCV tilt US and ex-US.",
+            "archetype": "factor investor (size/value)",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "VTI",
+                    "value": 50000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "VXUS",
+                    "value": 15000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "AVUV",
+                    "value": 25000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "AVDV",
+                    "value": 10000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "factor_investing",
+                "secondaryPhilosophies": [
+                    "passive_indexing"
+                ],
+                "requiredPrimaryInTopK": 1
+            },
+            "edgeCaseFlags": [
+                "pure_archetype"
+            ]
+        },
+        {
+            "id": "em_tilt_vwo_majority",
+            "description": "Emerging markets dominates allocation.",
+            "archetype": "EM tilt",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "VWO",
+                    "value": 60000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "VTI",
+                    "value": 25000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "VXUS",
+                    "value": 15000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "emerging_markets_tilt",
+                "secondaryPhilosophies": [
+                    "passive_indexing"
+                ]
+            },
+            "edgeCaseFlags": [
+                "em_tilt"
+            ]
+        },
+        {
+            "id": "dividend_growth_schd_vig",
+            "description": "Dividend growth / quality income tilt.",
+            "archetype": "dividend growth",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "SCHD",
+                    "value": 60000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "VIG",
+                    "value": 20000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "BND",
+                    "value": 20000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "dividend_growth",
+                "secondaryPhilosophies": [
+                    "income_focused",
+                    "balanced_allocation"
+                ]
+            },
+            "edgeCaseFlags": []
+        },
+        {
+            "id": "income_options_overlay_jepi_qyld",
+            "description": "Option-income ETFs as core (covered call / equity premium).",
+            "archetype": "options income",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "JEPI",
+                    "value": 50000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "QYLD",
+                    "value": 30000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "BIL",
+                    "value": 20000,
+                    "currency": "USD",
+                    "assetType": "cash_equivalent"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "options_overlay_income",
+                "secondaryPhilosophies": [
+                    "income_focused"
+                ]
+            },
+            "edgeCaseFlags": [
+                "options_overlay"
+            ]
+        },
+        {
+            "id": "all_weather_risk_parity_like",
+            "description": "Diversified across stocks, long/intermediate treasuries, gold, commodities.",
+            "archetype": "all-weather / risk parity",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "VTI",
+                    "value": 30000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "TLT",
+                    "value": 30000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "IEF",
+                    "value": 15000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "GLD",
+                    "value": 15000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "DBC",
+                    "value": 10000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "all_weather_risk_parity",
+                "secondaryPhilosophies": [
+                    "diversification_maximalist"
+                ]
+            },
+            "edgeCaseFlags": []
+        },
+        {
+            "id": "barbell_conservative",
+            "description": "Barbell: mostly T-bills/cash equivalents + small sleeve of growth.",
+            "archetype": "barbell conservative",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "SGOV",
+                    "value": 75000,
+                    "currency": "USD",
+                    "assetType": "cash_equivalent"
+                },
+                {
+                    "ticker": "QQQ",
+                    "value": 20000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "BTC",
+                    "value": 5000,
+                    "currency": "USD",
+                    "assetType": "crypto"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "barbell_strategy",
+                "secondaryPhilosophies": [
+                    "capital_preservation"
+                ]
+            },
+            "edgeCaseFlags": [
+                "mixed_signals"
+            ]
+        },
+        {
+            "id": "capital_preservation_tbill_heavy",
+            "description": "Near-cash allocation dominates.",
+            "archetype": "capital preservation",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "BIL",
+                    "value": 90000,
+                    "currency": "USD",
+                    "assetType": "cash_equivalent"
+                },
+                {
+                    "ticker": "AGG",
+                    "value": 10000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "capital_preservation",
+                "secondaryPhilosophies": []
+            },
+            "edgeCaseFlags": [
+                "pure_archetype"
+            ]
+        },
+        {
+            "id": "crypto_degen_80pct",
+            "description": "Crypto dominates; small equity position.",
+            "archetype": "crypto degen",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "BTC",
+                    "value": 60000,
+                    "currency": "USD",
+                    "assetType": "crypto"
+                },
+                {
+                    "ticker": "ETH",
+                    "value": 20000,
+                    "currency": "USD",
+                    "assetType": "crypto"
+                },
+                {
+                    "ticker": "VOO",
+                    "value": 20000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "crypto_speculation",
+                "secondaryPhilosophies": [
+                    "thematic_growth"
+                ],
+                "requiredPrimaryInTopK": 1
+            },
+            "edgeCaseFlags": [
+                "high_crypto"
+            ]
+        },
+        {
+            "id": "thematic_growth_arkk_qqq",
+            "description": "Thematic growth tilt with QQQ and ARKK.",
+            "archetype": "thematic growth",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "QQQ",
+                    "value": 60000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "ARKK",
+                    "value": 30000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "TSLA",
+                    "value": 10000,
+                    "currency": "USD",
+                    "assetType": "stock"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "thematic_growth",
+                "secondaryPhilosophies": [
+                    "growth_tilt"
+                ]
+            },
+            "edgeCaseFlags": []
+        },
+        {
+            "id": "concentrated_stock_picker_big_tech",
+            "description": "Few single stocks dominate; high concentration.",
+            "archetype": "stock picker concentrated",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "NVDA",
+                    "value": 50000,
+                    "currency": "USD",
+                    "assetType": "stock"
+                },
+                {
+                    "ticker": "AMZN",
+                    "value": 25000,
+                    "currency": "USD",
+                    "assetType": "stock"
+                },
+                {
+                    "ticker": "GOOG",
+                    "value": 25000,
+                    "currency": "USD",
+                    "assetType": "stock"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "stock_picking_concentrated",
+                "secondaryPhilosophies": [
+                    "growth_tilt"
+                ]
+            },
+            "edgeCaseFlags": [
+                "high_concentration"
+            ]
+        },
+        {
+            "id": "home_bias_canada_equity",
+            "description": "Strong Canada home-bias with some US exposure.",
+            "archetype": "home bias Canada",
+            "baseCurrency": "CAD",
+            "holdings": [
+                {
+                    "ticker": "XIC.TO",
+                    "value": 70000,
+                    "currency": "CAD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "VFV.TO",
+                    "value": 20000,
+                    "currency": "CAD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "XEF.TO",
+                    "value": 10000,
+                    "currency": "CAD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "home_bias",
+                "secondaryPhilosophies": [
+                    "passive_indexing"
+                ]
+            },
+            "edgeCaseFlags": [
+                "home_bias",
+                "multi_currency"
+            ]
+        },
+        {
+            "id": "esg_screened_index",
+            "description": "ESG-screened broad exposure.",
+            "archetype": "ESG/SRI indexer",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "ESGV",
+                    "value": 60000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "VSGX",
+                    "value": 30000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "BND",
+                    "value": 10000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "esg_sri",
+                "secondaryPhilosophies": [
+                    "passive_indexing"
+                ]
+            },
+            "edgeCaseFlags": [
+                "esg_screened"
+            ]
+        },
+        {
+            "id": "leveraged_beta_upro_tmf",
+            "description": "Leveraged equities + leveraged long treasuries (classic hedgefundie).",
+            "archetype": "leveraged beta",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "UPRO",
+                    "value": 55000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "TMF",
+                    "value": 45000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "leveraged_beta",
+                "secondaryPhilosophies": [
+                    "barbell_strategy"
+                ]
+            },
+            "edgeCaseFlags": [
+                "high_leverage"
+            ]
+        },
+        {
+            "id": "real_assets_inflation_hedge",
+            "description": "Real assets tilt: REITs + gold + commodities.",
+            "archetype": "real assets / inflation hedge",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "VNQ",
+                    "value": 40000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "GLD",
+                    "value": 30000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "DBC",
+                    "value": 30000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "real_assets_inflation_hedge",
+                "secondaryPhilosophies": [
+                    "diversification_maximalist"
+                ]
+            },
+            "edgeCaseFlags": []
+        },
+        {
+            "id": "manual_assets_real_estate_dominant",
+            "description": "Liquid portfolio small; large illiquid real estate equity recorded manually.",
+            "archetype": "illiquid-heavy household balance sheet",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "VTI",
+                    "value": 15000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "BIL",
+                    "value": 5000,
+                    "currency": "USD",
+                    "assetType": "cash_equivalent"
+                }
+            ],
+            "manualAssets": [
+                {
+                    "id": "home_equity",
+                    "type": "real_estate_equity",
+                    "value": 300000,
+                    "currency": "USD",
+                    "liquidity": "illiquid"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "household_balance_sheet_aware",
+                "secondaryPhilosophies": [
+                    "capital_preservation"
+                ],
+                "allowAlternatePrimary": [
+                    "passive_indexing"
+                ]
+            },
+            "edgeCaseFlags": [
+                "manual_assets_present",
+                "illiquid_assets"
+            ]
+        },
+        {
+            "id": "tiny_positions_noise",
+            "description": "Many tiny positions can confuse signals; should still detect passive indexing.",
+            "archetype": "data quality noisy",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "VTI",
+                    "value": 90000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "VXUS",
+                    "value": 8000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "BND",
+                    "value": 2000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "DOGE",
+                    "value": 50,
+                    "currency": "USD",
+                    "assetType": "crypto"
+                },
+                {
+                    "ticker": "GME",
+                    "value": 50,
+                    "currency": "USD",
+                    "assetType": "stock"
+                },
+                {
+                    "ticker": "AMC",
+                    "value": 50,
+                    "currency": "USD",
+                    "assetType": "stock"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "passive_indexing",
+                "secondaryPhilosophies": [],
+                "allowAlternatePrimary": [
+                    "balanced_allocation"
+                ]
+            },
+            "edgeCaseFlags": [
+                "tiny_positions",
+                "data_quality_noisy"
+            ]
+        },
+        {
+            "id": "confused_mix_meme_crypto_income",
+            "description": "Conflicting signals: meme stocks + crypto + income ETFs + index.",
+            "archetype": "confused mix",
+            "baseCurrency": "USD",
+            "holdings": [
+                {
+                    "ticker": "VOO",
+                    "value": 30000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "QYLD",
+                    "value": 15000,
+                    "currency": "USD",
+                    "assetType": "etf"
+                },
+                {
+                    "ticker": "BTC",
+                    "value": 15000,
+                    "currency": "USD",
+                    "assetType": "crypto"
+                },
+                {
+                    "ticker": "GME",
+                    "value": 20000,
+                    "currency": "USD",
+                    "assetType": "stock"
+                },
+                {
+                    "ticker": "TSLA",
+                    "value": 20000,
+                    "currency": "USD",
+                    "assetType": "stock"
+                }
+            ],
+            "expected": {
+                "primaryPhilosophy": "mixed_unclear",
+                "secondaryPhilosophies": [
+                    "stock_picking_concentrated",
+                    "crypto_speculation",
+                    "options_overlay_income"
+                ],
+                "allowAlternatePrimary": [
+                    "stock_picking_concentrated",
+                    "thematic_growth"
+                ]
+            },
+            "edgeCaseFlags": [
+                "mixed_signals",
+                "high_concentration",
+                "high_crypto",
+                "options_overlay"
+            ]
+        }
+    ]
+}

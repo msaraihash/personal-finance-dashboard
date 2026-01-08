@@ -1,9 +1,12 @@
 import { Compass } from 'lucide-react';
 import type { ComplianceResult } from '../types/scoring';
+import type { FinancialGoals } from '../types/FinancialGoals';
 import { PhilosophyCard } from './PhilosophyCard';
 
 interface PhilosophyEngineViewProps {
     complianceResult: ComplianceResult | null;
+    netWorthCAD?: number;
+    financialGoals?: FinancialGoals;
 }
 
 /**
@@ -11,7 +14,11 @@ interface PhilosophyEngineViewProps {
  * Per DesignBrief: "Staggered Constellation Reveal" animation on load.
  * Motif: constellation map with glowing nodes.
  */
-export const PhilosophyEngineView = ({ complianceResult }: PhilosophyEngineViewProps) => {
+export const PhilosophyEngineView = ({
+    complianceResult,
+    netWorthCAD,
+    financialGoals
+}: PhilosophyEngineViewProps) => {
     if (!complianceResult) {
         return (
             <div className="glass-card" style={{
@@ -31,7 +38,19 @@ export const PhilosophyEngineView = ({ complianceResult }: PhilosophyEngineViewP
     }
 
     const { philosophies, bestMatch } = complianceResult;
-    const displayPhilosophies = philosophies.filter(p => p.score >= 55 && !p.isExcluded).slice(0, 4);
+
+    // Filter philosophies >= 55 score and not excluded, excluding the fallback philosophy
+    let displayPhilosophies = philosophies
+        .filter(p => p.score >= 55 && !p.isExcluded && p.id !== 'time_to_financial_freedom')
+        .slice(0, 4);
+
+    // Fallback: if no strong matches, show "Time to Financial Freedom"
+    if (displayPhilosophies.length === 0) {
+        const fallback = philosophies.find(p => p.id === 'time_to_financial_freedom');
+        if (fallback) {
+            displayPhilosophies = [fallback];
+        }
+    }
 
     return (
         <div className="philosophy-engine-view" style={{ padding: '1rem 0' }}>
@@ -87,6 +106,8 @@ export const PhilosophyEngineView = ({ complianceResult }: PhilosophyEngineViewP
                         rank={index + 1}
                         isBestMatch={bestMatch?.id === philosophy.id}
                         features={complianceResult.features}
+                        netWorthCAD={netWorthCAD}
+                        financialGoals={financialGoals}
                     />
                 ))}
             </div>

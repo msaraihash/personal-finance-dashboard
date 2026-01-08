@@ -2,7 +2,8 @@ import { Sparkles, CheckCircle2, XCircle } from 'lucide-react';
 import type { PhilosophyMatch } from '../types/scoring';
 import type { PortfolioFeatures } from '../types/features';
 import type { Holding } from '../types';
-import { MOTIF_REGISTRY, isMotifImplemented } from './motifs';
+import type { FinancialGoals } from '../types/FinancialGoals';
+import { MOTIF_REGISTRY, isMotifImplemented, RunwayMeter } from './motifs';
 
 interface PhilosophyCardProps {
     philosophy: PhilosophyMatch;
@@ -10,6 +11,8 @@ interface PhilosophyCardProps {
     isBestMatch: boolean;
     features?: PortfolioFeatures;
     holdings?: Holding[];
+    netWorthCAD?: number;
+    financialGoals?: FinancialGoals;
 }
 
 /**
@@ -24,7 +27,9 @@ export const PhilosophyCard = ({
     rank,
     isBestMatch,
     features,
-    holdings
+    holdings,
+    netWorthCAD,
+    financialGoals
 }: PhilosophyCardProps) => {
     const scoreColor = philosophy.score >= 75
         ? 'var(--accent-green-dark)'
@@ -34,7 +39,11 @@ export const PhilosophyCard = ({
 
     // Determine primary motif to render (first one in the list)
     const primaryMotif = philosophy.visualMotifs?.[0];
-    const MotifComponent = primaryMotif && isMotifImplemented(primaryMotif.type)
+
+    // Special case: runway_meter needs custom props
+    const isRunwayMeter = primaryMotif?.type === 'runway_meter';
+
+    const MotifComponent = primaryMotif && !isRunwayMeter && isMotifImplemented(primaryMotif.type)
         ? MOTIF_REGISTRY[primaryMotif.type]
         : null;
 
@@ -117,6 +126,28 @@ export const PhilosophyCard = ({
                 }}>
                     {philosophy.displayName}
                 </h3>
+
+                {/* RunwayMeter - Special handling for time_to_financial_freedom */}
+                {isRunwayMeter && netWorthCAD !== undefined && (
+                    <div style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
+                        <RunwayMeter
+                            features={features!}
+                            netWorthCAD={netWorthCAD}
+                            financialGoals={financialGoals}
+                        />
+                        {primaryMotif?.caption && (
+                            <p style={{
+                                fontSize: '0.7rem',
+                                color: 'var(--text-secondary)',
+                                textAlign: 'center',
+                                marginTop: '0.5rem',
+                                fontStyle: 'italic'
+                            }}>
+                                {primaryMotif.caption}
+                            </p>
+                        )}
+                    </div>
+                )}
 
                 {/* Dynamic Motif Visualization */}
                 {MotifComponent && features && (

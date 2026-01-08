@@ -48,6 +48,7 @@ export const loadHistory = (): Snapshot[] => {
 };
 
 const ONBOARDING_KEY = 'pfd_onboarding_state';
+const FINANCIAL_GOALS_KEY = 'pfd_financial_goals';
 
 export interface OnboardingState {
     isComplete: boolean;
@@ -61,4 +62,16 @@ export const saveOnboardingState = (state: OnboardingState) => {
 export const loadOnboardingState = (): OnboardingState => {
     const data = localStorage.getItem(ONBOARDING_KEY);
     return data ? JSON.parse(data) : { isComplete: false };
+};
+
+import type { FinancialGoals } from '../types/FinancialGoals';
+import { DEFAULT_FINANCIAL_GOALS } from '../types/FinancialGoals';
+
+export const saveFinancialGoals = (goals: FinancialGoals) => {
+    localStorage.setItem(FINANCIAL_GOALS_KEY, JSON.stringify(goals));
+};
+
+export const loadFinancialGoals = (): FinancialGoals => {
+    const data = localStorage.getItem(FINANCIAL_GOALS_KEY);
+    return data ? JSON.parse(data) : DEFAULT_FINANCIAL_GOALS;
 };

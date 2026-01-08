@@ -645,6 +645,28 @@ philosophies:
       - type: "tail_risk_badge"
         caption: "Outcomes dominated by tails."
 
+  - id: time_to_financial_freedom
+    display_name: "Time to Financial Freedom"
+    archetype: "Outcome-first, style-agnostic"
+    one_liner: "Track your runway to financial independence, regardless of investment style."
+    principles:
+      - "Focus on savings rate and net worth trajectory."
+      - "Any allocation can work—discipline matters most."
+      - "Measure progress toward 'FI number' (25× annual expenses)."
+    typical_instruments:
+      - "Any diversified holdings"
+      - "Cash / emergency fund"
+    detection:
+      weight: 0.1  # Low priority—only surfaces as fallback
+      signals:
+        - name: "Has any holdings"
+          rule: "n_positions >= 1"
+          points: 100  # Always triggers if portfolio exists
+    exclusions: []
+    visual_motifs:
+      - type: "runway_meter"
+        caption: "Years to financial independence based on current trajectory."
+
 # -----------------------------
 # OPTIONAL: UI copy blocks (short)
 # -----------------------------
