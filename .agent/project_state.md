@@ -53,5 +53,12 @@
     - Added "Restart Onboarding" button to `IPSConfigModal`.
     - Verified full flow with browser automation.
 
+### Phase 8: Validation Infrastructure & Quality Assurance ✅
+- **Philosophy Detection Harness**
+  - Created `src/validation/ground_truth_schema.json` and 20 labeled fixtures.
+  - Implemented `validation.test.ts` with precision/recall metrics and confusion matrices.
+  - Created logic fuzz generator `generateSyntheticPortfolio.ts`.
+  - Identified signal regression (fallback philosophy dominating predictions).
+
 ## Current Focus
-Phase 7 is complete. The application now supports a full user intake flow with detecting or selecting an investment philosophy. Next steps involve enriching the tactical panel.
+Infrastructure is ready for signal tuning. The validation harness is successfully detecting that the fallback philosophy scores too highly, providing the necessary feedback loop for the next phase of engine refinement.

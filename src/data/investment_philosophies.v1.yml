@@ -661,7 +661,7 @@ philosophies:
       signals:
         - name: "Has any holdings"
           rule: "n_positions >= 1"
-          points: 100  # Always triggers if portfolio exists
+          points: 10  # Low score—only surfaces if nothing else > 55
     exclusions: []
     visual_motifs:
       - type: "runway_meter"

@@ -1,5 +1,5 @@
 // validation.test.ts
-import { describe, it, expect, afterAll } from "vitest";
+import { describe, it, afterAll } from "vitest";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promises as fs } from "node:fs";
@@ -429,7 +429,7 @@ afterAll(async () => {
 
     const report = lines.join("\n") + "\n";
     // Print to console for CI visibility
-    // eslint-disable-next-line no-console
+    // Print to console for CI visibility
     console.log(report);
     await writeReport(report);
 
