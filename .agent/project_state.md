@@ -22,9 +22,10 @@
 - Implemented `src/hooks/usePhilosophyEngine.ts` (React Integration).
 - Verified with comprehensive `vitest` suites.
 
-### Phase 5: Visual Overhaul (Next) 🚧
-- Implement the "Nebula Glass" UI components.
-- Build visualizations (Barbells, Sankeys) driven by the Engine.
+### Phase 5: Visual Overhaul ✅
+- Established **Design Contract System** (`DESIGN_CONTRACT_V1.md`).
+- Implemented `PhilosophyCard` and `PhilosophyEngineView`.
+- Integrated "Nebula Glass" theme with staggered animations.
 
 ## Current Focus
-Phase 4 is complete. The application can now take a portfolio and output a sorted list of matched Investment Philosophies. Next step is Phase 5: Building the UI to display these results.
+Phase 5 is complete. Next steps include deep-diving into specific visualizations (Barbell Chart, etc.) and refining transition states.
