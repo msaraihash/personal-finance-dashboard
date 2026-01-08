@@ -1,36 +1,44 @@
 # Architecture Documentation
 
 ## Data Flow Pipeline
-The application allows for a "stateless" flow where data is ingested, processed, and discarded or utilized immediately, with minimal persistence for convenience.
+The application allows for a **Local-First**, compliance-driven loop.
 
 ```mermaid
 graph TD
-    A[User CSV Upload] -->|Raw Text| B[Parser Service]
-    B -->|Holding[]| C[useIPSEngine Hook]
-    D[Manual Config] -->|IPSState| C
-    C -->|Metrics Object| E[StrategicVisuals]
-    C -->|Metrics Object| F[TacticalPanel]
-    C -->|RebalanceInstruction[]| F
+    A[User CSV Upload] -->|Wealthsimple CSV| B[Parser Service]
+    B -->|Holding[]| C[FeatureExtractor]
+    D[Manual Assets] -->|Asset[]| C
+    C -->|PortfolioFeatures| E[Philosophy Engine]
+    F[Philosophy Defs (YAML)] -->|Rules| E
+    E -->|ComplianceResult| G[StrategicVisuals]
+    E -->|RebalanceAction[]| H[TacticalPanel]
 ```
 
 ### 1. Ingestion Layer (`src/services/parser.ts`)
-*   **Input**: Raw CSV text from Wealthsimple or Fidelity.
-*   **Normalization**: Maps various column headers (e.g., "Market Value", "Amount") to a unified `Holding` interface.
-*   **Exchange Rates**: Fetches live USD/CAD rates from `frankfurter.app` but allows manual fallback.
+*   **Wealthsimple Only**: Strictly parses the specific schema from Wealthsimple trade/account exports.
+*   **Normalization**: Converts raw CSV rows into a standardized `Holding` object (Ticker, Amount, Currency).
 
-### 2. Aggregation Logic (`src/hooks/useIPSEngine.ts`)
-*   **Consolidation**: Groups holdings by **Ticker Symbol**.
-    *   *Example*: 10 units of NVDA in RRSP + 5 units in TFSA = 15 units Total NVDA.
-*   **Classification**: Assigns internal categories (Tech Basket, Speculative, Liquidity) based on strict ticker lists (`TECH_TICKERS`).
-*   **Compliance Check**: Compares current aggregation against `IPSState` limits (e.g., "Is NVDA > 5% of Net Worth?").
-
-### 3. Tactical Engine (`src/services/tacticalEngine.ts`)
-*   **Pure Function**: Takes `Metrics` and `IPSState` and outputs `RebalanceInstruction[]`.
+### 2. Feature Extractor (`src/services/featureExtractor.ts`)
+*   **Purpose**: Bridges the gap between raw data and philosophy rules.
 *   **Logic**:
-    1.  Check Liquidity Floor (add CASH if < $200k).
-    2.  Check Tech Concentration (trim if Basket > 10% or Single > 5%).
-    3.  Check Speculative Limits (trim if > 2%).
+    *   **Tagging**: Uses heuristics (Tickers, Asset Class) to identify `Index`, `Crypto`, `Cash`, etc.
+    *   **Metrics**: computes `herfindahl_index`, `pct_equity`, `top_5_positions_pct`.
+
+### 3. The Philosophy Engine (Phase 4)
+*   **Logic**: Consumes `PortfolioFeatures` + `ManualAssets`.
+*   **Registry**: `src/data/investment_philosophies.v1.yml`.
+*   **Execution**:
+    1.  **Extracts** features from holdings.
+    2.  **Matches** against Philosophy Rules (e.g., "Is `pct_single_stocks` > 0? Fail Boglehead").
+    3.  **Returns** a `ComplianceResult`.
+
+### 3. Onboarding Flow (`src/contexts/OnboardingContext.tsx`)
+*   **State Machine**: Tracks the user's journey from "Stranger" to "Dashboard User".
+    *   `Step 0`: Welcome / Value Prop.
+    *   `Step 1`: Select Philosophy (The "Vibe Check").
+    *   `Step 2`: Upload Wealthsimple CSV.
+    *   `Step 3`: Dashboard.
 
 ### 4. Implementation Details
-*   **State Persistence**: `src/services/storage.ts` saves the `IPSState` (manual asset values) to `localStorage` so users don't have to re-enter mortgage balances on every visit.
-*   **Build System**: Vite builds to `/docs` for GitHub Pages compatibility.
+*   **Storage**: `localStorage` keys are now namespaced and generic (e.g., `finance_dashboard_holdings` instead of `michael_holdings`).
+*   **Styling**: Continuing the "Nebula Glass" aesthetic but making components modular to support different visualizations per philosophy.

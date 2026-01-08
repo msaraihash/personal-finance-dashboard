@@ -1,27 +1,27 @@
-# Project Context: Michael & Pam's Journey
+# Project Context: Personal Finance Dashboard (Public Edition)
 
 ## Mission
-This application is **not just a net worth tracker**. It is a **Strategic IPS (Investment Policy Statement) Enforcement Engine**.
-Its primary goal is to turn raw data from Wealthsimple and Fidelity into actionable, emotion-free directives based on a pre-agreed strategy allowing Michael & Pam to execute on their **$5M Retirement Journey**.
+This application is a **Privacy-First, Visual Investment Mapper**.
+Its goal is to turn raw data from **Wealthsimple** (via CSV) into unforgettable visual communications of a user's financial reality, mapped to their chosen **Investment Philosophy** (e.g., Taleb, Bogle, Dividend).
 
 ## Core Philosophy
-*   **Outcome Over Observation**: We don't just show charts; we show *what to do* (e.g., "Sell $5k NVDA").
-*   **Household Unity**: Assets are combined into a single "Growth Garden", but we track "Spouse" assets (Pam) simply for fair accounting, not separation.
-*   **Peace of Mind**: The UI assumes the user is anxious about money and uses design ("All Is Well") to calm them.
+*   **Privacy First**: "What happens in your browser, stays in your browser." No servers, no databases, no data harvesting.
+*   **Visuals Over Spreadsheets**: We don't just show rows of numbers; we show "Barbells", "Sankeys", and "Donuts" that intuitively explain risk and allocation.
+*   **Opinionated but Flexible**: The app doesn't just "track"; it "grades" your portfolio against strict philosophical rules (e.g., "You claim to be a Boglehead, but you own 50% NVDA. Fail.").
 
 ## Core Entities
 ### Data Sources
-*   **Wealthsimple**: Primary aggregator (CSV export).
-*   **Fidelity**: Secondary aggregator (CSV export).
-*   **Manual Assets**: High-level inputs for illiquid/fixed assets:
-    *   **Property**: Principal residence value.
-    *   **Mortgage**: Current debt load.
-    *   **Spouse Mutual Funds**: Locked-in legacy assets.
-    *   **USD HYSA**: Cash held outside brokerage.
+*   **Wealthsimple**: The primary and initial data source (CSV export).
+*   **Manual Assets**: Generic user-defined assets (Real Estate, Cash, Alternative Investments) that are not in the CSV.
+
+### The Philosophy Engine
+*   **Source of Truth**: `src/data/investment_philosophies.v1.yml` defines 20+ philosophies (definitions, rules, "sins").
+*   **Feature Extraction**: A dedicated layer that converts raw holdings into normalized metrics (e.g., `pct_equity`, `herfindahl_index`) using heuristics.
+*   **Philosophy Selection**: Users match with a philosophy (e.g., Boglehead, Taleb, Yield Hunter) which dictates the "Grading Logic".
 
 ## Technology Stack
 *   **Framework**: [React](https://react.dev/) + [Vite](https://vitejs.dev/)
 *   **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict Mode)
-*   **Deployment**: [GitHub Pages](https://pages.github.com/) (Client-side only)
-*   **Persistence**: `localStorage` (Privacy-first; no server database)
-*   **Styling**: Vanilla CSS (Variables-based theming) + Lucide React (Icons)
+*   **Testing**: [Vitest](https://vitest.dev/)
+*   **Persistence**: `localStorage` (Device-only persistence)
+*   **Deployment**: Static hosting (GitHub Pages / Netlify)
