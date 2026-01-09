@@ -148,6 +148,22 @@
   - Top 3 holdings highlighted with subtle background.
   - Gradient text effect for CAD values on mobile.
 
+### Phase 13: LLM Philosophy Coaching ✅
+- **Firebase Cloud Functions**
+  - Created `functions/` with `coachPhilosophy` callable function.
+  - Integrated Vertex AI Gemini with JSON mode for structured outputs.
+  - Added Zod schemas for request/response validation.
+- **System Prompt & Guardrails**
+  - No specific ticker recommendations (asset classes only).
+  - Always includes legal disclaimer.
+  - Philosophy-specific context injection (Boglehead, Factor, Risk Parity, etc.).
+- **Client Integration**
+  - `usePhilosophyCoach` hook with client-side caching.
+  - `CoachPanel.tsx` UI with alignment score, strengths/gaps, action plan.
+  - Integrated into `RemixStudio.tsx` sidebar.
+- **Bug Fixes**
+  - Fixed pre-existing `metrics.equityPercent` undefined error in App.tsx.
+
 ## Current Focus
-The application is now **mobile-first** with responsive breakpoints. Legacy features (Snapshots, Tactical Rebalance) have been removed. Holdings view redesigned with hero metrics and premium visual styling.
+LLM coaching feature scaffolded. **Next step**: Configure Firebase project and deploy functions to enable live AI coaching in Remix Studio.
 
