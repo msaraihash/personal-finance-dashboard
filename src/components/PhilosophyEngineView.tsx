@@ -39,18 +39,25 @@ export const PhilosophyEngineView = ({
 
     const { philosophies, bestMatch } = complianceResult;
 
-    // Filter philosophies >= 55 score and not excluded, excluding the fallback philosophy
-    let displayPhilosophies = philosophies
+    // 1. Get strong matches (score >= 55)
+    // Filter out 'time_to_financial_freedom' initially to avoid dupes/confusion, we will add it back specifically.
+    const strongMatches = philosophies
         .filter(p => p.score >= 55 && !p.isExcluded && p.id !== 'time_to_financial_freedom')
-        .slice(0, 4);
+        .slice(0, 3); // Take top 3 actual philosophy matches
 
-    // Fallback: if no strong matches, show "Time to Financial Freedom"
-    if (displayPhilosophies.length === 0) {
-        const fallback = philosophies.find(p => p.id === 'time_to_financial_freedom');
-        if (fallback) {
-            displayPhilosophies = [fallback];
-        }
+    // 2. Always grab the "Time to Financial Freedom" philosophy
+    const timeToFreedom = philosophies.find(p => p.id === 'time_to_financial_freedom');
+
+    // 3. Assemble display list: Strong Matches + Time To Freedom
+    const displayPhilosophies = [...strongMatches];
+
+    // Always append Time to Freedom if it exists (it should)
+    if (timeToFreedom) {
+        displayPhilosophies.push(timeToFreedom);
     }
+
+    // Fallback: If absolutely no strong matches and no TimeToFreedom (unlikely), shows empty state below.
+    // If only TimeToFreedom exists, it shows just that card.
 
     return (
         <div className="philosophy-engine-view" style={{ padding: '1rem 0' }}>

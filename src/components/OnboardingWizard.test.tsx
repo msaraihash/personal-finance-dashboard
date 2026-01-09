@@ -96,7 +96,6 @@ describe('OnboardingWizard Financial Goals (Minimal V3)', () => {
             savingsRate: 0.20, // IMPLICIT CONSTANT
             realReturn: 0.05, // IMPLICIT CONSTANT
             safeWithdrawalRate: 0.04, // IMPLICIT CONSTANT
-            savingsRateAppliesTo: 'net',
         }));
     });
 });

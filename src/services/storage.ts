@@ -96,7 +96,6 @@ export const loadFinancialGoals = (): FinancialGoals => {
             grossIncomeAnnual: 100000,
             taxRate: 0.30,
             savingsRate: old.savingsRate || 0.20,
-            savingsRateAppliesTo: 'net', // Safest assumption for simplistic models
             realReturn: 0.04,
             safeWithdrawalRate: 0.04,
             // If they had a custom target, it's tricky since V2 calculates it dynamically.

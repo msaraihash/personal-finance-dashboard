@@ -78,7 +78,6 @@ export const OnboardingWizard: FC<OnboardingWizardProps> = ({ onComplete, onHold
                 // Use calculated / implicit values
                 taxRate: assumedTaxRate,
                 savingsRate: IMPLICIT_SAVINGS_RATE,
-                savingsRateAppliesTo: 'net', // Implicitly saving on net
                 realReturn: IMPLICIT_REAL_RETURN,
                 safeWithdrawalRate: IMPLICIT_SWR,
             };

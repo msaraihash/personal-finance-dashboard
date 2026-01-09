@@ -234,18 +234,6 @@ export const IPSConfigModal = ({
                                             </div>
                                         </div>
 
-                                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
-                                            <div>
-                                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={financialGoals?.savingsRateAppliesTo === 'net'}
-                                                        onChange={(e) => setFinancialGoals({ ...financialGoals!, savingsRateAppliesTo: e.target.checked ? 'net' : 'gross' })}
-                                                    />
-                                                    Apply Savings to Net Income
-                                                </label>
-                                            </div>
-                                        </div>
                                     </div>
                                 )}
 

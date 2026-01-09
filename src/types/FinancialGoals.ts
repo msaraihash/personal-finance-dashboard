@@ -5,7 +5,8 @@ export interface FinancialGoalsV1 {
     fiTargetCAD?: number;
 }
 
-export type SavingsRateApplication = 'gross' | 'net';
+
+
 
 export interface FinancialGoals {
     version: 2;
@@ -13,8 +14,7 @@ export interface FinancialGoals {
     targetRetirementAge: number;
     grossIncomeAnnual: number;
     taxRate: number; // 0.0 - 1.0
-    savingsRate: number; // 0.0 - 1.0
-    savingsRateAppliesTo: SavingsRateApplication;
+    savingsRate: number; // 0.0 - 1.0. ALWAYS applies to Net Income (Post-Tax).
     realReturn: number; // 0.0 - 1.0 (after inflation/fees)
     safeWithdrawalRate: number; // 0.0 - 1.0
 }
@@ -26,7 +26,6 @@ export const DEFAULT_FINANCIAL_GOALS: FinancialGoals = {
     grossIncomeAnnual: 100000,
     taxRate: 0.30,
     savingsRate: 0.20,
-    savingsRateAppliesTo: 'net',
     realReturn: 0.04, // 4% real return
     safeWithdrawalRate: 0.04, // 4% rule
 };
@@ -53,7 +52,6 @@ export const computeFIStatus = (
         grossIncomeAnnual,
         taxRate,
         savingsRate,
-        savingsRateAppliesTo,
         safeWithdrawalRate,
         realReturn,
         currentAge
@@ -61,10 +59,12 @@ export const computeFIStatus = (
 
     // 1. Derive cash flows
     const netIncome = grossIncomeAnnual * (1 - taxRate);
-    const annualSavings = (savingsRateAppliesTo === 'net' ? netIncome : grossIncomeAnnual) * savingsRate;
 
-    // Derived expenses: If saving on gross, allow expenses to be netIncome - savings (which might be low/negative if aggressive)
-    // If strict compliance: expenses = netIncome - annualSavings.
+    // ENFORCED: Savings Rate always applies to Net Income.
+    // "100% savings rate cannot equal gross income."
+    const annualSavings = netIncome * savingsRate;
+
+    // Derived expenses: Net Income - Savings
     const annualExpenses = netIncome - annualSavings;
 
     // 2. FI Target

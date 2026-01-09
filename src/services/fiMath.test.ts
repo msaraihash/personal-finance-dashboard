@@ -9,7 +9,6 @@ const BASE_GOALS: FinancialGoals = {
     grossIncomeAnnual: 100000,
     taxRate: 0.30,
     savingsRate: 0.20,
-    savingsRateAppliesTo: 'net',
     realReturn: 0.04,
     safeWithdrawalRate: 0.04,
 };
@@ -58,22 +57,6 @@ describe('Financial Independence Calculator (Math V2)', () => {
         expect(res.yearsToFI).toBeGreaterThan(34);
         expect(res.yearsToFI).toBeLessThan(35);
         expect(res.isFI).toBe(false);
-    });
-
-    it('should derive expenses correctly when saving on Gross income', () => {
-        const goals: FinancialGoals = {
-            ...BASE_GOALS,
-            savingsRateAppliesTo: 'gross',
-            savingsRate: 0.20
-        };
-        // Net Income = 70k.
-        // Savings = 100k * 0.20 = 20k.
-        // Expenses = 70k - 20k = 50k.
-        // Target = 50k / 0.04 = 1.25M.
-
-        const res = computeFIStatus(0, goals);
-        expect(res.annualExpenses).toBe(50000);
-        expect(res.fiTarget).toBe(1250000);
     });
 
     it('should handle negative real returns gracefully (iterative fallback scenario)', () => {

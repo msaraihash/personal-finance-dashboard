@@ -124,5 +124,9 @@
   - Added reusable `Tooltip.tsx` component.
   - Added explanatory tooltips to Philosophy Rank (#1) and Score (10).
 
+- **Refinement (V2.2)**
+  - **Always Show Financial Freedom**: Engineered `PhilosophyEngineView` to always display the "Time to Financial Freedom" card, regardless of score logic.
+  - **Net Income Enforcement**: Strict enforcement of Savings Rate applying to Net Income (Post-Tax) only, removing ambiguous "Gross Income" options.
+
 ## Current Focus
-The application now has a "Viral/Consumer" aesthetic with high-impact visuals. The core engine is verified and stable.
+The application now has a "Viral/Consumer" aesthetic with high-impact visuals. The core engine is verified and stable, with strict financial modeling rules.
