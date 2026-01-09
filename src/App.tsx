@@ -352,7 +352,7 @@ export default function App() {
                 <div>
                   <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Asset Mix</div>
                   <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--nebula-teal-dark)' }}>
-                    {Math.round(metrics.equityPercent)}%
+                    {Math.round((portfolioFeatures?.pct_equity ?? 0) * 100)}%
                   </div>
                   <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '2px' }}>equity</div>
                 </div>

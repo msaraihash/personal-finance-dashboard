@@ -1,9 +1,11 @@
 import { useRef } from 'react';
 import { useRemixEngine } from '../../hooks/useRemixEngine';
+import { usePhilosophyCoach } from '../../hooks/usePhilosophyCoach';
 import type { Holding, IPSState } from '../../types';
 import type { FinancialGoals } from '../../types/FinancialGoals';
 import { AllocationSliders } from './AllocationSliders';
 import { LiveStats } from './LiveStats';
+import { CoachPanel } from './CoachPanel';
 import { RefreshCcw } from 'lucide-react';
 import { PosterCanvas, PosterPreviewWrapper } from './PosterCanvas';
 import { TemplateMinimal } from './Posters/TemplateMinimal';
@@ -21,6 +23,18 @@ export const RemixStudio = ({ holdings, manualAssets, goals, usdRate, onClose }:
 
     const exportRef = useRef<HTMLDivElement>(null);
     const { sliders, setSlider, remixResult } = useRemixEngine(holdings, manualAssets, goals, usdRate);
+
+    // AI Coach hook
+    const coachOptions = {
+        holdings,
+        manualAssets,
+        goals,
+        usdRate,
+        netWorthCAD: remixResult?.remixed.netWorth ?? 0,
+        yearsToFI: remixResult?.remixed.fiStatus.yearsToFI ?? 0,
+        topPhilosophies: remixResult?.remixed.philosophy.philosophies ?? [],
+    };
+    const coach = usePhilosophyCoach(coachOptions);
 
     return (
         <div style={{ minHeight: '80vh', paddingBottom: '4rem' }}>
@@ -51,8 +65,8 @@ export const RemixStudio = ({ holdings, manualAssets, goals, usdRate, onClose }:
 
             <div className="grid-layout" style={{ gridTemplateColumns: '350px 1fr', gap: '2rem' }}>
 
-                {/* Left: Controls */}
-                <div style={{ gridColumn: '1 / 2' }}>
+                {/* Left: Controls + AI Coach */}
+                <div style={{ gridColumn: '1 / 2', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div className="glass-card" style={{ padding: '1.5rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                             <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Allocations</h3>
@@ -64,7 +78,19 @@ export const RemixStudio = ({ holdings, manualAssets, goals, usdRate, onClose }:
                         <AllocationSliders sliders={sliders} onChange={setSlider} />
                     </div>
 
-                    <div style={{ marginTop: '1.5rem' }}>
+                    {/* AI Coach Panel */}
+                    {remixResult && coachOptions.topPhilosophies.length > 0 && (
+                        <CoachPanel
+                            topPhilosophies={coachOptions.topPhilosophies}
+                            onAnalyze={coach.analyze}
+                            response={coach.response}
+                            isLoading={coach.isLoading}
+                            error={coach.error}
+                            currentPhilosophyId={coach.currentPhilosophyId}
+                        />
+                    )}
+
+                    <div>
                         {/* Hints or tips could go here */}
                         <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.2)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                             <strong>Pro Tip:</strong> Try increasing "VTI" or highly diversified assets to see your Philosophy shift towards "Boglehead".
