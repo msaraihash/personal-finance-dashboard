@@ -320,3 +320,328 @@ svg {
     transition: none;
   }
 }
+
+/* ===== MOBILE-FIRST RESPONSIVE DESIGN ===== */
+
+/* Base mobile styles (applied first) */
+.container {
+  width: 100%;
+  padding: 0;
+}
+
+.grid-layout {
+  grid-template-columns: 1fr !important;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.glass-card {
+  padding: 1.25rem;
+  border-radius: 20px;
+}
+
+/* Mobile Header */
+.navbar {
+  padding: 1rem !important;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.navbar > div:first-child {
+  flex: 1 1 100%;
+}
+
+.navbar > div:last-child {
+  flex: 1 1 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem !important;
+}
+
+/* Mobile buttons */
+.upload-label,
+.btn-primary,
+.btn-secondary {
+  padding: 0.7rem 1rem !important;
+  font-size: 0.8rem;
+}
+
+/* Mobile table improvements */
+.holdings-mobile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.holdings-mobile-card .ticker-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.holdings-mobile-card .value-cad {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* Philosophy cards mobile */
+.philosophy-card {
+  padding: 1.25rem !important;
+}
+
+/* Config Modal mobile */
+@media (max-width: 768px) {
+  .glass-card[style*="max-width: 900px"] {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0.5rem;
+    max-height: 95vh !important;
+    border-radius: 20px !important;
+  }
+  
+  /* Stack modal columns on mobile */
+  .glass-card > div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ===== TABLET BREAKPOINT (768px+) ===== */
+@media (min-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .grid-layout {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    padding: 2rem;
+    gap: 1.5rem;
+  }
+  
+  .glass-card {
+    padding: 2rem;
+    border-radius: 28px;
+  }
+  
+  .navbar {
+    padding: 1.5rem 2rem !important;
+    flex-wrap: nowrap;
+  }
+  
+  .navbar > div:first-child,
+  .navbar > div:last-child {
+    flex: initial;
+  }
+  
+  .upload-label,
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.85rem 1.5rem !important;
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== DESKTOP BREAKPOINT (1024px+) ===== */
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 2rem;
+  }
+  
+  .grid-layout {
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important;
+    padding: 3rem;
+    gap: 2rem;
+  }
+  
+  .glass-card {
+    padding: 2.5rem;
+    border-radius: 32px;
+  }
+  
+  .navbar {
+    padding: 2rem 3rem !important;
+  }
+}
+
+/* ===== LARGE DESKTOP (1400px+) ===== */
+@media (min-width: 1400px) {
+  .grid-layout {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+}
+
+/* ===== HOLDINGS TABLE MOBILE TRANSFORM ===== */
+@media (max-width: 768px) {
+  /* Hide table headers on mobile */
+  table thead {
+    display: none;
+  }
+  
+  table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  table tbody tr {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  
+  table tbody tr td {
+    padding: 0.25rem 0 !important;
+    border: none !important;
+  }
+  
+  /* Ticker/name column */
+  table tbody tr td:first-child {
+    order: 1;
+    padding-bottom: 0.5rem !important;
+  }
+  
+  /* Asset class badge */
+  table tbody tr td:nth-child(2) {
+    order: 2;
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+  }
+  
+  /* Account/source info */
+  table tbody tr td:nth-child(3) {
+    order: 4;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    padding-top: 0.75rem !important;
+    border-top: 1px solid var(--border-color) !important;
+    margin-top: 0.5rem;
+  }
+  
+  /* Native value */
+  table tbody tr td:nth-child(4) {
+    order: 3;
+    font-size: 0.85rem;
+  }
+  
+  /* CAD value - make it prominent */
+  table tbody tr td:last-child {
+    order: 5;
+    text-align: left !important;
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    background: linear-gradient(135deg, var(--nebula-purple), var(--nebula-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 0.5rem;
+  }
+}
+
+/* ===== PHILOSOPHY ENGINE VIEW MOBILE ===== */
+@media (max-width: 768px) {
+  .philosophy-card .score-badge {
+    font-size: 0.7rem !important;
+    padding: 4px 10px !important;
+  }
+  
+  .philosophy-card h3 {
+    font-size: 1.1rem !important;
+  }
+}
+
+/* ===== HEADER MOBILE ENHANCEMENTS ===== */
+@media (max-width: 600px) {
+  .navbar h1 {
+    font-size: 1.1rem !important;
+  }
+  
+  .navbar p {
+    font-size: 0.65rem !important;
+  }
+  
+  /* Hide upload text, show only icon */
+  .upload-label span,
+  .upload-label:not(:has(svg)) {
+    display: none;
+  }
+  
+  .navbar > div:last-child > div:first-child {
+    border-right: none !important;
+    padding-right: 0 !important;
+  }
+  
+  /* Compact action buttons */
+  .btn-secondary {
+    padding: 0.7rem !important;
+  }
+  
+  .btn-secondary span {
+    display: none;
+  }
+}
+
+/* ===== REMIX STUDIO MOBILE ===== */
+@media (max-width: 768px) {
+  .remix-studio-container {
+    padding: 1rem !important;
+  }
+  
+  .remix-studio-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* ===== ONBOARDING WIZARD MOBILE ===== */
+@media (max-width: 600px) {
+  .onboarding-container {
+    padding: 1rem !important;
+  }
+  
+  .onboarding-step {
+    padding: 1.5rem !important;
+  }
+}
+
+/* ===== SAFE AREA INSETS (for notched devices) ===== */
+@supports (padding: max(0px)) {
+  .container {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  button, .upload-label, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Remove hover effects that don't work on touch */
+  .glass-card:hover {
+    transform: none;
+  }
+  
+  .philosophy-card:hover {
+    transform: none;
+  }
+  
+  table tr:hover:not(thead tr) {
+    background: transparent !important;
+  }
+}

@@ -5,7 +5,6 @@ import {
   ChevronUp,
   ChevronDown,
   Sparkles,
-  Zap,
   LayoutDashboard
 } from 'lucide-react';
 import { parseWealthsimpleCSV } from './services/parser';
@@ -17,8 +16,6 @@ import {
   saveHoldings,
   loadIPSState,
   saveIPSState,
-  saveSnapshot,
-  loadHistory,
   loadOnboardingState,
   saveOnboardingState,
   loadFinancialGoals,
@@ -27,12 +24,10 @@ import {
 } from './services/storage';
 import type { FinancialGoals } from './types/FinancialGoals';
 import { OnboardingWizard } from './components/OnboardingWizard';
-import { TacticalPanel } from './components/TacticalPanel';
 import { IPSConfigModal } from './components/IPSConfigModal';
 
-import { HistoryView } from './components/HistoryView';
 import { PhilosophyEngineView } from './components/PhilosophyEngineView';
-import type { Holding, IPSState, Snapshot } from './types';
+import type { Holding, IPSState } from './types';
 import { RemixStudio } from './components/RemixStudio/RemixStudio';
 
 // --- Sub-components ---
@@ -64,7 +59,6 @@ const SortHeader = (
 export default function App() {
   const [holdings, setHoldings] = useState<Holding[]>(loadHoldings());
   const [ipsState, setIpsState] = useState<IPSState>(loadIPSState());
-  const [history, setHistory] = useState<Snapshot[]>(loadHistory());
   const [usdRate, setUsdRate] = useState(1.40);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isRemixOpen, setIsRemixOpen] = useState(false);
@@ -101,23 +95,7 @@ export default function App() {
     saveIPSState(ipsState);
   }, [holdings, ipsState]);
 
-  const handleSnapshot = () => {
-    const snapshot: Snapshot = {
-      id: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-      totalNetWorthCAD: metrics.totalNetWorthCAD,
-      holdings: JSON.parse(JSON.stringify(holdings)), // Deep copy
-      exchangeRate: usdRate
-    };
-    saveSnapshot(snapshot);
-    setHistory(loadHistory());
 
-    // Celebration effect or alert
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-    audio.volume = 0.2;
-    audio.play().catch(() => { }); // Fallback if blocked
-    alert(`Portfolio Snapshot Captured: $${metrics.totalNetWorthCAD.toLocaleString()} CAD recorded.`);
-  };
 
   const metrics = useIPSEngine(holdings, ipsState, usdRate);
 
@@ -211,21 +189,7 @@ export default function App() {
             <Settings size={20} />
           </button>
 
-          <button
-            className="btn-primary"
-            style={{
-              height: '42px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '0 1.5rem',
-              background: 'linear-gradient(135deg, #fff 0%, #cbd5e1 100%)',
-              color: '#000'
-            }}
-            onClick={handleSnapshot}
-          >
-            <Zap size={18} fill="currentColor" /> Snapshot
-          </button>
+
 
           <button
             className="btn-secondary"
@@ -270,70 +234,148 @@ export default function App() {
             />
           </div>
 
-          <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
-            <HistoryView history={history} />
-          </div>
 
-          <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
-            <TacticalPanel metrics={metrics} ipsState={ipsState} />
-          </div>
 
-          <div className="glass-card" style={{ gridColumn: '1 / -1' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <h3 style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.75rem' }}>
-                <Sparkles size={28} color="var(--nebula-teal)" /> Household Inventory
-              </h3>
-              <div style={{ display: 'flex', background: '#f1f5f9', padding: '6px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
-                <button
-                  onClick={() => setViewMode('consolidated')}
-                  style={{
-                    padding: '8px 20px',
+          <div className="glass-card" style={{
+            gridColumn: '1 / -1',
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
+            border: '1px solid rgba(255,255,255,0.9)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            {/* Decorative gradient orb */}
+            <div style={{
+              position: 'absolute',
+              top: '-100px',
+              right: '-100px',
+              width: '300px',
+              height: '300px',
+              background: 'radial-gradient(circle, hsla(180, 70%, 80%, 0.3) 0%, transparent 70%)',
+              borderRadius: '50%',
+              pointerEvents: 'none'
+            }} />
+
+            {/* Hero Section */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem',
+              marginBottom: '2rem',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              {/* Top row: Title + Toggle */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.5rem', color: 'var(--text-primary)' }}>
+                  <div style={{
+                    background: 'linear-gradient(135deg, var(--nebula-teal), var(--nebula-purple))',
+                    padding: '10px',
                     borderRadius: '12px',
-                    fontSize: '0.75rem',
-                    border: 'none',
-                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Sparkles size={20} color="white" />
+                  </div>
+                  Portfolio Holdings
+                </h3>
+                <div style={{ display: 'flex', background: 'rgba(241,245,249,0.8)', padding: '4px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                  <button
+                    onClick={() => setViewMode('consolidated')}
+                    style={{
+                      padding: '6px 16px',
+                      borderRadius: '8px',
+                      fontSize: '0.7rem',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      background: viewMode === 'consolidated' ? 'white' : 'transparent',
+                      color: viewMode === 'consolidated' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      boxShadow: viewMode === 'consolidated' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                      transition: 'all 0.2s'
+                    }}
+                  >Merged</button>
+                  <button
+                    onClick={() => setViewMode('individual')}
+                    style={{
+                      padding: '6px 16px',
+                      borderRadius: '8px',
+                      fontSize: '0.7rem',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      background: viewMode === 'individual' ? 'white' : 'transparent',
+                      color: viewMode === 'individual' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      boxShadow: viewMode === 'individual' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                      transition: 'all 0.2s'
+                    }}
+                  >By Account</button>
+                </div>
+              </div>
+
+              {/* Hero Metrics Row */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                gap: '1rem',
+                padding: '1.25rem',
+                background: 'linear-gradient(135deg, rgba(167,139,250,0.08) 0%, rgba(153,246,228,0.08) 100%)',
+                borderRadius: '16px',
+                border: '1px solid rgba(167,139,250,0.15)'
+              }}>
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Total Value</div>
+                  <div style={{
+                    fontSize: '1.75rem',
                     fontWeight: 800,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    background: viewMode === 'consolidated' ? 'white' : 'transparent',
-                    color: viewMode === 'consolidated' ? 'black' : 'var(--text-secondary)',
-                    transition: 'all 0.3s'
-                  }}
-                >Consolidated</button>
-                <button
-                  onClick={() => setViewMode('individual')}
-                  style={{
-                    padding: '8px 20px',
-                    borderRadius: '12px',
-                    fontSize: '0.75rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: 800,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    background: viewMode === 'individual' ? 'white' : 'transparent',
-                    color: viewMode === 'individual' ? 'black' : 'var(--text-secondary)',
-                    transition: 'all 0.3s'
-                  }}
-                >Individual</button>
+                    fontFamily: 'Outfit, sans-serif',
+                    background: 'linear-gradient(135deg, var(--nebula-purple-dark), var(--nebula-teal-dark))',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
+                    ${metrics.totalNetWorthCAD.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  </div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '2px' }}>CAD</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Positions</div>
+                  <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                    {(viewMode === 'consolidated' ? metrics.consolidatedHoldings.length : holdings.length) + ipsState.manualAssets.length}
+                  </div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '2px' }}>holdings</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Asset Mix</div>
+                  <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--nebula-teal-dark)' }}>
+                    {Math.round(metrics.equityPercent)}%
+                  </div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '2px' }}>equity</div>
+                </div>
               </div>
             </div>
+
+            {/* Holdings Table/List */}
             <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.95rem' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
                 <thead>
-                  <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                    <SortHeader label="Asset / Ticker" sortKey="ticker" sortConfig={sortConfig} onSort={handleSort} />
-                    <SortHeader label="Class" sortKey="assetClass" sortConfig={sortConfig} onSort={handleSort} />
-                    <SortHeader label={viewMode === 'consolidated' ? 'Portfolio Segments' : 'Source'} sortKey={viewMode === 'consolidated' ? 'accounts' : 'source'} sortConfig={sortConfig} onSort={handleSort} />
-                    <SortHeader label="Native Value" sortKey="marketValue" sortConfig={sortConfig} onSort={handleSort} />
-                    <SortHeader label="Value (CAD)" sortKey="valueCAD" align="right" sortConfig={sortConfig} onSort={handleSort} />
+                  <tr style={{ borderBottom: '2px solid var(--border-color)' }}>
+                    <SortHeader label="Asset" sortKey="ticker" sortConfig={sortConfig} onSort={handleSort} />
+                    <SortHeader label="Type" sortKey="assetClass" sortConfig={sortConfig} onSort={handleSort} />
+                    <SortHeader label={viewMode === 'consolidated' ? 'Accounts' : 'Source'} sortKey={viewMode === 'consolidated' ? 'accounts' : 'source'} sortConfig={sortConfig} onSort={handleSort} />
+                    <SortHeader label="Amount" sortKey="marketValue" sortConfig={sortConfig} onSort={handleSort} />
+                    <SortHeader label="CAD Value" sortKey="valueCAD" align="right" sortConfig={sortConfig} onSort={handleSort} />
                   </tr>
                 </thead>
                 <tbody style={{ verticalAlign: 'middle' }}>
                   {(() => {
                     const manualHoldings: Holding[] = ipsState.manualAssets.map(asset => ({
                       id: asset.id,
-                      ticker: 'MANUAL',
+                      ticker: '💎',
                       name: asset.name,
                       assetClass: asset.assetClass,
                       source: 'Manual',
@@ -362,28 +404,66 @@ export default function App() {
                       .map((h, idx) => {
                         const valueCAD = (h as { valueCAD?: number }).valueCAD || (h.currency === 'USD' ? h.marketValue * usdRate : h.marketValue);
                         const isPam = h.accountName?.toLowerCase().includes('pam') || h.accountName?.toLowerCase().includes('spouse');
+                        const isTopHolding = idx < 3;
 
                         return (
-                          <tr key={h.id || idx} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', background: isPam ? '#fff1f2' : 'transparent' }}>
-                            <td style={{ padding: '1.5rem 1rem' }}>
-                              <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)' }}>{h.ticker}</div>
-                              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px', maxWidth: '300px' }}>{h.name}</div>
+                          <tr key={h.id || idx} style={{
+                            borderBottom: '1px solid #f1f5f9',
+                            transition: 'all 0.2s',
+                            background: isPam ? 'rgba(251,207,232,0.15)' : isTopHolding ? 'rgba(167,139,250,0.03)' : 'transparent'
+                          }}>
+                            <td style={{ padding: '1.25rem 1rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <div style={{
+                                  width: '36px',
+                                  height: '36px',
+                                  borderRadius: '10px',
+                                  background: h.assetClass === 'Equity'
+                                    ? 'linear-gradient(135deg, #99f6e4, #5eead4)'
+                                    : h.assetClass === 'Cash'
+                                      ? 'linear-gradient(135deg, #86efac, #4ade80)'
+                                      : h.assetClass === 'Property'
+                                        ? 'linear-gradient(135deg, #fde68a, #fbbf24)'
+                                        : 'linear-gradient(135deg, #e2e8f0, #cbd5e1)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: '0.7rem',
+                                  fontWeight: 800,
+                                  color: 'white',
+                                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                                  flexShrink: 0
+                                }}>
+                                  {h.ticker === '💎' ? '💎' : h.ticker.slice(0, 3)}
+                                </div>
+                                <div>
+                                  <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{h.ticker === '💎' ? h.name : h.ticker}</div>
+                                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '2px', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{h.ticker === '💎' ? 'Manual Asset' : h.name}</div>
+                                </div>
+                              </div>
                             </td>
                             <td>
-                              <span className="status-badge" style={{
-                                background: h.assetClass === 'Equity' ? 'hsla(180, 70%, 50%, 0.1)' : h.assetClass === 'Cash' ? 'hsla(160, 100%, 50%, 0.1)' : 'hsla(240, 10%, 100%, 0.05)',
-                                color: h.assetClass === 'Equity' ? 'var(--nebula-teal)' : h.assetClass === 'Cash' ? '#34d399' : 'var(--text-secondary)',
+                              <span style={{
+                                padding: '4px 10px',
+                                borderRadius: '6px',
                                 fontSize: '0.6rem',
-                                border: `1px solid ${h.assetClass === 'Equity' ? 'hsla(180, 70%, 50%, 0.2)' : 'transparent'}`
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                                background: h.assetClass === 'Equity' ? 'rgba(20, 184, 166, 0.1)' : h.assetClass === 'Cash' ? 'rgba(34, 197, 94, 0.1)' : h.assetClass === 'Property' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(100, 116, 139, 0.1)',
+                                color: h.assetClass === 'Equity' ? '#0d9488' : h.assetClass === 'Cash' ? '#16a34a' : h.assetClass === 'Property' ? '#d97706' : 'var(--text-secondary)'
                               }}>
                                 {h.assetClass}
                               </span>
                             </td>
-                            <td style={{ padding: '1.5rem 1rem', color: isPam ? 'var(--nebula-pink)' : 'var(--text-secondary)', fontWeight: isPam ? 800 : 500, fontStyle: isPam ? 'italic' : 'normal' }} title={viewMode === 'consolidated' ? h.accounts : h.accountName}>
+                            <td style={{ padding: '1.25rem 1rem', color: isPam ? '#ec4899' : 'var(--text-secondary)', fontWeight: isPam ? 700 : 400, fontSize: '0.8rem' }} title={viewMode === 'consolidated' ? h.accounts : h.accountName}>
                               {viewMode === 'consolidated' ? h.accounts : `${h.source} · ${h.accountName}`}
                             </td>
-                            <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{h.marketValue.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span style={{ fontSize: '0.7rem', opacity: 0.5 }}>{h.currency}</span></td>
-                            <td style={{ textAlign: 'right', padding: '1.5rem 1rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums', fontSize: '1.1rem' }}>
+                            <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 500, fontSize: '0.85rem' }}>
+                              {h.marketValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                              <span style={{ fontSize: '0.65rem', opacity: 0.5, marginLeft: '4px' }}>{h.currency}</span>
+                            </td>
+                            <td style={{ textAlign: 'right', padding: '1.25rem 1rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums', fontSize: '1.05rem', color: 'var(--text-primary)' }}>
                               ${Math.round(valueCAD).toLocaleString()}
                             </td>
                           </tr>
@@ -406,8 +486,6 @@ export default function App() {
         setUsdRate={setUsdRate}
         holdings={holdings}
         setHoldings={setHoldings}
-        history={history}
-        setHistory={setHistory}
         onResetOnboarding={handleResetOnboarding}
         financialGoals={financialGoals}
         setFinancialGoals={handleFinancialGoalsSet}

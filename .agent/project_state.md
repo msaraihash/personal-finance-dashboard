@@ -128,5 +128,26 @@
   - **Always Show Financial Freedom**: Engineered `PhilosophyEngineView` to always display the "Time to Financial Freedom" card, regardless of score logic.
   - **Net Income Enforcement**: Strict enforcement of Savings Rate applying to Net Income (Post-Tax) only, removing ambiguous "Gross Income" options.
 
+### Phase 12: Mobile-First UI & Legacy Cleanup ✅
+- **Legacy Code Removal**
+  - Deleted `HistoryView.tsx` (Snapshot feature) - legacy, unused.
+  - Deleted `TacticalPanel.tsx` (Tactical Rebalance) - legacy, unused.
+  - Removed Snapshot button from header.
+  - Cleaned `IPSConfigModal` of snapshot-related props and "Clear History" button.
+- **Mobile-First Responsive CSS**
+  - Added comprehensive media query breakpoints (mobile: 320px, tablet: 768px, desktop: 1024px, large: 1400px).
+  - Header stacks on mobile with centered actions.
+  - Grid layouts collapse to single column on mobile.
+  - Holdings table transforms to card layout on mobile with gradient text values.
+  - Safe area inset support for notched devices.
+  - Touch device optimizations (larger targets, no hover effects).
+- **Holdings "Wow" Redesign**
+  - Added hero metrics summary (Total Value, Positions, Asset Mix).
+  - Decorative gradient orb background.
+  - Ticker icons with asset-class colored gradients.
+  - Top 3 holdings highlighted with subtle background.
+  - Gradient text effect for CAD values on mobile.
+
 ## Current Focus
-The application now has a "Viral/Consumer" aesthetic with high-impact visuals. The core engine is verified and stable, with strict financial modeling rules.
+The application is now **mobile-first** with responsive breakpoints. Legacy features (Snapshots, Tactical Rebalance) have been removed. Holdings view redesigned with hero metrics and premium visual styling.
+

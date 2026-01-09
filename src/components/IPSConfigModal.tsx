@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Settings, X, Trash2, Plus, DollarSign, Wallet, ChevronUp, ChevronDown } from 'lucide-react';
-import type { IPSState, Holding, Snapshot, AssetClass, Currency } from '../types';
+import type { IPSState, Holding, AssetClass, Currency } from '../types';
 import type { ManualAsset } from '../types/Assets';
 import type { FinancialGoals } from '../types/FinancialGoals';
 import { calculateOntarioTax } from '../services/tax';
@@ -14,8 +14,6 @@ interface IPSConfigModalProps {
     setUsdRate: (r: number) => void;
     holdings: Holding[];
     setHoldings: (h: Holding[]) => void;
-    history: Snapshot[];
-    setHistory: (h: Snapshot[]) => void;
     onResetOnboarding: () => void;
     financialGoals?: FinancialGoals;
     setFinancialGoals: (g: FinancialGoals) => void;
@@ -30,7 +28,6 @@ export const IPSConfigModal = ({
     setUsdRate,
     holdings,
     setHoldings,
-    setHistory,
     onResetOnboarding,
     financialGoals,
     setFinancialGoals
@@ -77,12 +74,7 @@ export const IPSConfigModal = ({
         }
     };
 
-    const clearHistory = () => {
-        if (confirm('Are you sure you want to clear your snapshot history? This cannot be undone.')) {
-            setHistory([]);
-            localStorage.setItem('pfd_history', JSON.stringify([]));
-        }
-    };
+
 
     const uniqueAccounts = Array.from(new Set(holdings.map(h =>
         JSON.stringify({ source: h.source, name: h.accountName, type: h.accountType, number: h.accountNumber })
@@ -247,10 +239,7 @@ export const IPSConfigModal = ({
                                     onChange={(e) => setUsdRate(parseFloat(e.target.value) || 0)}
                                     style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
                                 />
-                                <button onClick={clearHistory} style={{ marginTop: '1rem', width: '100%', padding: '0.75rem', background: '#fef2f2', color: '#dc2626', border: '1px dashed #fca5a5', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
-                                    Clear History Snapshots
-                                </button>
-                                <button onClick={onResetOnboarding} style={{ marginTop: '0.5rem', width: '100%', padding: '0.75rem', background: '#f0f9ff', color: '#0ea5e9', border: '1px dashed #7dd3fc', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
+                                <button onClick={onResetOnboarding} style={{ marginTop: '1rem', width: '100%', padding: '0.75rem', background: '#f0f9ff', color: '#0ea5e9', border: '1px dashed #7dd3fc', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
                                     Restart Onboarding Wizard
                                 </button>
                             </div>
