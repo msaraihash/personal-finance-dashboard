@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Settings,
-  AlertTriangle,
   Upload,
-  ShieldCheck,
   ChevronUp,
   ChevronDown,
   Sparkles,
@@ -39,42 +37,7 @@ import { RemixStudio } from './components/RemixStudio/RemixStudio';
 
 // --- Sub-components ---
 
-const ComplianceBanner = ({ compliance }: { compliance: Record<string, boolean> }) => {
-  const isHealthy = Object.values(compliance).every(v => v);
-  return (
-    <div className="glass-card" style={{
-      borderColor: isHealthy ? 'hsla(160, 100%, 50%, 0.4)' : 'hsla(350, 100%, 60%, 0.4)',
-      background: isHealthy ? 'hsla(160, 100%, 10%, 0.2)' : 'hsla(350, 100%, 10%, 0.2)',
-      marginBottom: '1rem',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '1.25rem',
-      padding: '1.25rem 2.5rem',
-      boxShadow: isHealthy ? '0 0 30px hsla(160, 100%, 50%, 0.05)' : '0 0 30px hsla(350, 100%, 60%, 0.05)'
-    }}>
-      <div style={{
-        width: '40px',
-        height: '40px',
-        borderRadius: '14px',
-        background: isHealthy ? 'hsla(160, 100%, 50%, 0.1)' : 'hsla(350, 100%, 60%, 0.1)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: 'inset 0 0 10px rgba(0,0,0,0.5)'
-      }}>
-        {isHealthy ? <ShieldCheck color="#10b981" size={20} /> : <AlertTriangle color="#f43f5e" size={20} />}
-      </div>
-      <div>
-        <h3 style={{ fontSize: '0.9rem', color: isHealthy ? 'var(--accent-green-dark)' : 'var(--accent-red-dark)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          {isHealthy ? 'Governance Protocol: Optimal' : 'Governance Warning: Drift Detected'}
-        </h3>
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-          {isHealthy ? 'All concentration and liquidity rules are within acceptable bounds.' : 'One or more portfolio parameters exceed defined safety limits.'}
-        </p>
-      </div>
-    </div >
-  );
-};
+
 
 const SortHeader = (
   { label, sortKey, align = 'left', sortConfig, onSort }:
@@ -298,14 +261,6 @@ export default function App() {
         <main className="grid-layout stagger-reveal" style={{ marginTop: '0rem' }}>
 
 
-          <div style={{ gridColumn: '1 / -1' }}>
-            <ComplianceBanner compliance={metrics.compliance} />
-          </div>
-
-          <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
-            <HistoryView history={history} />
-          </div>
-
           {/* Phase 5: Philosophy Engine View */}
           <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
             <PhilosophyEngineView
@@ -315,11 +270,15 @@ export default function App() {
             />
           </div>
 
-          <div style={{ gridColumn: '1 / 2' }}>
+          <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
+            <HistoryView history={history} />
+          </div>
+
+          <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
             <TacticalPanel metrics={metrics} ipsState={ipsState} />
           </div>
 
-          <div className="glass-card" style={{ gridColumn: '2 / -1' }}>
+          <div className="glass-card" style={{ gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
               <h3 style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.75rem' }}>
                 <Sparkles size={28} color="var(--nebula-teal)" /> Household Inventory

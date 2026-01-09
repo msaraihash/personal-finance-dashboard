@@ -4,6 +4,7 @@ import type { PortfolioFeatures } from '../types/features';
 import type { Holding } from '../types';
 import type { FinancialGoals } from '../types/FinancialGoals';
 import { MOTIF_REGISTRY, isMotifImplemented, RunwayMeter } from './motifs';
+import { Tooltip } from './ui/Tooltip';
 
 interface PhilosophyCardProps {
     philosophy: PhilosophyMatch;
@@ -88,32 +89,48 @@ export const PhilosophyCard = ({
                                 <Sparkles size={18} color="white" />
                             </div>
                         )}
-                        <span style={{
-                            fontSize: '0.7rem',
-                            fontWeight: 800,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.1em',
-                            color: isBestMatch ? 'var(--nebula-purple-dark)' : 'var(--text-secondary)',
-                        }}>
-                            {isBestMatch ? 'Best Match' : `#${rank}`}
-                        </span>
+                        <Tooltip content={
+                            <div style={{ textAlign: 'center' }}>
+                                <div style={{ fontWeight: 600, color: 'var(--nebula-purple)' }}>Fit Rank</div>
+                                <div style={{ color: 'var(--text-secondary)' }}>How well this philosophy matches<br />your portfolio relative to others.</div>
+                            </div>
+                        }>
+                            <span style={{
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.1em',
+                                color: isBestMatch ? 'var(--nebula-purple-dark)' : 'var(--text-secondary)',
+                                cursor: 'help',
+                            }}>
+                                {isBestMatch ? 'Best Match' : `#${rank}`}
+                            </span>
+                        </Tooltip>
                     </div>
 
                     {/* Score Badge */}
-                    <div
-                        className={isBestMatch ? 'score-pulse' : ''}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            borderRadius: '20px',
-                            background: isBestMatch ? 'var(--nebula-purple)' : 'var(--bg-color)',
-                            color: isBestMatch ? 'white' : scoreColor,
-                            fontWeight: 800,
-                            fontSize: '0.9rem',
-                            border: isBestMatch ? 'none' : `1px solid ${scoreColor}40`,
-                        }}
-                    >
-                        {philosophy.score}
-                    </div>
+                    <Tooltip content={
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontWeight: 600, color: 'var(--nebula-purple)' }}>Match Score</div>
+                            <div style={{ color: 'var(--text-secondary)' }}>0-100 rating based on signal alignment.</div>
+                        </div>
+                    }>
+                        <div
+                            className={isBestMatch ? 'score-pulse' : ''}
+                            style={{
+                                padding: '0.5rem 1rem',
+                                borderRadius: '20px',
+                                background: isBestMatch ? 'var(--nebula-purple)' : 'var(--bg-color)',
+                                color: isBestMatch ? 'white' : scoreColor,
+                                fontWeight: 800,
+                                fontSize: '0.9rem',
+                                border: isBestMatch ? 'none' : `1px solid ${scoreColor}40`,
+                                cursor: 'help',
+                            }}
+                        >
+                            {philosophy.score}
+                        </div>
+                    </Tooltip>
                 </div>
 
                 {/* Title */}
