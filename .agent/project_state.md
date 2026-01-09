@@ -162,8 +162,11 @@
   - `CoachPanel.tsx` UI with alignment score, strengths/gaps, action plan.
   - Integrated into `RemixStudio.tsx` sidebar.
 - **Bug Fixes**
-  - Fixed pre-existing `metrics.equityPercent` undefined error in App.tsx.
+- **Deployment**
+  - Created Firebase project `fi-philosophy-coach` with Blaze billing.
+  - Deployed `coachPhilosophy` Cloud Function to `us-central1`.
+  - Configured client with `.env.local` containing all Firebase keys.
 
 ## Current Focus
-LLM coaching feature scaffolded. **Next step**: Configure Firebase project and deploy functions to enable live AI coaching in Remix Studio.
+LLM coaching feature is **LIVE**. AI Coach panel in Remix Studio calls deployed Cloud Function with Gemini.
 
