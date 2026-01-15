@@ -8,6 +8,6 @@ export default defineConfig({
   plugins: [react(), yaml()],
   base: './',
   build: {
-    outDir: 'docs'
+    outDir: 'dist'
   }
 })

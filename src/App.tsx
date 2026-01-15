@@ -31,6 +31,7 @@ import { OnboardingWizard } from './components/OnboardingWizard';
 import { IPSConfigModal } from './components/IPSConfigModal';
 import { ExpensesView } from './components/ExpensesView';
 import { FICalculatorModal } from './components/FICalculatorModal';
+import { LandingPage } from './components/LandingPage';
 
 import { PhilosophyEngineView } from './components/PhilosophyEngineView';
 import type { Holding, IPSState } from './types';
@@ -79,6 +80,9 @@ export default function App() {
   const [onboardingState, setOnboardingState] = useState(loadOnboardingState());
   const [financialGoals, setFinancialGoals] = useState<FinancialGoals>(loadFinancialGoals());
   const [expenses, setExpenses] = useState<Expense[]>(loadExpenses());
+  const [hasSeenLanding, setHasSeenLanding] = useState(() => {
+    return localStorage.getItem('wealthpath_seen_landing') === 'true';
+  });
 
   const handleOnboardingComplete = (state: OnboardingState) => {
     saveOnboardingState(state);
@@ -115,6 +119,18 @@ export default function App() {
     return extractFeatures(holdings, ipsState.manualAssets, usdRate);
   }, [holdings, ipsState.manualAssets, usdRate]);
   const complianceResult = usePhilosophyEngine(portfolioFeatures);
+
+  // Show landing page for first-time visitors
+  if (!hasSeenLanding) {
+    return (
+      <LandingPage
+        onGetStarted={() => {
+          localStorage.setItem('wealthpath_seen_landing', 'true');
+          setHasSeenLanding(true);
+        }}
+      />
+    );
+  }
 
   if (!onboardingState.isComplete) {
     return (
