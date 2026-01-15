@@ -2,10 +2,12 @@ import Papa from 'papaparse';
 import type { Expense } from '../../types/Expense';
 
 interface WealthsimpleCardRow {
-    'Transaction Date': string;
-    'Posted Date': string;
-    'Description': string;
-    'Amount': string;
+    transaction_date: string;
+    post_date: string;
+    type: string;
+    details: string;
+    amount: string;
+    currency: string;
 }
 
 export const parseWealthsimpleCardCSV = (content: string): Expense[] => {
@@ -14,29 +16,29 @@ export const parseWealthsimpleCardCSV = (content: string): Expense[] => {
         skipEmptyLines: true,
     });
 
+    console.log('[WealthsimpleCardParser] Parsed CSV:', {
+        meta: results.meta,
+        errors: results.errors,
+        rowCount: results.data.length,
+        firstRow: results.data[0],
+    });
+
     const expenses: Expense[] = [];
 
     for (const row of results.data) {
         // Basic validation
-        if (!row['Transaction Date'] || !row['Description'] || !row['Amount']) {
+        if (!row.transaction_date || !row.details || !row.amount) {
             continue;
         }
 
-        // Generate a simple ID (in a real app, maybe hash fields)
-        const id = btoa(`${row['Transaction Date']}-${row['Description']}-${row['Amount']}-${Math.random()}`);
-
-        // Parse Amount (Wealthsimple CSVs usually have positive for spend, negative for payments/refunds? 
-        // Wait, usually CC statements are: Positive = Charge, Negative = Payment.
-        // Let's assume standard behavior. We want "Expenses" to be positive numbers for display usually, 
-        // but data-wise, keeping it raw is safer, OR normalizing.
-        // Let's normalize: If it's a credit card, a positive amount is debt/spend. 
-        // We will store it as number.
+        // Generate a simple ID (hash the key fields for deduplication)
+        const id = btoa(`${row.transaction_date}-${row.details}-${row.amount}-${Math.random()}`);
 
         expenses.push({
             id,
-            date: row['Transaction Date'],
-            payee: row['Description'],
-            amount: parseFloat(row['Amount']),
+            date: row.transaction_date,
+            payee: row.details,
+            amount: parseFloat(row.amount),
             source: 'Wealthsimple',
         });
     }

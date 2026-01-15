@@ -3,9 +3,9 @@ import { parseWealthsimpleCardCSV } from './wealthsimpleCardParser';
 
 describe('wealthsimpleCardParser', () => {
     it('parses a valid CSV correctly', () => {
-        const csv = `Transaction Date,Posted Date,Description,Amount
-2023-10-01,2023-10-02,UBER EATS,25.50
-2023-10-03,2023-10-04,PAYMENT THANK YOU,-500.00
+        const csv = `"transaction_date","post_date","type","details","amount","currency"
+"2023-10-01","2023-10-02","Purchase","UBER EATS","25.50","CAD"
+"2023-10-03","2023-10-04","Payment","PAYMENT THANK YOU","-500.00","CAD"
 `;
         const expenses = parseWealthsimpleCardCSV(csv);
 
@@ -21,10 +21,10 @@ describe('wealthsimpleCardParser', () => {
     });
 
     it('ignores empty lines and missing fields', () => {
-        const csv = `Transaction Date,Posted Date,Description,Amount
-2023-10-01,2023-10-02,VALID,10.00
-,,,
-2023-10-05,,Broken,
+        const csv = `"transaction_date","post_date","type","details","amount","currency"
+"2023-10-01","2023-10-02","Purchase","VALID","10.00","CAD"
+,,,,,
+"2023-10-05","","","","","CAD"
 `;
         const expenses = parseWealthsimpleCardCSV(csv);
         expect(expenses).toHaveLength(1);

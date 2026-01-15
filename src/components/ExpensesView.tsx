@@ -16,13 +16,18 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
         const file = e.target.files?.[0];
         if (!file) return;
 
+        console.log('[ExpensesView] File selected:', file.name, file.size);
+
         const reader = new FileReader();
         reader.onload = (event) => {
             const content = event.target?.result as string;
+            console.log('[ExpensesView] File read, length:', content.length, 'First 500 chars:', content.substring(0, 500));
             const newExpenses = parseWealthsimpleCardCSV(content);
+            console.log('[ExpensesView] Parsed expenses:', newExpenses.length, newExpenses.slice(0, 3));
             // Filter out duplicates (if any, based on ID)
             const existingIds = new Set(expenses.map(e => e.id));
             const uniqueNew = newExpenses.filter(e => !existingIds.has(e.id));
+            console.log('[ExpensesView] Unique new expenses:', uniqueNew.length);
 
             onExpensesLoaded(uniqueNew);
         };
