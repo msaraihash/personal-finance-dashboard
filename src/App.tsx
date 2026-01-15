@@ -75,7 +75,6 @@ export default function App() {
   });
 
   const [onboardingState, setOnboardingState] = useState(loadOnboardingState());
-  const [onboardingState, setOnboardingState] = useState(loadOnboardingState());
   const [financialGoals, setFinancialGoals] = useState<FinancialGoals>(loadFinancialGoals());
   const [expenses, setExpenses] = useState<Expense[]>(loadExpenses());
 
