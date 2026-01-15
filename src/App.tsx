@@ -5,7 +5,8 @@ import {
   ChevronUp,
   ChevronDown,
   Sparkles,
-  LayoutDashboard
+  LayoutDashboard,
+  CreditCard
 } from 'lucide-react';
 import { parseWealthsimpleCSV } from './services/parser';
 import { useIPSEngine } from './hooks/useIPSEngine';
@@ -20,11 +21,15 @@ import {
   saveOnboardingState,
   loadFinancialGoals,
   saveFinancialGoals,
+  loadExpenses,
+  saveExpenses,
   type OnboardingState
 } from './services/storage';
 import type { FinancialGoals } from './types/FinancialGoals';
+import type { Expense } from './types/Expense';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { IPSConfigModal } from './components/IPSConfigModal';
+import { ExpensesView } from './components/ExpensesView';
 
 import { PhilosophyEngineView } from './components/PhilosophyEngineView';
 import type { Holding, IPSState } from './types';
@@ -62,6 +67,7 @@ export default function App() {
   const [usdRate, setUsdRate] = useState(1.40);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isRemixOpen, setIsRemixOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'expenses'>('dashboard');
   const [viewMode, setViewMode] = useState<'individual' | 'consolidated'>('consolidated');
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({
     key: 'valueCAD',
@@ -69,7 +75,9 @@ export default function App() {
   });
 
   const [onboardingState, setOnboardingState] = useState(loadOnboardingState());
+  const [onboardingState, setOnboardingState] = useState(loadOnboardingState());
   const [financialGoals, setFinancialGoals] = useState<FinancialGoals>(loadFinancialGoals());
+  const [expenses, setExpenses] = useState<Expense[]>(loadExpenses());
 
   const handleOnboardingComplete = (state: OnboardingState) => {
     saveOnboardingState(state);
@@ -93,7 +101,8 @@ export default function App() {
   useEffect(() => {
     saveHoldings(holdings);
     saveIPSState(ipsState);
-  }, [holdings, ipsState]);
+    saveExpenses(expenses);
+  }, [holdings, ipsState, expenses]);
 
 
 
@@ -195,6 +204,24 @@ export default function App() {
             className="btn-secondary"
             style={{
               height: '42px',
+              padding: '0 1.5rem',
+              background: activeTab === 'expenses' ? 'var(--text-primary)' : 'white',
+              color: activeTab === 'expenses' ? 'white' : 'var(--text-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '14px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '8px'
+            }}
+            onClick={() => { setActiveTab('expenses'); setIsRemixOpen(false); }}
+          >
+            <CreditCard size={18} /> Expenses
+          </button>
+
+          <button
+            className="btn-secondary"
+            style={{
+              height: '42px',
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
@@ -221,6 +248,19 @@ export default function App() {
           usdRate={usdRate}
           onClose={() => setIsRemixOpen(false)}
         />
+      ) : activeTab === 'expenses' ? (
+        <main className="grid-layout stagger-reveal" style={{ marginTop: '0rem' }}>
+          <div style={{ marginBottom: '1rem' }}>
+            <button onClick={() => setActiveTab('dashboard')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <ChevronDown style={{ transform: 'rotate(90deg)' }} size={16} /> Back to Dashboard
+            </button>
+          </div>
+          <ExpensesView
+            expenses={expenses}
+            onExpensesLoaded={(newExpenses) => setExpenses(opts => [...opts, ...newExpenses])}
+            onClearExpenses={() => setExpenses([])}
+          />
+        </main>
       ) : (
         <main className="grid-layout stagger-reveal" style={{ marginTop: '0rem' }}>
 

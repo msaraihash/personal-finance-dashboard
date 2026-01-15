@@ -108,3 +108,18 @@ export const loadFinancialGoals = (): FinancialGoals => {
     return parsed as FinancialGoals;
 };
 
+
+// --- Expenses Storage ---
+
+import type { Expense } from '../types/Expense';
+
+const EXPENSES_KEY = 'pfd_expenses';
+
+export const saveExpenses = (expenses: Expense[]) => {
+    localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
+};
+
+export const loadExpenses = (): Expense[] => {
+    const data = localStorage.getItem(EXPENSES_KEY);
+    return data ? JSON.parse(data) : [];
+};
