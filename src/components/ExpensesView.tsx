@@ -47,7 +47,21 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
     }, [expenses, filter]);
 
     const totalSpent = useMemo(() => {
-        return expenses.reduce((sum, e) => sum + e.amount, 0);
+        return expenses.filter(e => e.amount > 0).reduce((sum, e) => sum + e.amount, 0);
+    }, [expenses]);
+
+    const medianMonthlySpend = useMemo(() => {
+        const monthlyTotals = new Map<string, number>();
+        for (const expense of expenses) {
+            if (expense.amount <= 0) continue;
+            const date = new Date(expense.date);
+            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            monthlyTotals.set(monthKey, (monthlyTotals.get(monthKey) || 0) + expense.amount);
+        }
+        const values = Array.from(monthlyTotals.values()).sort((a, b) => a - b);
+        if (values.length === 0) return 0;
+        const mid = Math.floor(values.length / 2);
+        return values.length % 2 === 0 ? (values[mid - 1] + values[mid]) / 2 : values[mid];
     }, [expenses]);
 
     return (
@@ -158,10 +172,25 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                             Total Spend
                         </div>
                         <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#9d174d', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                            \${totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            ${totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                         <div style={{ fontSize: '0.85rem', color: '#be185d', marginTop: '8px', fontWeight: 500 }}>
-                            {expenses.length} transactions
+                            {expenses.filter(e => e.amount > 0).length} transactions
+                        </div>
+                    </div>
+
+                    {/* Median Monthly Spend */}
+                    <div style={{
+                        padding: '1.25rem',
+                        background: 'linear-gradient(135deg, rgba(96,165,250,0.1), rgba(59,130,246,0.05))',
+                        borderRadius: '20px',
+                        border: '1px solid rgba(96,165,250,0.2)'
+                    }}>
+                        <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 700, color: '#1d4ed8', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                            Median Monthly
+                        </div>
+                        <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1e40af', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                            ${medianMonthlySpend.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                         </div>
                     </div>
 
@@ -183,7 +212,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                             .map(([payee, amount], idx) => (
                                 <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: idx < 4 ? '1px solid #f1f5f9' : 'none' }}>
                                     <span style={{ fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60%' }}>{payee}</span>
-                                    <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>\${amount.toFixed(0)}</span>
+                                    <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>${amount.toFixed(0)}</span>
                                 </div>
                             ))}
 
@@ -253,7 +282,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                                         })()}
                                     </div>
                                     <div style={{ textAlign: 'right', fontWeight: 700, fontSize: '1rem', color: e.amount > 0 ? '#1e293b' : '#16a34a', fontVariantNumeric: 'tabular-nums' }}>
-                                        {e.amount > 0 ? '' : '+'} \${Math.abs(e.amount).toFixed(2)}
+                                        {e.amount > 0 ? '' : '+'} ${Math.abs(e.amount).toFixed(2)}
                                     </div>
                                 </div>
                             ))
