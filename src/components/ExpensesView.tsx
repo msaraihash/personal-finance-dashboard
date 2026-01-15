@@ -16,25 +16,50 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
     const [filter, setFilter] = useState('');
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
 
-        console.log('[ExpensesView] File selected:', file.name, file.size);
+        console.log('[ExpensesView] Files selected:', files.length);
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const content = event.target?.result as string;
-            console.log('[ExpensesView] File read, length:', content.length, 'First 500 chars:', content.substring(0, 500));
-            const newExpenses = parseWealthsimpleCardCSV(content);
-            console.log('[ExpensesView] Parsed expenses:', newExpenses.length, newExpenses.slice(0, 3));
-            // Filter out duplicates (if any, based on ID)
-            const existingIds = new Set(expenses.map(e => e.id));
-            const uniqueNew = newExpenses.filter(e => !existingIds.has(e.id));
-            console.log('[ExpensesView] Unique new expenses:', uniqueNew.length);
+        // Create expense hash for deduplication (date + payee + amount)
+        const createHash = (exp: Expense) => `${exp.date}|${exp.payee}|${exp.amount}`;
+        const existingHashes = new Set(expenses.map(createHash));
 
-            onExpensesLoaded(uniqueNew);
-        };
-        reader.readAsText(file);
+        const allNewExpenses: Expense[] = [];
+        let filesProcessed = 0;
+
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const content = event.target?.result as string;
+                console.log(`[ExpensesView] File ${file.name} read, length:`, content.length);
+                const parsed = parseWealthsimpleCardCSV(content);
+                console.log(`[ExpensesView] Parsed ${parsed.length} expenses from ${file.name}`);
+
+                // Filter duplicates using hash
+                const unique = parsed.filter(exp => {
+                    const hash = createHash(exp);
+                    if (existingHashes.has(hash)) {
+                        return false;
+                    }
+                    existingHashes.add(hash); // Track across files in this batch too
+                    return true;
+                });
+
+                allNewExpenses.push(...unique);
+                filesProcessed++;
+
+                // When all files processed, notify parent
+                if (filesProcessed === files.length) {
+                    console.log(`[ExpensesView] Total unique new expenses: ${allNewExpenses.length}`);
+                    onExpensesLoaded(allNewExpenses);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Reset input so same files can be re-selected
+        e.target.value = '';
     };
 
     const filteredExpenses = useMemo(() => {
@@ -116,7 +141,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                     </div>
 
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <input type="file" id="expense-upload" hidden onChange={handleFileUpload} accept=".csv" />
+                        <input type="file" id="expense-upload" hidden onChange={handleFileUpload} accept=".csv" multiple />
                         <label htmlFor="expense-upload" className="upload-label" style={{
                             borderRadius: '14px',
                             background: 'var(--text-primary)',
