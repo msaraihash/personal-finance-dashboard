@@ -2,9 +2,5 @@
 name = "wealthpath"
 compatibility_date = "2024-01-01"
 
-# Pages-specific configuration
-# The actual deployment is done via `wrangler pages deploy`
-# This file mainly provides project naming and settings
-
-[site]
-bucket = "./dist"
+# Pages configuration
+pages_build_output_dir = "dist"
