@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Upload, CreditCard, Calendar, Search, TrendingUp, PieChart } from 'lucide-react';
+import { Upload, CreditCard, Calendar, Search, TrendingUp, PieChart, Trash2 } from 'lucide-react';
 import type { Expense } from '../types/Expense';
 import { parseWealthsimpleCardCSV } from '../services/csvParsers/wealthsimpleCardParser';
 import { categorizeExpense, CATEGORY_COLORS } from '../services/categorizer';
@@ -12,7 +12,7 @@ interface ExpensesViewProps {
     onClearExpenses: () => void;
 }
 
-export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpensesLoaded }) => {
+export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpensesLoaded, onClearExpenses }) => {
     const [filter, setFilter] = useState('');
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +126,27 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                         }}>
                             <Upload size={16} /> Upload CSV
                         </label>
+                        {expenses.length > 0 && (
+                            <button
+                                onClick={onClearExpenses}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    padding: '0.6rem 1rem',
+                                    borderRadius: '14px',
+                                    background: 'transparent',
+                                    color: '#ef4444',
+                                    border: '1px solid #fca5a5',
+                                    cursor: 'pointer',
+                                    fontSize: '0.9rem',
+                                    fontWeight: 600,
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                <Trash2 size={16} /> Clear All
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
