@@ -19,7 +19,8 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
         const files = e.target.files;
         if (!files || files.length === 0) return;
 
-        console.log('[ExpensesView] Files selected:', files.length);
+        const fileCount = files.length; // Store count before reset
+        console.log('[ExpensesView] Files selected:', fileCount);
 
         // Create expense hash for deduplication (date + payee + amount)
         const createHash = (exp: Expense) => `${exp.date}|${exp.payee}|${exp.amount}`;
@@ -28,7 +29,11 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
         const allNewExpenses: Expense[] = [];
         let filesProcessed = 0;
 
-        Array.from(files).forEach(file => {
+        // Reset input immediately so same files can be re-selected
+        const fileArray = Array.from(files);
+        e.target.value = '';
+
+        fileArray.forEach(file => {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const content = event.target?.result as string;
@@ -50,16 +55,13 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                 filesProcessed++;
 
                 // When all files processed, notify parent
-                if (filesProcessed === files.length) {
+                if (filesProcessed === fileCount) {
                     console.log(`[ExpensesView] Total unique new expenses: ${allNewExpenses.length}`);
                     onExpensesLoaded(allNewExpenses);
                 }
             };
             reader.readAsText(file);
         });
-
-        // Reset input so same files can be re-selected
-        e.target.value = '';
     };
 
     const filteredExpenses = useMemo(() => {
