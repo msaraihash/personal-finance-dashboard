@@ -30,7 +30,6 @@ export const MonthlySpendingChart: React.FC<MonthlySpendingChartProps> = ({ expe
 
             const date = new Date(expense.date);
             const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            const displayMonth = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 
             const existing = monthMap.get(monthKey) || 0;
             monthMap.set(monthKey, existing + expense.amount);
@@ -90,7 +89,7 @@ export const MonthlySpendingChart: React.FC<MonthlySpendingChartProps> = ({ expe
                         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                         fontSize: '0.9rem',
                     }}
-                    formatter={(value: number) => [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 'Spent']}
+                    formatter={(value) => [`$${(value as number).toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 'Spent']}
                     cursor={{ fill: 'rgba(244, 114, 182, 0.1)' }}
                 />
                 <Bar dataKey="total" radius={[6, 6, 0, 0]}>

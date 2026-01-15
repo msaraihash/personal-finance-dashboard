@@ -5,7 +5,6 @@ import {
     Cell,
     Tooltip,
     ResponsiveContainer,
-    Legend,
 } from 'recharts';
 import type { Expense } from '../../types/Expense';
 import { categorizeExpense, CATEGORY_COLORS } from '../../services/categorizer';
@@ -19,6 +18,7 @@ interface CategoryData {
     value: number;
     color: string;
     percentage: number;
+    [key: string]: string | number;
 }
 
 export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({ expenses }) => {
@@ -122,9 +122,9 @@ export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({ expenses
                             boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                             fontSize: '0.85rem',
                         }}
-                        formatter={(value: number, name: string) => [
-                            `$${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
-                            name
+                        formatter={(value, name) => [
+                            `$${(value as number).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+                            name as string
                         ]}
                     />
                 </PieChart>
