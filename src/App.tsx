@@ -528,6 +528,7 @@ export default function App() {
         onResetOnboarding={handleResetOnboarding}
         financialGoals={financialGoals}
         setFinancialGoals={handleFinancialGoalsSet}
+        expenses={expenses}
       />
     </div>
   );

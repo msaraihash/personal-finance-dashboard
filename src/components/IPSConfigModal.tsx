@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { Settings, X, Trash2, Plus, DollarSign, Wallet, ChevronUp, ChevronDown } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Settings, X, Trash2, Plus, DollarSign, Wallet, ChevronUp, ChevronDown, Sparkles } from 'lucide-react';
 import type { IPSState, Holding, AssetClass, Currency } from '../types';
 import type { ManualAsset } from '../types/Assets';
 import type { FinancialGoals } from '../types/FinancialGoals';
+import type { Expense } from '../types/Expense';
 import { calculateOntarioTax } from '../services/tax';
 
 interface IPSConfigModalProps {
@@ -17,6 +18,7 @@ interface IPSConfigModalProps {
     onResetOnboarding: () => void;
     financialGoals?: FinancialGoals;
     setFinancialGoals: (g: FinancialGoals) => void;
+    expenses?: Expense[];
 }
 
 export const IPSConfigModal = ({
@@ -30,7 +32,8 @@ export const IPSConfigModal = ({
     setHoldings,
     onResetOnboarding,
     financialGoals,
-    setFinancialGoals
+    setFinancialGoals,
+    expenses = []
 }: IPSConfigModalProps) => {
     const [showAdvancedGoals, setShowAdvancedGoals] = useState(false);
     const [newAsset, setNewAsset] = useState<Partial<ManualAsset>>({
@@ -39,6 +42,34 @@ export const IPSConfigModal = ({
         name: '',
         value: 0
     });
+
+    // Compute suggested savings rate from expense data
+    const suggestedSavingsRate = useMemo(() => {
+        if (!financialGoals || expenses.length === 0) return null;
+
+        // Calculate annualized expenses from uploaded data
+        const monthlyTotals = new Map<string, number>();
+        for (const expense of expenses) {
+            if (expense.amount <= 0) continue;
+            const date = new Date(expense.date);
+            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            monthlyTotals.set(monthKey, (monthlyTotals.get(monthKey) || 0) + expense.amount);
+        }
+
+        if (monthlyTotals.size === 0) return null;
+
+        const monthlyValues = Array.from(monthlyTotals.values());
+        const avgMonthlyExpense = monthlyValues.reduce((a, b) => a + b, 0) / monthlyValues.length;
+        const annualizedExpenses = avgMonthlyExpense * 12;
+
+        // Net income = gross * (1 - tax)
+        const netIncome = financialGoals.grossIncomeAnnual * (1 - financialGoals.taxRate);
+        if (netIncome <= 0) return null;
+
+        // Savings rate = 1 - (expenses / net income)
+        const rate = 1 - (annualizedExpenses / netIncome);
+        return Math.max(0, Math.min(1, rate)); // Clamp 0-100%
+    }, [expenses, financialGoals]);
 
     if (!isOpen) return null;
 
@@ -147,7 +178,31 @@ export const IPSConfigModal = ({
                                 </div>
 
                                 <div style={{ marginBottom: '1rem' }}>
-                                    <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Savings Rate ({((financialGoals?.savingsRate || 0) * 100).toFixed(0)}%)</label>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                        <label style={{ fontSize: '0.7rem', fontWeight: 700 }}>
+                                            After-Tax Savings Rate ({((financialGoals?.savingsRate || 0) * 100).toFixed(0)}%)
+                                        </label>
+                                        {suggestedSavingsRate !== null && (
+                                            <button
+                                                onClick={() => setFinancialGoals({ ...financialGoals!, savingsRate: suggestedSavingsRate })}
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '4px',
+                                                    background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '6px',
+                                                    padding: '4px 8px',
+                                                    fontSize: '0.65rem',
+                                                    fontWeight: 600,
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                <Sparkles size={10} /> Use Suggested ({(suggestedSavingsRate * 100).toFixed(0)}%)
+                                            </button>
+                                        )}
+                                    </div>
                                     <input
                                         type="range"
                                         min="0"
@@ -157,6 +212,9 @@ export const IPSConfigModal = ({
                                         onChange={(e) => setFinancialGoals({ ...financialGoals!, savingsRate: parseFloat(e.target.value) })}
                                         style={{ width: '100%' }}
                                     />
+                                    <p style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '4px', fontStyle: 'italic' }}>
+                                        Percentage of take-home pay you save. {suggestedSavingsRate !== null ? 'Suggested rate computed from your uploaded expenses.' : 'Upload expenses to auto-calculate.'}
+                                    </p>
                                 </div>
 
                                 {/* Advanced Toggle */}
