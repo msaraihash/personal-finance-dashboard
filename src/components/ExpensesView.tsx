@@ -50,7 +50,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
         return expenses.filter(e => e.amount > 0).reduce((sum, e) => sum + e.amount, 0);
     }, [expenses]);
 
-    const medianMonthlySpend = useMemo(() => {
+    const { averageMonthlySpend, monthCount } = useMemo(() => {
         const monthlyTotals = new Map<string, number>();
         for (const expense of expenses) {
             if (expense.amount <= 0) continue;
@@ -58,10 +58,13 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
             const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
             monthlyTotals.set(monthKey, (monthlyTotals.get(monthKey) || 0) + expense.amount);
         }
-        const values = Array.from(monthlyTotals.values()).sort((a, b) => a - b);
-        if (values.length === 0) return 0;
-        const mid = Math.floor(values.length / 2);
-        return values.length % 2 === 0 ? (values[mid - 1] + values[mid]) / 2 : values[mid];
+        const values = Array.from(monthlyTotals.values());
+        if (values.length === 0) return { averageMonthlySpend: 0, monthCount: 0 };
+        const total = values.reduce((sum, v) => sum + v, 0);
+        return {
+            averageMonthlySpend: total / values.length,
+            monthCount: values.length
+        };
     }, [expenses]);
 
     return (
@@ -179,7 +182,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                         </div>
                     </div>
 
-                    {/* Median Monthly Spend */}
+                    {/* Average Monthly Spend */}
                     <div style={{
                         padding: '1.25rem',
                         background: 'linear-gradient(135deg, rgba(96,165,250,0.1), rgba(59,130,246,0.05))',
@@ -187,10 +190,13 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                         border: '1px solid rgba(96,165,250,0.2)'
                     }}>
                         <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 700, color: '#1d4ed8', letterSpacing: '0.05em', marginBottom: '8px' }}>
-                            Median Monthly
+                            Avg Monthly
                         </div>
                         <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1e40af', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                            ${medianMonthlySpend.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                            ${averageMonthlySpend.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#3b82f6', marginTop: '6px', fontWeight: 500 }}>
+                            across {monthCount} months
                         </div>
                     </div>
 
