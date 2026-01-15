@@ -1,7 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { Upload, CreditCard, Calendar, Search } from 'lucide-react';
+import { Upload, CreditCard, Calendar, Search, TrendingUp, PieChart } from 'lucide-react';
 import type { Expense } from '../types/Expense';
 import { parseWealthsimpleCardCSV } from '../services/csvParsers/wealthsimpleCardParser';
+import { categorizeExpense, CATEGORY_COLORS } from '../services/categorizer';
+import { MonthlySpendingChart } from './charts/MonthlySpendingChart';
+import { CategoryDonutChart } from './charts/CategoryDonutChart';
 
 interface ExpensesViewProps {
     expenses: Expense[];
@@ -110,6 +113,37 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                 </div>
             </div>
 
+            {/* Charts Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+                {/* Monthly Spending Chart */}
+                <div style={{
+                    padding: '1.5rem',
+                    background: 'white',
+                    borderRadius: '20px',
+                    border: '1px solid var(--border-color)'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                        <TrendingUp size={18} color="#ec4899" />
+                        <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: 0 }}>Monthly Spending</h4>
+                    </div>
+                    <MonthlySpendingChart expenses={expenses} />
+                </div>
+
+                {/* Category Breakdown */}
+                <div style={{
+                    padding: '1.5rem',
+                    background: 'white',
+                    borderRadius: '20px',
+                    border: '1px solid var(--border-color)'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                        <PieChart size={18} color="#a78bfa" />
+                        <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: 0 }}>By Category</h4>
+                    </div>
+                    <CategoryDonutChart expenses={expenses} />
+                </div>
+            </div>
+
             {/* Main Content Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '2rem' }}>
                 {/* Sidebar / Metrics */}
@@ -131,7 +165,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                         </div>
                     </div>
 
-                    {/* Placeholder for future categories */}
+                    {/* Top Payees */}
                     <div style={{
                         padding: '1.5rem',
                         background: 'white',
@@ -141,7 +175,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                     }}>
                         <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem' }}>Top Payees</h4>
                         {Object.entries(expenses.reduce((acc, curr) => {
-                            acc[curr.payee] = (acc[curr.payee] || 0) + curr.amount;
+                            if (curr.amount > 0) acc[curr.payee] = (acc[curr.payee] || 0) + curr.amount;
                             return acc;
                         }, {} as Record<string, number>))
                             .sort(([, a], [, b]) => b - a)
@@ -170,9 +204,10 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                     display: 'flex',
                     flexDirection: 'column'
                 }}>
-                    <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', background: '#f8fafc', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', display: 'grid', gridTemplateColumns: 'minmax(120px, 1.5fr) 3fr 1.5fr', gap: '1rem' }}>
+                    <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', background: '#f8fafc', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', display: 'grid', gridTemplateColumns: 'minmax(100px, 1fr) 2.5fr 1fr 1fr', gap: '1rem' }}>
                         <div>Date</div>
                         <div>Payee</div>
+                        <div>Category</div>
                         <div style={{ textAlign: 'right' }}>Amount</div>
                     </div>
 
@@ -183,7 +218,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                                     padding: '1rem 1.5rem',
                                     borderBottom: '1px solid #f1f5f9',
                                     display: 'grid',
-                                    gridTemplateColumns: 'minmax(120px, 1.5fr) 3fr 1.5fr',
+                                    gridTemplateColumns: 'minmax(100px, 1fr) 2.5fr 1fr 1fr',
                                     gap: '1rem',
                                     alignItems: 'center',
                                     transition: 'background 0.2s'
@@ -196,6 +231,26 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                                     </div>
                                     <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
                                         {e.payee}
+                                    </div>
+                                    <div>
+                                        {(() => {
+                                            const category = e.category || categorizeExpense(e.payee);
+                                            const color = CATEGORY_COLORS[category] || CATEGORY_COLORS.Other;
+                                            return (
+                                                <span style={{
+                                                    display: 'inline-block',
+                                                    padding: '4px 10px',
+                                                    borderRadius: '20px',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 600,
+                                                    background: `${color}20`,
+                                                    color: color,
+                                                    whiteSpace: 'nowrap'
+                                                }}>
+                                                    {category}
+                                                </span>
+                                            );
+                                        })()}
                                     </div>
                                     <div style={{ textAlign: 'right', fontWeight: 700, fontSize: '1rem', color: e.amount > 0 ? '#1e293b' : '#16a34a', fontVariantNumeric: 'tabular-nums' }}>
                                         {e.amount > 0 ? '' : '+'} \${Math.abs(e.amount).toFixed(2)}
