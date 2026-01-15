@@ -1,5 +1,5 @@
 import Papa from 'papaparse';
-import { Expense } from '../../types/Expense';
+import type { Expense } from '../../types/Expense';
 
 interface WealthsimpleCardRow {
     'Transaction Date': string;

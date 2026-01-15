@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Upload, CreditCard, DollarSign, Calendar, Search } from 'lucide-react';
+import { Upload, CreditCard, Calendar, Search } from 'lucide-react';
 import type { Expense } from '../types/Expense';
 import { parseWealthsimpleCardCSV } from '../services/csvParsers/wealthsimpleCardParser';
 
@@ -9,7 +9,7 @@ interface ExpensesViewProps {
     onClearExpenses: () => void;
 }
 
-export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpensesLoaded, onClearExpenses }) => {
+export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpensesLoaded }) => {
     const [filter, setFilter] = useState('');
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
