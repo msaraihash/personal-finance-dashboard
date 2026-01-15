@@ -297,8 +297,8 @@ export const OnboardingWizard: FC<OnboardingWizardProps> = ({ onComplete, onHold
 
                     <div style={{ background: 'white', borderRadius: '16px', padding: '2rem', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
 
-                        {/* Primary Inputs */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+                        {/* Primary Inputs - Mobile responsive */}
+                        <div className="onboarding-goals-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.5rem', color: '#1e293b' }}>
                                     Current Age
@@ -450,7 +450,7 @@ export const OnboardingWizard: FC<OnboardingWizardProps> = ({ onComplete, onHold
                     </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                <div className="onboarding-import-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
                     {/* User Upload */}
                     <div style={{
                         border: filesUploaded.user ? '2px solid #10b981' : '2px dashed #cbd5e1',

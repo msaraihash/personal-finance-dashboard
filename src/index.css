@@ -283,9 +283,12 @@ svg {
 
 /* Micro-interaction: Score badge pulse on best match */
 @keyframes scorePulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.4);
   }
+
   50% {
     box-shadow: 0 0 20px 5px rgba(167, 139, 250, 0.2);
   }
@@ -309,13 +312,15 @@ svg {
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  .stagger-reveal > * {
+  .stagger-reveal>* {
     animation: none;
     opacity: 1;
   }
+
   .score-pulse {
     animation: none;
   }
+
   .philosophy-card {
     transition: none;
   }
@@ -347,11 +352,11 @@ svg {
   gap: 1rem;
 }
 
-.navbar > div:first-child {
+.navbar>div:first-child {
   flex: 1 1 100%;
 }
 
-.navbar > div:last-child {
+.navbar>div:last-child {
   flex: 1 1 100%;
   justify-content: center;
   flex-wrap: wrap;
@@ -375,7 +380,7 @@ svg {
   background: white;
   border-radius: 16px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .holdings-mobile-card .ticker-row {
@@ -404,9 +409,9 @@ svg {
     max-height: 95vh !important;
     border-radius: 20px !important;
   }
-  
+
   /* Stack modal columns on mobile */
-  .glass-card > div[style*="grid-template-columns: 1fr 1fr"] {
+  .glass-card>div[style*="grid-template-columns: 1fr 1fr"] {
     grid-template-columns: 1fr !important;
   }
 }
@@ -416,28 +421,28 @@ svg {
   .container {
     padding: 0 1rem;
   }
-  
+
   .grid-layout {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
     padding: 2rem;
     gap: 1.5rem;
   }
-  
+
   .glass-card {
     padding: 2rem;
     border-radius: 28px;
   }
-  
+
   .navbar {
     padding: 1.5rem 2rem !important;
     flex-wrap: nowrap;
   }
-  
-  .navbar > div:first-child,
-  .navbar > div:last-child {
+
+  .navbar>div:first-child,
+  .navbar>div:last-child {
     flex: initial;
   }
-  
+
   .upload-label,
   .btn-primary,
   .btn-secondary {
@@ -451,18 +456,18 @@ svg {
   .container {
     padding: 0 2rem;
   }
-  
+
   .grid-layout {
     grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important;
     padding: 3rem;
     gap: 2rem;
   }
-  
+
   .glass-card {
     padding: 2.5rem;
     border-radius: 32px;
   }
-  
+
   .navbar {
     padding: 2rem 3rem !important;
   }
@@ -478,17 +483,18 @@ svg {
 
 /* ===== HOLDINGS TABLE MOBILE TRANSFORM ===== */
 @media (max-width: 768px) {
+
   /* Hide table headers on mobile */
   table thead {
     display: none;
   }
-  
+
   table tbody {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
   }
-  
+
   table tbody tr {
     display: flex;
     flex-direction: column;
@@ -496,21 +502,21 @@ svg {
     background: white;
     border-radius: 16px;
     border: 1px solid var(--border-color) !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     position: relative;
   }
-  
+
   table tbody tr td {
     padding: 0.25rem 0 !important;
     border: none !important;
   }
-  
+
   /* Ticker/name column */
   table tbody tr td:first-child {
     order: 1;
     padding-bottom: 0.5rem !important;
   }
-  
+
   /* Asset class badge */
   table tbody tr td:nth-child(2) {
     order: 2;
@@ -518,7 +524,7 @@ svg {
     top: 1.25rem;
     right: 1.25rem;
   }
-  
+
   /* Account/source info */
   table tbody tr td:nth-child(3) {
     order: 4;
@@ -528,13 +534,13 @@ svg {
     border-top: 1px solid var(--border-color) !important;
     margin-top: 0.5rem;
   }
-  
+
   /* Native value */
   table tbody tr td:nth-child(4) {
     order: 3;
     font-size: 0.85rem;
   }
-  
+
   /* CAD value - make it prominent */
   table tbody tr td:last-child {
     order: 5;
@@ -555,7 +561,7 @@ svg {
     font-size: 0.7rem !important;
     padding: 4px 10px !important;
   }
-  
+
   .philosophy-card h3 {
     font-size: 1.1rem !important;
   }
@@ -566,27 +572,27 @@ svg {
   .navbar h1 {
     font-size: 1.1rem !important;
   }
-  
+
   .navbar p {
     font-size: 0.65rem !important;
   }
-  
+
   /* Hide upload text, show only icon */
   .upload-label span,
   .upload-label:not(:has(svg)) {
     display: none;
   }
-  
-  .navbar > div:last-child > div:first-child {
+
+  .navbar>div:last-child>div:first-child {
     border-right: none !important;
     padding-right: 0 !important;
   }
-  
+
   /* Compact action buttons */
   .btn-secondary {
     padding: 0.7rem !important;
   }
-  
+
   .btn-secondary span {
     display: none;
   }
@@ -597,7 +603,7 @@ svg {
   .remix-studio-container {
     padding: 1rem !important;
   }
-  
+
   .remix-studio-header {
     flex-direction: column;
     gap: 1rem;
@@ -609,9 +615,101 @@ svg {
   .onboarding-container {
     padding: 1rem !important;
   }
-  
+
   .onboarding-step {
     padding: 1.5rem !important;
+  }
+
+  /* Welcome screen mobile */
+  .onboarding-overlay h1 {
+    font-size: 2rem !important;
+  }
+
+  /* Force age inputs to stack on mobile */
+  .onboarding-goals-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Assumptions grid stack on mobile */
+  .onboarding-overlay div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ===== HEADER MOBILE IMPROVEMENTS ===== */
+@media (max-width: 480px) {
+
+  /* Two-row header layout on very small screens */
+  .navbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    padding: 1rem !important;
+  }
+
+  .navbar>div:first-child {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .navbar>div:last-child {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .navbar>div:last-child>* {
+    justify-content: center;
+  }
+
+  /* Hide border between items */
+  .navbar>div:last-child>div:first-child {
+    border-right: none !important;
+    padding-right: 0 !important;
+  }
+
+  /* Full-width action buttons */
+  .navbar label,
+  .navbar button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* ===== EXPENSES VIEW MOBILE ===== */
+@media (max-width: 768px) {
+
+  /* Stack charts vertically */
+  .expenses-charts-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Stack sidebar and content */
+  .expenses-content-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Stack search and upload controls */
+  .expenses-controls {
+    flex-direction: column !important;
+    width: 100%;
+  }
+
+  .expenses-controls input {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  /* Transaction list mobile */
+  .transaction-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  .transaction-header {
+    display: none !important;
   }
 }
 
@@ -626,21 +724,24 @@ svg {
 
 /* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
 @media (hover: none) and (pointer: coarse) {
+
   /* Larger touch targets */
-  button, .upload-label, a {
+  button,
+  .upload-label,
+  a {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   /* Remove hover effects that don't work on touch */
   .glass-card:hover {
     transform: none;
   }
-  
+
   .philosophy-card:hover {
     transform: none;
   }
-  
+
   table tr:hover:not(thead tr) {
     background: transparent !important;
   }

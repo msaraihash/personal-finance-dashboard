@@ -124,7 +124,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div className="expenses-controls" style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
                     <div style={{ position: 'relative' }}>
                         <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                         <input
@@ -179,7 +179,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
             </div>
 
             {/* Charts Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+            <div className="expenses-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                 {/* Monthly Spending Chart */}
                 <div style={{
                     padding: '1.5rem',
@@ -210,7 +210,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
             </div>
 
             {/* Main Content Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '2rem' }}>
+            <div className="expenses-content-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
                 {/* Sidebar / Metrics */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div style={{
@@ -287,7 +287,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                     display: 'flex',
                     flexDirection: 'column'
                 }}>
-                    <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', background: '#f8fafc', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', display: 'grid', gridTemplateColumns: 'minmax(100px, 1fr) 2.5fr 1fr 1fr', gap: '1rem' }}>
+                    <div className="transaction-header" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', background: '#f8fafc', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', display: 'grid', gridTemplateColumns: 'minmax(100px, 1fr) 2.5fr 1fr 1fr', gap: '1rem' }}>
                         <div>Date</div>
                         <div>Payee</div>
                         <div>Category</div>
@@ -297,7 +297,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                     <div style={{ overflowY: 'auto', maxHeight: '500px' }}>
                         {filteredExpenses.length > 0 ? (
                             filteredExpenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((e) => (
-                                <div key={e.id} style={{
+                                <div key={e.id} className="transaction-row" style={{
                                     padding: '1rem 1.5rem',
                                     borderBottom: '1px solid #f1f5f9',
                                     display: 'grid',
@@ -305,9 +305,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({ expenses, onExpenses
                                     gap: '1rem',
                                     alignItems: 'center',
                                     transition: 'background 0.2s'
-                                }}
-                                    className="hover:bg-slate-50"
-                                >
+                                }}>
                                     <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                         <Calendar size={14} />
                                         {e.date}
