@@ -69,6 +69,17 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
         setLocalGoals(prev => ({ ...prev, [key]: value }));
     };
 
+    // Handle expenses change - back-calculate savings rate
+    const handleExpensesChange = (expenses: number) => {
+        const netIncome = localGoals.grossIncomeAnnual * (1 - localGoals.taxRate);
+        if (netIncome <= 0) return;
+
+        // Clamp expenses to net income
+        const clampedExpenses = Math.min(expenses, netIncome);
+        const newSavingsRate = (netIncome - clampedExpenses) / netIncome;
+        updateGoal('savingsRate', Math.max(0, Math.min(1, newSavingsRate)));
+    };
+
     const handleApply = () => {
         onApply(localGoals);
         onClose();
@@ -186,12 +197,13 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
                             onChange={(v) => updateGoal('taxRate', v / 100)}
                         />
                         <Slider
-                            label="Savings Rate (Post-Tax)"
-                            value={Math.round(localGoals.savingsRate * 100)}
-                            min={0}
-                            max={80}
-                            suffix="%"
-                            onChange={(v) => updateGoal('savingsRate', v / 100)}
+                            label="Annual Expenses"
+                            value={Math.round(fiStatus.annualExpenses)}
+                            min={10000}
+                            max={Math.round(localGoals.grossIncomeAnnual * (1 - localGoals.taxRate))}
+                            step={1000}
+                            formatValue={(v) => formatCurrency(v)}
+                            onChange={handleExpensesChange}
                         />
                         <Slider
                             label="Real Return (After Inflation)"
@@ -312,10 +324,10 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
                                 textAlign: 'center'
                             }}>
                                 <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
-                                    Annual Expenses
+                                    Savings Rate
                                 </span>
                                 <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#334155', marginTop: '0.25rem' }}>
-                                    {formatCurrency(fiStatus.annualExpenses)}
+                                    {Math.round(localGoals.savingsRate * 100)}%
                                 </div>
                             </div>
                         </div>
