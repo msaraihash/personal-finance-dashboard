@@ -206,11 +206,12 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
                             onChange={handleExpensesChange}
                         />
                         <Slider
-                            label="Real Return (After Inflation)"
+                            label="Real Return"
                             value={Math.round(localGoals.realReturn * 100)}
                             min={0}
                             max={12}
                             suffix="%"
+                            tooltip="Expected annual investment growth after inflation and fees. Historically, stocks average ~7% real return, bonds ~2-3%."
                             onChange={(v) => updateGoal('realReturn', v / 100)}
                         />
                         <Slider
@@ -221,6 +222,7 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
                             step={0.1}
                             suffix="%"
                             formatValue={(v) => `${v.toFixed(1)}%`}
+                            tooltip="The percentage of your portfolio you can withdraw annually in retirement without running out of money. The '4% rule' is a common benchmark."
                             onChange={(v) => updateGoal('safeWithdrawalRate', v / 100)}
                         />
                     </div>

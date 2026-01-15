@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Info } from 'lucide-react';
 
 interface SliderProps {
     label: string;
@@ -8,6 +9,7 @@ interface SliderProps {
     step?: number;
     prefix?: string;
     suffix?: string;
+    tooltip?: string;
     onChange: (value: number) => void;
     formatValue?: (value: number) => string;
 }
@@ -23,9 +25,11 @@ export const Slider: React.FC<SliderProps> = ({
     step = 1,
     prefix = '',
     suffix = '',
+    tooltip,
     onChange,
     formatValue
 }) => {
+    const [showTooltip, setShowTooltip] = useState(false);
     const displayValue = formatValue ? formatValue(value) : `${prefix}${value.toLocaleString()}${suffix}`;
     const percentage = ((value - min) / (max - min)) * 100;
 
@@ -38,15 +42,59 @@ export const Slider: React.FC<SliderProps> = ({
                 alignItems: 'center',
                 marginBottom: '0.75rem'
             }}>
-                <span style={{
-                    fontSize: '0.8rem',
-                    fontWeight: 600,
-                    color: '#64748b',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em'
-                }}>
-                    {label}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', position: 'relative' }}>
+                    <span style={{
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        color: '#64748b',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em'
+                    }}>
+                        {label}
+                    </span>
+                    {tooltip && (
+                        <div
+                            style={{ position: 'relative', display: 'inline-flex' }}
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                        >
+                            <Info size={14} color="#94a3b8" style={{ cursor: 'help' }} />
+                            {showTooltip && (
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: '100%',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    marginBottom: '8px',
+                                    padding: '10px 14px',
+                                    background: 'rgba(15, 23, 42, 0.95)',
+                                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                                    borderRadius: '10px',
+                                    color: '#e2e8f0',
+                                    fontSize: '0.75rem',
+                                    lineHeight: 1.5,
+                                    zIndex: 100,
+                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                                    backdropFilter: 'blur(4px)',
+                                    pointerEvents: 'none',
+                                    width: '220px',
+                                    whiteSpace: 'normal'
+                                }}>
+                                    {tooltip}
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        borderWidth: '5px',
+                                        borderStyle: 'solid',
+                                        borderColor: 'rgba(15, 23, 42, 0.95) transparent transparent transparent'
+                                    }} />
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
                 <span style={{
                     fontSize: '1.1rem',
                     fontWeight: 700,
