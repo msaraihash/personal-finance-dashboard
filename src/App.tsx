@@ -30,6 +30,7 @@ import type { Expense } from './types/Expense';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { IPSConfigModal } from './components/IPSConfigModal';
 import { ExpensesView } from './components/ExpensesView';
+import { FICalculatorModal } from './components/FICalculatorModal';
 
 import { PhilosophyEngineView } from './components/PhilosophyEngineView';
 import type { Holding, IPSState } from './types';
@@ -67,6 +68,7 @@ export default function App() {
   const [usdRate, setUsdRate] = useState(1.40);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isRemixOpen, setIsRemixOpen] = useState(false);
+  const [isFICalculatorOpen, setIsFICalculatorOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'expenses'>('dashboard');
   const [viewMode, setViewMode] = useState<'individual' | 'consolidated'>('consolidated');
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({
@@ -270,6 +272,7 @@ export default function App() {
               complianceResult={complianceResult}
               netWorthCAD={metrics.totalNetWorthCAD}
               financialGoals={financialGoals}
+              onExploreFI={() => setIsFICalculatorOpen(true)}
             />
           </div>
 
@@ -529,6 +532,14 @@ export default function App() {
         financialGoals={financialGoals}
         setFinancialGoals={handleFinancialGoalsSet}
         expenses={expenses}
+      />
+
+      <FICalculatorModal
+        isOpen={isFICalculatorOpen}
+        onClose={() => setIsFICalculatorOpen(false)}
+        netWorthCAD={metrics.totalNetWorthCAD}
+        financialGoals={financialGoals}
+        onApply={handleFinancialGoalsSet}
       />
     </div>
   );

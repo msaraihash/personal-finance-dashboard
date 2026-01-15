@@ -7,6 +7,7 @@ interface PhilosophyEngineViewProps {
     complianceResult: ComplianceResult | null;
     netWorthCAD?: number;
     financialGoals?: FinancialGoals;
+    onExploreFI?: () => void;
 }
 
 /**
@@ -17,7 +18,8 @@ interface PhilosophyEngineViewProps {
 export const PhilosophyEngineView = ({
     complianceResult,
     netWorthCAD,
-    financialGoals
+    financialGoals,
+    onExploreFI
 }: PhilosophyEngineViewProps) => {
     if (!complianceResult) {
         return (
@@ -115,6 +117,7 @@ export const PhilosophyEngineView = ({
                         features={complianceResult.features}
                         netWorthCAD={netWorthCAD}
                         financialGoals={financialGoals}
+                        onExploreFI={philosophy.id === 'time_to_financial_freedom' ? onExploreFI : undefined}
                     />
                 ))}
             </div>

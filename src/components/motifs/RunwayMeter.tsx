@@ -1,4 +1,4 @@
-import { Info, Rocket, Sparkles } from 'lucide-react';
+import { Info, Rocket, Sparkles, SlidersHorizontal } from 'lucide-react';
 import { Tooltip } from '../ui/Tooltip';
 import type { MotifProps } from './index';
 import type { FinancialGoals } from '../../types/FinancialGoals';
@@ -7,6 +7,7 @@ import { computeFIStatus, DEFAULT_FINANCIAL_GOALS } from '../../types/FinancialG
 interface RunwayMeterProps extends MotifProps {
     netWorthCAD: number;
     financialGoals?: FinancialGoals;
+    onExplore?: () => void;
 }
 
 /**
@@ -16,7 +17,8 @@ interface RunwayMeterProps extends MotifProps {
  */
 export const RunwayMeter = ({
     netWorthCAD,
-    financialGoals = DEFAULT_FINANCIAL_GOALS
+    financialGoals = DEFAULT_FINANCIAL_GOALS,
+    onExplore
 }: RunwayMeterProps) => {
 
     const status = computeFIStatus(netWorthCAD, financialGoals);
@@ -183,6 +185,40 @@ export const RunwayMeter = ({
                         <Sparkles size={14} color="#fbbf24" fill="#fbbf24" />
                         <span style={{ fontWeight: 600 }}>You are on your way</span>
                     </div>
+                )}
+
+                {/* Explore Button */}
+                {onExplore && (
+                    <button
+                        onClick={onExplore}
+                        style={{
+                            marginTop: '1.5rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            background: 'linear-gradient(135deg, #ec4899, #c4b5fd)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '12px',
+                            padding: '10px 20px',
+                            fontSize: '0.85rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 12px rgba(236, 72, 153, 0.3)',
+                            transition: 'transform 0.2s, box-shadow 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(236, 72, 153, 0.4)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(236, 72, 153, 0.3)';
+                        }}
+                    >
+                        <SlidersHorizontal size={16} />
+                        Explore Variables
+                    </button>
                 )}
             </div>
         </div>

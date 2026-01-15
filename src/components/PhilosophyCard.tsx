@@ -14,6 +14,7 @@ interface PhilosophyCardProps {
     holdings?: Holding[];
     netWorthCAD?: number;
     financialGoals?: FinancialGoals;
+    onExploreFI?: () => void;
 }
 
 /**
@@ -30,7 +31,8 @@ export const PhilosophyCard = ({
     features,
     holdings,
     netWorthCAD,
-    financialGoals
+    financialGoals,
+    onExploreFI
 }: PhilosophyCardProps) => {
     const scoreColor = philosophy.score >= 75
         ? 'var(--accent-green-dark)'
@@ -151,6 +153,7 @@ export const PhilosophyCard = ({
                             features={features!}
                             netWorthCAD={netWorthCAD}
                             financialGoals={financialGoals}
+                            onExplore={onExploreFI}
                         />
                         {primaryMotif?.caption && (
                             <p style={{
