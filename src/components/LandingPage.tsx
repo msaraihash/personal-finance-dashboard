@@ -306,18 +306,16 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                         letterSpacing: '0.05em',
                         marginBottom: '1.5rem',
                     }}>
-                        Platforms We Recommend
+                        Platform We Recommend
                     </h3>
 
                     <div style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        gap: '2rem',
-                        flexWrap: 'wrap',
                         marginBottom: '1.5rem',
                     }}>
                         <a
-                            href="https://www.wealthsimple.com/invite"
+                            href="http://wealthsimple.com/invite/QYEGNG"
                             target="_blank"
                             rel="sponsored noopener noreferrer"
                             style={{
@@ -343,34 +341,6 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                             Wealthsimple
                             <ExternalLink size={14} color="var(--text-secondary)" />
                         </a>
-
-                        <a
-                            href="https://www.questrade.com/self-directed-investing"
-                            target="_blank"
-                            rel="sponsored noopener noreferrer"
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                padding: '0.75rem 1.5rem',
-                                background: 'white',
-                                borderRadius: '12px',
-                                border: '1px solid var(--border-color)',
-                                color: 'var(--text-primary)',
-                                textDecoration: 'none',
-                                fontWeight: 600,
-                                transition: 'all 0.2s ease',
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.borderColor = 'var(--nebula-purple)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.borderColor = 'var(--border-color)';
-                            }}
-                        >
-                            Questrade
-                            <ExternalLink size={14} color="var(--text-secondary)" />
-                        </a>
                     </div>
 
                     <p style={{
@@ -378,7 +348,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                         color: 'var(--text-secondary)',
                         fontStyle: 'italic',
                     }}>
-                        These are affiliate links. We may earn a small commission at no cost to you.
+                        This is an affiliate link. We may earn a small commission at no cost to you.
                     </p>
                 </div>
             </section>
