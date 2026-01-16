@@ -455,6 +455,7 @@ export default function App() {
                     <SortHeader label={viewMode === 'consolidated' ? 'Accounts' : 'Source'} sortKey={viewMode === 'consolidated' ? 'accounts' : 'source'} sortConfig={sortConfig} onSort={handleSort} />
                     <SortHeader label="Amount" sortKey="marketValue" sortConfig={sortConfig} onSort={handleSort} />
                     <SortHeader label="CAD Value" sortKey="valueCAD" align="right" sortConfig={sortConfig} onSort={handleSort} />
+                    <SortHeader label="%" sortKey="valueCAD" align="right" sortConfig={sortConfig} onSort={handleSort} />
                   </tr>
                 </thead>
                 <tbody style={{ verticalAlign: 'middle' }}>
@@ -551,6 +552,9 @@ export default function App() {
                             </td>
                             <td style={{ textAlign: 'right', padding: '1.25rem 1rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums', fontSize: '1.05rem', color: 'var(--text-primary)' }}>
                               ${Math.round(valueCAD).toLocaleString()}
+                            </td>
+                            <td style={{ textAlign: 'right', padding: '1.25rem 1rem', fontWeight: 600, fontVariantNumeric: 'tabular-nums', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                              {metrics.totalNetWorthCAD > 0 ? ((valueCAD / metrics.totalNetWorthCAD) * 100).toFixed(1) : '0.0'}%
                             </td>
                           </tr>
                         )

@@ -511,6 +511,7 @@ svg {
   table tbody tr td {
     padding: 0.25rem 0 !important;
     border: none !important;
+    text-align: left !important;
   }
 
   /* Ticker/name column */
@@ -521,31 +522,16 @@ svg {
 
   /* Asset class badge */
   table tbody tr td:nth-child(2) {
-    order: 2;
+    order: 0;
+    /* Irrelevant due to absolute */
     position: absolute;
     top: 1.25rem;
     right: 1.25rem;
   }
 
-  /* Account/source info */
-  table tbody tr td:nth-child(3) {
-    order: 4;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    padding-top: 0.75rem !important;
-    border-top: 1px solid var(--border-color) !important;
-    margin-top: 0.5rem;
-  }
-
-  /* Native value */
-  table tbody tr td:nth-child(4) {
-    order: 3;
-    font-size: 0.85rem;
-  }
-
-  /* CAD value - make it prominent */
-  table tbody tr td:last-child {
-    order: 5;
+  /* CAD value - Primary Metric */
+  table tbody tr td:nth-child(5) {
+    order: 2;
     text-align: left !important;
     font-size: 1.5rem !important;
     font-weight: 800 !important;
@@ -553,7 +539,33 @@ svg {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  /* Percentage - Secondary Metric */
+  table tbody tr td:nth-child(6) {
+    order: 3;
+    font-size: 0.9rem !important;
+    color: var(--text-secondary);
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Native value - Tertiary Metric */
+  table tbody tr td:nth-child(4) {
+    order: 4;
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+
+  /* Account/source info - Footer */
+  table tbody tr td:nth-child(3) {
+    order: 5;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    padding-top: 0.75rem !important;
+    border-top: 1px solid var(--border-color) !important;
+    margin-top: 0.75rem;
   }
 }
 
