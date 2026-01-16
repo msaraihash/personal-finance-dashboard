@@ -93,6 +93,7 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
 
     return (
         <div
+            className="modal-overlay"
             style={{
                 position: 'fixed',
                 inset: 0,
@@ -102,14 +103,15 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 zIndex: 1000,
-                padding: '1rem'
+                padding: 'clamp(0.5rem, 2vw, 1rem)'
             }}
             onClick={onClose}
         >
             <div
+                className="fi-calculator-modal"
                 style={{
                     background: 'linear-gradient(135deg, #fff1f2 0%, #fdfbf7 50%, #f0fdf4 100%)',
-                    borderRadius: '24px',
+                    borderRadius: 'clamp(12px, 3vw, 24px)',
                     maxWidth: '800px',
                     width: '100%',
                     maxHeight: '90vh',
@@ -121,11 +123,12 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
             >
                 {/* Header */}
                 <div style={{
-                    padding: '1.5rem 2rem',
+                    padding: 'clamp(1rem, 3vw, 1.5rem) clamp(1rem, 4vw, 2rem)',
                     borderBottom: '1px solid rgba(0,0,0,0.05)',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    gap: '1rem'
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div style={{
@@ -160,7 +163,7 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
                 </div>
 
                 {/* Content */}
-                <div style={{ padding: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                <div className="fi-calculator-content" style={{ padding: 'clamp(1rem, 4vw, 2rem)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(1.5rem, 4vw, 2rem)' }}>
                     {/* Left Column: Sliders */}
                     <div>
                         <Slider
@@ -270,7 +273,7 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
                         </div>
 
                         {/* Stats Grid */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="fi-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem' }}>
                             <div style={{
                                 background: 'linear-gradient(135deg, #f0fdf4, #ecfdf5)',
                                 padding: '1rem',
@@ -356,12 +359,14 @@ export const FICalculatorModal: React.FC<FICalculatorModalProps> = ({
                 </div>
 
                 {/* Footer */}
-                <div style={{
-                    padding: '1.5rem 2rem',
+                <div className="fi-calculator-footer" style={{
+                    padding: 'clamp(1rem, 3vw, 1.5rem) clamp(1rem, 4vw, 2rem)',
                     borderTop: '1px solid rgba(0,0,0,0.05)',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    gap: '1rem',
+                    flexWrap: 'wrap'
                 }}>
                     <button
                         onClick={handleReset}

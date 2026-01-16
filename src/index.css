@@ -713,6 +713,48 @@ svg {
   }
 }
 
+/* ===== MODAL MOBILE IMPROVEMENTS ===== */
+@media (max-width: 640px) {
+  /* Full-screen modals on mobile */
+  .config-modal,
+  .fi-calculator-modal {
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .modal-overlay {
+    align-items: stretch !important;
+    padding: 0 !important;
+  }
+  
+  /* Stack config modal grids */
+  .config-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Ensure FI Calculator content stacks */
+  .fi-calculator-content {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Stack stats grids */
+  .fi-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  
+  /* Better footer on mobile */
+  .fi-calculator-footer {
+    flex-direction: column;
+    gap: 0.75rem !important;
+  }
+  
+  .fi-calculator-footer button {
+    width: 100%;
+  }
+}
+
 /* ===== SAFE AREA INSETS (for notched devices) ===== */
 @supports (padding: max(0px)) {
   .container {

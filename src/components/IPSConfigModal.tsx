@@ -112,8 +112,8 @@ export const IPSConfigModal = ({
     ))).map(str => JSON.parse(str));
 
     return (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(15px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, animation: 'fadeIn 0.2s ease-out' }}>
-            <div className="glass-card" style={{ width: '100%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', padding: '2.5rem', border: '1px solid white', boxShadow: '0 20px 60px -10px rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.95)' }}>
+        <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(15px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, animation: 'fadeIn 0.2s ease-out', padding: '0' }}>
+            <div className="glass-card config-modal" style={{ width: '100%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', padding: 'clamp(1rem, 4vw, 2.5rem)', border: '1px solid white', boxShadow: '0 20px 60px -10px rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.95)', margin: '0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2rem' }}>
                     <div>
                         <h2 style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.75rem', color: 'var(--text-primary)' }}>
@@ -124,7 +124,7 @@ export const IPSConfigModal = ({
                     <button onClick={onClose} style={{ background: '#f1f5f9', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.75rem', borderRadius: '50%', transition: 'all 0.2s' }}><X size={24} /></button>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                <div className="config-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 'clamp(1rem, 3vw, 2rem)' }}>
                     {/* Left Column: Data Sources */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                         <section>
@@ -156,7 +156,7 @@ export const IPSConfigModal = ({
                             <div style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '1.5rem' }}>
 
                                 {/* Basic Inputs */}
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                                <div className="config-age-inputs" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Current Age</label>
                                         <input
@@ -249,7 +249,7 @@ export const IPSConfigModal = ({
                                             />
                                         </div>
 
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                                        <div className="config-assumptions-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
                                             <div>
                                                 <label style={{ display: 'block', fontSize: '0.7rem', marginBottom: '0.5rem', fontWeight: 700 }}>Tax Rate (Auto-calc)</label>
                                                 <input
