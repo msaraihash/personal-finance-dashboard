@@ -331,7 +331,7 @@ export const IPSConfigModal = ({
 
                         {/* Add Form */}
                         <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                            <div className="manual-asset-input-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                                 <input
                                     placeholder="Asset Name (e.g. Condo)"
                                     value={newAsset.name}
@@ -346,7 +346,7 @@ export const IPSConfigModal = ({
                                     style={{ padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}
                                 />
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                            <div className="manual-asset-select-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                                 <select
                                     value={newAsset.currency}
                                     onChange={e => setNewAsset({ ...newAsset, currency: e.target.value as Currency })}

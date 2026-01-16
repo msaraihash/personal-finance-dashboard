@@ -745,7 +745,9 @@ svg {
   /* Stack config modal grids */
   .config-grid,
   .config-age-inputs,
-  .config-assumptions-grid {
+  .config-assumptions-grid,
+  .manual-asset-input-grid,
+  .manual-asset-select-grid {
     grid-template-columns: 1fr !important;
   }
 
