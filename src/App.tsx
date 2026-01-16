@@ -28,8 +28,8 @@ import {
 import type { FinancialGoals } from './types/FinancialGoals';
 import type { Expense } from './types/Expense';
 import { OnboardingWizard } from './components/OnboardingWizard';
-import { IPSConfigModal } from './components/IPSConfigModal';
 import { ExpensesView } from './components/ExpensesView';
+import { SettingsView } from './components/SettingsView';
 import { FICalculatorModal } from './components/FICalculatorModal';
 import { LandingPage } from './components/LandingPage';
 
@@ -67,10 +67,9 @@ export default function App() {
   const [holdings, setHoldings] = useState<Holding[]>(loadHoldings());
   const [ipsState, setIpsState] = useState<IPSState>(loadIPSState());
   const [usdRate, setUsdRate] = useState(1.40);
-  const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isRemixOpen, setIsRemixOpen] = useState(false);
   const [isFICalculatorOpen, setIsFICalculatorOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'expenses'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'expenses' | 'settings'>('dashboard');
   const [viewMode, setViewMode] = useState<'individual' | 'consolidated'>('consolidated');
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({
     key: 'valueCAD',
@@ -180,7 +179,7 @@ export default function App() {
     const newState: OnboardingState = { isComplete: false };
     saveOnboardingState(newState);
     setOnboardingState(newState);
-    setIsConfigOpen(false);
+    setActiveTab('dashboard'); // Reset view
   };
 
   return (
@@ -211,11 +210,18 @@ export default function App() {
             </label>
           </div>
 
-          <button onClick={() => setIsConfigOpen(true)} className="upload-label" style={{ padding: '0.85rem', borderRadius: '14px' }}>
+          <button
+            onClick={() => { setActiveTab('settings'); setIsRemixOpen(false); }}
+            className="upload-label"
+            style={{
+              padding: '0.85rem',
+              borderRadius: '14px',
+              background: activeTab === 'settings' ? 'var(--text-primary)' : 'white',
+              color: activeTab === 'settings' ? 'white' : 'var(--text-primary)'
+            }}
+          >
             <Settings size={20} />
           </button>
-
-
 
           <button
             className="btn-secondary"
@@ -265,6 +271,28 @@ export default function App() {
           usdRate={usdRate}
           onClose={() => setIsRemixOpen(false)}
         />
+      ) : activeTab === 'settings' ? (
+        <main className="grid-layout stagger-reveal" style={{ marginTop: '0rem' }}>
+          <div style={{ marginBottom: '1rem', gridColumn: '1 / -1' }}>
+            <button onClick={() => setActiveTab('dashboard')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <ChevronDown style={{ transform: 'rotate(90deg)' }} size={16} /> Back to Dashboard
+            </button>
+          </div>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <SettingsView
+              ipsState={ipsState}
+              setIpsState={setIpsState}
+              usdRate={usdRate}
+              setUsdRate={setUsdRate}
+              holdings={holdings}
+              setHoldings={setHoldings}
+              onResetOnboarding={handleResetOnboarding}
+              financialGoals={financialGoals}
+              setFinancialGoals={handleFinancialGoalsSet}
+              expenses={expenses}
+            />
+          </div>
+        </main>
       ) : activeTab === 'expenses' ? (
         <main className="grid-layout stagger-reveal" style={{ marginTop: '0rem' }}>
           <div style={{ marginBottom: '1rem' }}>
@@ -533,22 +561,8 @@ export default function App() {
             </div>
           </div>
         </main>
-      )}
-
-      <IPSConfigModal
-        isOpen={isConfigOpen}
-        onClose={() => setIsConfigOpen(false)}
-        ipsState={ipsState}
-        setIpsState={setIpsState}
-        usdRate={usdRate}
-        setUsdRate={setUsdRate}
-        holdings={holdings}
-        setHoldings={setHoldings}
-        onResetOnboarding={handleResetOnboarding}
-        financialGoals={financialGoals}
-        setFinancialGoals={handleFinancialGoalsSet}
-        expenses={expenses}
-      />
+      )
+      }
 
       <FICalculatorModal
         isOpen={isFICalculatorOpen}

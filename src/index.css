@@ -717,7 +717,7 @@ svg {
 @media (max-width: 640px) {
 
   /* Full-screen modals on mobile */
-  .config-modal,
+  /* Full-screen modals on mobile */
   .fi-calculator-modal {
     max-width: 100% !important;
     max-height: 100vh !important;
@@ -749,6 +749,12 @@ svg {
   .manual-asset-input-grid,
   .manual-asset-select-grid {
     grid-template-columns: 1fr !important;
+  }
+
+  /* Reset grid spans for children in stacked grids */
+  .manual-asset-select-grid>* {
+    grid-column: auto !important;
+    width: 100% !important;
   }
 
   /* Ensure FI Calculator content stacks */
