@@ -731,6 +731,10 @@ svg {
     flex-direction: column !important;
     /* Add extra padding at bottom of scrolling container for mobile URL bar/home indicator */
     padding-bottom: max(4rem, calc(2rem + env(safe-area-inset-bottom))) !important;
+    /* Ensure horizontal safe areas are respected */
+    padding-left: max(1rem, env(safe-area-inset-left)) !important;
+    padding-right: max(1rem, env(safe-area-inset-right)) !important;
+    overflow-x: hidden !important;
   }
 
   .modal-overlay {
@@ -748,15 +752,18 @@ svg {
     grid-template-columns: 1fr !important;
   }
 
-  /* Stack stats grids */
+  /* Stack stats grids - use auto-fit to avoid squishing */
   .fi-stats-grid {
-    grid-template-columns: 1fr 1fr !important;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
   }
 
   /* Better footer on mobile */
   .fi-calculator-footer {
     flex-direction: column;
     gap: 0.75rem !important;
+    /* Ensure footer aligns with safe area padding */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   .fi-calculator-footer button {
