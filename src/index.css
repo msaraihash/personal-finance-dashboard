@@ -715,41 +715,50 @@ svg {
 
 /* ===== MODAL MOBILE IMPROVEMENTS ===== */
 @media (max-width: 640px) {
+
   /* Full-screen modals on mobile */
   .config-modal,
   .fi-calculator-modal {
     max-width: 100% !important;
     max-height: 100vh !important;
+    /* Fallback */
+    max-height: 100dvh !important;
+    /* iOS fix */
+    height: 100dvh !important;
     border-radius: 0 !important;
     margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    /* Add extra padding at bottom of scrolling container for mobile URL bar/home indicator */
+    padding-bottom: max(4rem, calc(2rem + env(safe-area-inset-bottom))) !important;
   }
-  
+
   .modal-overlay {
     align-items: stretch !important;
     padding: 0 !important;
   }
-  
+
   /* Stack config modal grids */
   .config-grid {
     grid-template-columns: 1fr !important;
   }
-  
+
   /* Ensure FI Calculator content stacks */
   .fi-calculator-content {
     grid-template-columns: 1fr !important;
   }
-  
+
   /* Stack stats grids */
   .fi-stats-grid {
     grid-template-columns: 1fr 1fr !important;
   }
-  
+
   /* Better footer on mobile */
   .fi-calculator-footer {
     flex-direction: column;
     gap: 0.75rem !important;
   }
-  
+
   .fi-calculator-footer button {
     width: 100%;
   }
