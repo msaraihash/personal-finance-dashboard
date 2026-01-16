@@ -743,7 +743,9 @@ svg {
   }
 
   /* Stack config modal grids */
-  .config-grid {
+  .config-grid,
+  .config-age-inputs,
+  .config-assumptions-grid {
     grid-template-columns: 1fr !important;
   }
 
@@ -752,9 +754,9 @@ svg {
     grid-template-columns: 1fr !important;
   }
 
-  /* Stack stats grids - use auto-fit to avoid squishing */
+  /* Stack stats grids - Strict vertical stack per user request */
   .fi-stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+    grid-template-columns: 1fr !important;
   }
 
   /* Better footer on mobile */
